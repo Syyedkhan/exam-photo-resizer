@@ -8,7 +8,14 @@ const EXAM_PRESETS = {
     ibps_sign:  { width: 140, height: 60,  maxKB: 20, minKB: 10 },
     ssc_photo:  { width: 100, height: 120, maxKB: 50, minKB: 20 },
     ssc_sign:   { width: 140, height: 60,  maxKB: 20, minKB: 10 },
-    rrb_photo:  { width: 320, height: 240, maxKB: 40, minKB: 15 }
+    rrb_photo:  { width: 320, height: 240, maxKB: 40, minKB: 15 },
+    // NAYE EXAMS
+    ssc_cgl_photo: { width: 100, height: 120, maxKB: 50, minKB: 20 },
+    ssc_cgl_sign:  { width: 140, height: 60,  maxKB: 20, minKB: 10 },
+    upsc_photo:    { width: 350, height: 450, maxKB: 300, minKB: 20 },
+    upsc_sign:     { width: 350, height: 500, maxKB: 100, minKB: 20 },
+    neet_photo:    { width: 200, height: 230, maxKB: 200, minKB: 10 },
+    neet_sign:     { width: 140, height: 60,  maxKB: 20, minKB: 10 }
 };
 
 // HTML elements
