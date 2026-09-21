@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Photo & Signature Resizer 2026 - Triple Signature Tool (Free)</title>
+    <meta name="description" content="Free UPSC photo resizer 2026. Resize photo to 350×450 (20-300 KB) and triple signature to 350×500 (20-100 KB) instantly. 100% browser-based, no upload.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📸 UPSC Photo & Signature Resizer 2026</h1>
+            <p class="tagline">Free • Fast • 100% Private (No Upload)</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="card">
+            <h2>1. Apni photo select kariye</h2>
+            <input type="file" id="photoInput" accept="image/*">
+        </section>
+
+        <section class="card">
+            <h2>2. Kya resize karna hai?</h2>
+            <select id="examSelect">
+                <option value="upsc_photo">UPSC Photo (350×450, 20-300 KB)</option>
+                <option value="upsc_sign">UPSC Triple Signature (350×500, 20-100 KB)</option>
+            </select>
+        </section>
+
+        <section class="card">
+            <h2>3. Preview & Download</h2>
+            <div class="preview-box">
+                <div id="dragHint" class="drag-hint">
+                    👆 Photo ko <strong>drag</strong> karke adjust kariye
+                </div>
+                <canvas id="previewCanvas"></canvas>
+                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            </div>
+
+            <div id="adjustControls" style="display:none;">
+                <p class="hint">💡 Photo ko drag kariye, ya neeche sliders use kariye</p>
+                <label class="control-label">🔍 Zoom: <span id="zoomValue">100%</span></label>
+                <input type="range" id="zoomSlider" min="50" max="300" value="100" step="5">
+                <label class="control-label">↕️ Vertical: <span id="yValue">0</span></label>
+                <input type="range" id="ySlider" min="-100" max="100" value="0" step="1">
+                <label class="control-label">↔️ Horizontal: <span id="xValue">0</span></label>
+                <input type="range" id="xSlider" min="-100" max="100" value="0" step="1">
+                <button id="resetBtn" type="button">🔄 Reset</button>
+            </div>
+
+            <button id="downloadBtn" disabled>⬇️ Download</button>
+        </section>
+
+        <!-- GUIDE -->
+        <section class="card">
+            <h2>📖 UPSC Photo & Signature Size 2026 - Complete Guide</h2>
+            <p>UPSC ne 2026 se photo aur signature ke rules update kar diye hain. Sabse bada change hai <strong>"Triple Signature"</strong> — ab ek hi image me 3 signatures upload karne honge.</p>
+
+            <h3>UPSC Photo Requirements 2026:</h3>
+            <ul>
+                <li>Dimensions: 350×450 pixels</li>
+                <li>File size: 20 KB se 300 KB</li>
+                <li>Format: JPG/JPEG</li>
+                <li>Recent passport-style photo</li>
+                <li>White background</li>
+            </ul>
+
+            <h3>UPSC Triple Signature Requirements 2026:</h3>
+            <ul>
+                <li>Dimensions: 350×500 pixels</li>
+                <li>File size: 20 KB se 100 KB</li>
+                <li>Format: JPG/JPEG</li>
+                <li><strong>Black ink</strong> me signature</li>
+                <li>Ek hi image me 3 signatures (running signature style)</li>
+                <li>White paper par</li>
+            </ul>
+
+            <h3>Triple Signature kaise banayein?</h3>
+            <ol>
+                <li>Ek white paper par 3 baar signature kariye (teeno ek ke neeche ek)</li>
+                <li>Us paper ki photo khinchiye</li>
+                <li>Yahan upload kariye → "UPSC Triple Signature" preset chuniye</li>
+                <li>Adjust karke Download dabaiye</li>
+            </ol>
+
+            <h3>Photo kaise resize karein?</h3>
+            <ol>
+                <li>Upar "Select Photo" button dabaiye</li>
+                <li>"UPSC Photo" preset chuniye</li>
+                <li>Photo adjust karke Download dabaiye</li>
+            </ol>
+        </section>
+
+        <!-- FAQ -->
+        <section class="card">
+            <h2>❓ FAQs</h2>
+
+            <h3>UPSC photo ka size kitna hona chahiye?</h3>
+            <p>350×450 pixels, 20-300 KB, JPG format.</p>
+
+            <h3>UPSC triple signature kya hai?</h3>
+            <p>2026 se UPSC ne naya rule lagaya hai — ek hi image me 3 signatures upload karne honge, black ink me, 350×500 pixels, 20-100 KB.</p>
+
+            <h3>Kya files upload hoti hain?</h3>
+            <p>Nahi. Sab kuch aapke browser me hi hota hai. Files device se bahar nahi jaati.</p>
+
+            <h3>Kya mobile par kaam karega?</h3>
+            <p>Haan, mobile, tablet, laptop — sab par.</p>
+
+            <h3>Signature ki quality kharab hogi?</h3>
+            <p>Nahi. Tool best quality maintain karta hai.</p>
+        </section>
+
+        <section class="card" style="text-align:center;">
+            <a href="index.html" style="color:#667eea;font-weight:600;text-decoration:none;">← Saare exams ke tools dekhein</a>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Exam Photo Resizer • Made in India 🇮🇳</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
