@@ -22,7 +22,8 @@
 
     <header class="header">
         <div class="container">
-            <div class="logo">Exam Photo Resizer</div>
+            <h1 class="logo">📸 Exam Photo Resizer</h1>
+            <p class="tagline">Free • Fast • 100% Private (files device se bahar nahi jaati)</p>
             <nav class="nav">
                 <a href="index.html">Home</a>
                 <a href="ibps.html">IBPS</a>
@@ -36,15 +37,12 @@
 
     <main class="container">
 
-        <section class="hero">
-            <h1>📸 Exam Photo Resizer</h1>
-            <p>Free • Fast • 100% Private (files device se bahar nahi jaati)</p>
-        </section>
-
-        <section class="tool-section">
+        <div class="card">
             <h2>1. Apni photo select kariye</h2>
             <input type="file" id="photoInput" accept="image/*">
+        </div>
 
+        <div class="card">
             <h2>2. Exam chuniye</h2>
             <select id="examSelect">
                 <option value="">-- Select Exam --</option>
@@ -54,23 +52,28 @@
                 <option value="neet">NEET</option>
                 <option value="upsc">UPSC</option>
             </select>
+        </div>
 
+        <div class="card">
             <h2>3. Preview & Download</h2>
-            <canvas id="previewCanvas"></canvas>
-            <button onclick="downloadPhoto()">Download Photo</button>
-        </section>
+            <div class="preview-box">
+                <canvas id="previewCanvas"></canvas>
+                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            </div>
+            <button id="downloadBtn" disabled>Download Photo</button>
+        </div>
 
-        <section class="exam-links">
+        <div class="card">
             <h2>🎯 Exam-wise Tools & Guides</h2>
             <p>Apne exam ka page chuniye — exact specifications ke saath:</p>
-            <ul>
-                <li><a href="ssc-cgl.html">📘 SSC CGL Photo & Signature</a></li>
-                <li><a href="upsc.html">📗 UPSC Photo & Triple Signature</a></li>
-                <li><a href="neet.html">📕 NEET Photo & Signature</a></li>
-                <li><a href="ibps.html">📙 IBPS Photo & Signature</a></li>
-                <li><a href="rrb.html">📓 RRB Photo & Signature</a></li>
-            </ul>
-        </section>
+            <div class="exam-links">
+                <a href="ssc-cgl.html" class="exam-link">📘 SSC CGL Photo & Signature</a>
+                <a href="upsc.html" class="exam-link">📗 UPSC Photo & Triple Signature</a>
+                <a href="neet.html" class="exam-link">📕 NEET Photo & Signature</a>
+                <a href="ibps.html" class="exam-link">📙 IBPS Photo & Signature</a>
+                <a href="rrb.html" class="exam-link">📓 RRB Photo & Signature</a>
+            </div>
+        </div>
 
     </main>
 
