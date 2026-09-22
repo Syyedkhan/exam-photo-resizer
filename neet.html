@@ -3,143 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET Photo & Signature Resizer 2026 - Free Tool (No Upload)</title>
-    <meta name="description" content="Free NEET photo resizer 2026. Resize photo to 200×230 (10-200 KB) and signature to 140×60 (10-20 KB) instantly. 100% browser-based, no upload needed.">
+    <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RN2DNB447D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-RN2DNB447D');
+    </script>
+
+    <title>NEET Photo & Signature Resizer 2026 - Free Tool</title>
+    <meta name="description" content="Free NEET photo and signature resizer 2026. Get exact specifications and resize instantly. 100% private.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="header">
         <div class="container">
-            <h1 class="logo">📸 NEET Photo & Signature Resizer 2026</h1>
-            <p class="tagline">Free • Fast • 100% Private (No Upload)</p>
+            <div class="logo">Exam Photo Resizer</div>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="ibps.html">IBPS</a>
+                <a href="ssc-cgl.html">SSC CGL</a>
+                <a href="rrb.html">RRB</a>
+                <a href="neet.html">NEET</a>
+                <a href="upsc.html">UPSC</a>
+            </nav>
         </div>
     </header>
 
     <main class="container">
 
-        <section class="card">
-            <h2>1. Apni photo select kariye</h2>
-            <input type="file" id="photoInput" accept="image/*">
+        <section class="hero">
+            <h1>📕 NEET Photo & Signature Resizer</h1>
+            <p>NEET exam ke liye exact photo aur signature specifications</p>
         </section>
 
-        <section class="card">
-            <h2>2. Kya resize karna hai?</h2>
-            <select id="examSelect">
-                <option value="neet_photo">NEET Photo (200×230, 10-200 KB)</option>
-                <option value="neet_sign">NEET Signature (140×60, 10-20 KB)</option>
-            </select>
-        </section>
-
-        <section class="card">
-            <h2>3. Preview & Download</h2>
-            <div class="preview-box">
-                <div id="dragHint" class="drag-hint">
-                    👆 Photo ko <strong>drag</strong> karke adjust kariye
-                </div>
-                <canvas id="previewCanvas"></canvas>
-                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
-            </div>
-
-            <div id="adjustControls" style="display:none;">
-                <p class="hint">💡 Photo ko drag kariye, ya neeche sliders use kariye</p>
-                <label class="control-label">🔍 Zoom: <span id="zoomValue">100%</span></label>
-                <input type="range" id="zoomSlider" min="50" max="300" value="100" step="5">
-                <label class="control-label">↕️ Vertical: <span id="yValue">0</span></label>
-                <input type="range" id="ySlider" min="-100" max="100" value="0" step="1">
-                <label class="control-label">↔️ Horizontal: <span id="xValue">0</span></label>
-                <input type="range" id="xSlider" min="-100" max="100" value="0" step="1">
-                <button id="resetBtn" type="button">🔄 Reset</button>
-            </div>
-
-            <button id="downloadBtn" disabled>⬇️ Download</button>
-        </section>
-
-        <!-- GUIDE -->
-        <section class="card">
-            <h2>📖 NEET Photo & Signature Size 2026 - Complete Guide</h2>
-            <p>NEET UG 2026 ka registration process NTA (National Testing Agency) dwara conduct kiya jata hai. Form bharne ke dauran photo aur signature upload karna compulsory hai. Agar size ya format galat hua, to application reject ho sakta hai.</p>
-
-            <h3>NEET Photo Requirements 2026:</h3>
+        <section class="specs-section">
+            <h2>NEET Photo Requirements</h2>
             <ul>
-                <li>Dimensions: 200×230 pixels (approx 3.5cm × 4.5cm)</li>
-                <li>File size: 10 KB se 200 KB</li>
-                <li>Format: JPG/JPEG</li>
-                <li>Recent passport-style photo (6 mahine se purani nahi)</li>
-                <li>White background</li>
-                <li>Chehra saaf dikhna chahiye, cap/chashma nahi</li>
+                <li><strong>Photo Size:</strong> 200 x 230 pixels</li>
+                <li><strong>File Size:</strong> 10 KB - 200 KB</li>
+                <li><strong>Format:</strong> JPG/JPEG</li>
+                <li><strong>Background:</strong> White</li>
             </ul>
 
-            <h3>NEET Signature Requirements 2026:</h3>
+            <h2>NEET Signature Requirements</h2>
             <ul>
-                <li>Dimensions: 140×60 pixels (approx 3.5cm × 1.5cm)</li>
-                <li>File size: 10 KB se 20 KB</li>
-                <li>Format: JPG/JPEG</li>
-                <li>Black ink me signature</li>
-                <li>White paper par</li>
-                <li>Running handwriting me (capital letters nahi)</li>
-            </ul>
-
-            <h3>NEET Photo kaise resize karein? (3 Steps)</h3>
-            <ol>
-                <li>Upar "Select Photo" button dabaiye aur apni photo chuniye</li>
-                <li>"NEET Photo" preset dropdown me chuniye</li>
-                <li>Photo ko drag/zoom karke adjust kariye, phir Download dabaiye</li>
-            </ol>
-
-            <h3>NEET Signature kaise resize karein?</h3>
-            <ol>
-                <li>White paper par black pen se signature kariye</li>
-                <li>Us paper ki saaf photo khinchiye</li>
-                <li>Yahan upload kariye → "NEET Signature" preset chuniye</li>
-                <li>Adjust karke Download dabaiye</li>
-            </ol>
-
-            <h3>Common Mistakes jo avoid karein:</h3>
-            <ul>
-                <li>Photo me background white hona chahiye — colorful nahi</li>
-                <li>Signature running hand me ho, capital letters me nahi</li>
-                <li>Photo blur ya low quality nahi honi chahiye</li>
-                <li>File size limit se bahar nahi honi chahiye</li>
-                <li>Selfie ya casual photo accept nahi hoti</li>
+                <li><strong>Signature Size:</strong> 140 x 60 pixels</li>
+                <li><strong>File Size:</strong> 10 KB - 20 KB</li>
+                <li><strong>Format:</strong> JPG/JPEG</li>
             </ul>
         </section>
 
-        <!-- FAQ -->
-        <section class="card">
-            <h2>❓ FAQs</h2>
-
-            <h3>NEET photo ka size kitna hona chahiye?</h3>
-            <p>200×230 pixels, 10-200 KB, JPG format, white background.</p>
-
-            <h3>NEET signature ka size kitna hona chahiye?</h3>
-            <p>140×60 pixels, 10-20 KB, JPG format, black ink me.</p>
-
-            <h3>Kya files upload hoti hain?</h3>
-            <p>Nahi. Sab kuch aapke browser me hi hota hai. Files device se bahar nahi jaati. 100% private.</p>
-
-            <h3>Kya mobile par kaam karega?</h3>
-            <p>Haan, mobile, tablet, laptop — sab par kaam karta hai.</p>
-
-            <h3>Photo ki quality kharab hogi?</h3>
-            <p>Nahi. Tool automatically best quality maintain karta hai aur size limit ke andar rakhta hai.</p>
-
-            <h3>Kya ye tool free hai?</h3>
-            <p>Haan, 100% free. Koi signup nahi, koi payment nahi, koi watermark nahi.</p>
-
-            <h3>NEET form reject ho jayega agar photo galat hui to?</h3>
-            <p>Haan, NTA galat specifications wali photo/signature reject kar sakta hai. Isliye exact size aur format me upload karna zaroori hai.</p>
-        </section>
-
-        <section class="card" style="text-align:center;">
-            <a href="index.html" style="color:#667eea;font-weight:600;text-decoration:none;">← Saare exams ke tools dekhein</a>
+        <section class="tool-section">
+            <h2>Resize Your Photo Now</h2>
+            <a href="index.html" class="btn">Go to Photo Resizer</a>
         </section>
 
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>© 2026 Exam Photo Resizer • Made in India 🇮🇳</p>
+            <p>© 2026 Exam Photo Resizer</p>
         </div>
     </footer>
 
