@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-L5K09RC5D2');
+    </script>
+
+    <title>Photo Merger - Combine Photos Online Free (No Upload)</title>
+    <meta name="description" content="Free photo merger tool. Combine 2 or more photos into one. Drag, zoom, and adjust. 100% private, no upload.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📸 Photo Resizer</h1>
+            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
+            <nav class="nav">
+                <a href="index.html">🏠 Home</a>
+                <a href="us-passport-photo.html">🇺🇸 US</a>
+                <a href="uk-passport-photo.html">🇬🇧 UK</a>
+                <a href="schengen-visa-photo.html">🇪🇺 Schengen</a>
+                <a href="canada-passport-photo.html">🇨🇦 Canada</a>
+                <a href="australia-passport-photo.html">🇦🇺 Australia</a>
+                <a href="ibps.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+                <a href="photo-merger.html">🔗 Merger</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="intro-section">
+            <h2>🔗 Photo Merger</h2>
+            <p>Combine 2 or more photos into one — drag, zoom, and adjust</p>
+        </section>
+
+        <div class="card">
+            <h2>1. Select Photos</h2>
+            <label for="mergeInput">Choose photos (2 or more)</label>
+            <input type="file" id="mergeInput" accept="image/*" multiple aria-label="Upload photos">
+            <p id="mergeStatus" style="margin-top: 10px; color: #718096; font-size: 14px;">Select 2 or more photos to merge.</p>
+        </div>
+
+        <div class="card">
+            <h2>2. Choose Layout</h2>
+            <label for="layoutSelect">Layout</label>
+            <select id="layoutSelect" aria-label="Select layout">
+                <option value="vertical">Vertical (Stacked)</option>
+                <option value="horizontal">Horizontal (Side by Side)</option>
+                <option value="grid">Grid (2x2)</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <h2>3. Preview & Merge</h2>
+            <div class="preview-box">
+                <canvas id="mergeCanvas" style="display:none; max-width:100%; border-radius:6px;"></canvas>
+                <p id="mergePreviewText">Photos select karne ke baad yahan preview dikhega.</p>
+            </div>
+            <button id="mergeBtn" disabled aria-label="Merge photos">Merge Photos</button>
+            <button id="mergeDownloadBtn" disabled aria-label="Download merged photo" style="margin-top:10px;">Download Merged Photo</button>
+        </div>
+
+        <div class="card">
+            <h2>📌 How to Use</h2>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li>Select 2 or more photos</li>
+                <li>Choose layout (vertical, horizontal, grid)</li>
+                <li>Click "Merge Photos"</li>
+                <li>Preview and click "Download"</li>
+            </ol>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Photo Resizer | Made for the World 🌍</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

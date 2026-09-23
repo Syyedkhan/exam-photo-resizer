@@ -304,3 +304,142 @@ if (compressDownloadBtn) {
         link.click();
     });
 }
+
+
+/* ============================================
+   PHOTO MERGER
+   ============================================ */
+
+const mergeInput = document.getElementById('mergeInput');
+const layoutSelect = document.getElementById('layoutSelect');
+const mergeCanvas = document.getElementById('mergeCanvas');
+const mergePreviewText = document.getElementById('mergePreviewText');
+const mergeBtn = document.getElementById('mergeBtn');
+const mergeDownloadBtn = document.getElementById('mergeDownloadBtn');
+const mergeStatus = document.getElementById('mergeStatus');
+
+let mergeImages = [];
+let mergedBlob = null;
+
+// Photo select
+if (mergeInput) {
+    mergeInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        if (files.length < 2) {
+            if (mergeStatus) mergeStatus.textContent = 'Please select at least 2 photos.';
+            return;
+        }
+
+        mergeImages = [];
+        let loaded = 0;
+
+        files.forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    mergeImages.push(img);
+                    loaded++;
+                    if (loaded === files.length) {
+                        if (mergeStatus) mergeStatus.textContent = `✅ ${files.length} photos loaded. Click "Merge Photos".`;
+                        if (mergeBtn) mergeBtn.disabled = false;
+                        if (mergeDownloadBtn) mergeDownloadBtn.disabled = true;
+                        mergedBlob = null;
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+}
+
+// Merge function
+if (mergeBtn) {
+    mergeBtn.addEventListener('click', function() {
+        if (mergeImages.length < 2 || !mergeCanvas) return;
+
+        const layout = layoutSelect ? layoutSelect.value : 'vertical';
+        const ctx = mergeCanvas.getContext('2d');
+
+        let canvasW, canvasH;
+
+        if (layout === 'vertical') {
+            canvasW = Math.max(...mergeImages.map(img => img.width));
+            canvasH = mergeImages.reduce((sum, img) => sum + (img.height * canvasW / img.width), 0);
+        } else if (layout === 'horizontal') {
+            canvasH = Math.max(...mergeImages.map(img => img.height));
+            canvasW = mergeImages.reduce((sum, img) => sum + (img.width * canvasH / img.height), 0);
+        } else {
+            // Grid 2x2
+            const cols = 2;
+            const rows = Math.ceil(mergeImages.length / cols);
+            const cellW = Math.max(...mergeImages.map(img => img.width));
+            const cellH = Math.max(...mergeImages.map(img => img.height));
+            canvasW = cellW * cols;
+            canvasH = cellH * rows;
+        }
+
+        mergeCanvas.width = canvasW;
+        mergeCanvas.height = canvasH;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        let x = 0, y = 0;
+
+        if (layout === 'vertical') {
+            mergeImages.forEach((img) => {
+                const drawH = img.height * canvasW / img.width;
+                ctx.drawImage(img, 0, y, canvasW, drawH);
+                y += drawH;
+            });
+        } else if (layout === 'horizontal') {
+            mergeImages.forEach((img) => {
+                const drawW = img.width * canvasH / img.height;
+                ctx.drawImage(img, x, 0, drawW, canvasH);
+                x += drawW;
+            });
+        } else {
+            const cols = 2;
+            const cellW = canvasW / cols;
+            const cellH = canvasH / Math.ceil(mergeImages.length / cols);
+
+            mergeImages.forEach((img, i) => {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = col * cellW;
+                const y = row * cellH;
+
+                // Fit image in cell
+                const scale = Math.min(cellW / img.width, cellH / img.height);
+                const drawW = img.width * scale;
+                const drawH = img.height * scale;
+                const offsetX = (cellW - drawW) / 2;
+                const offsetY = (cellH - drawH) / 2;
+
+                ctx.drawImage(img, x + offsetX, y + offsetY, drawW, drawH);
+            });
+        }
+
+        mergeCanvas.style.display = 'block';
+        if (mergePreviewText) mergePreviewText.style.display = 'none';
+
+        // Save blob
+        mergeCanvas.toBlob(function(blob) {
+            mergedBlob = blob;
+            if (mergeDownloadBtn) mergeDownloadBtn.disabled = false;
+        }, 'image/jpeg', 0.9);
+    });
+}
+
+// Download merged
+if (mergeDownloadBtn) {
+    mergeDownloadBtn.addEventListener('click', function() {
+        if (!mergedBlob) return;
+        const link = document.createElement('a');
+        link.download = 'merged-photo.jpg';
+        link.href = URL.createObjectURL(mergedBlob);
+        link.click();
+    });
+}
