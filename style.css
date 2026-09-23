@@ -346,3 +346,293 @@ select:focus {
         font-size: 19px;
     }
 }
+
+
+/* ========== PHOTO MERGER ========== */
+.merge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.merge-item {
+    position: relative;
+    background: #f7fafc;
+    border: 2px dashed #cbd5e0;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.merge-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.merge-item .crop-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(102, 126, 234, 0.95);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.merge-item .crop-btn:hover {
+    background: #4c51bf;
+}
+
+.merge-item .remove-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(220, 38, 38, 0.95);
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.merge-item .remove-btn:hover {
+    background: #b91c1c;
+}
+
+.merge-item .file-name {
+    font-size: 11px;
+    color: #718096;
+    margin-top: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.add-more-btn {
+    width: 100%;
+    padding: 12px;
+    background: #f0f4ff;
+    color: #4c51bf;
+    border: 2px dashed #667eea;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add-more-btn:hover {
+    background: #e0e7ff;
+}
+
+.option-row {
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.option-row > label:first-child {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+    min-width: 80px;
+    margin-bottom: 0;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #4a5568;
+    cursor: pointer;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.radio-label input[type="radio"] {
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #4a5568;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+/* ========== CROP MODAL ========== */
+.crop-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.crop-modal.active {
+    display: flex;
+}
+
+.crop-modal-content {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: auto;
+}
+
+.crop-modal-content h3 {
+    color: #4c51bf;
+    font-size: 20px;
+}
+
+.crop-canvas-wrapper {
+    position: relative;
+    background: #2d3748;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.crop-canvas-wrapper canvas {
+    max-width: 100%;
+    max-height: 60vh;
+    display: block;
+    cursor: grab;
+    touch-action: none;
+}
+
+.crop-canvas-wrapper canvas:active {
+    cursor: grabbing;
+}
+
+.crop-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.crop-controls button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.crop-controls .btn-save {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.crop-controls .btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.crop-controls .btn-cancel {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.crop-controls .btn-cancel:hover {
+    background: #e2e8f0;
+}
+
+.crop-zoom-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.crop-zoom-row label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0;
+}
+
+.crop-zoom-row input[type="range"] {
+    width: 200px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .merge-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .merge-item img {
+        height: 100px;
+    }
+    .merge-item .crop-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    .merge-item .remove-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    .option-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .crop-canvas-wrapper {
+        min-height: 200px;
+    }
+}

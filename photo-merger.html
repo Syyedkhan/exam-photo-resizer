@@ -14,8 +14,8 @@
       gtag('config', 'G-L5K09RC5D2');
     </script>
 
-    <title>Photo Merger - Combine Photos Online Free (No Upload)</title>
-    <meta name="description" content="Free photo merger tool. Combine 2 or more photos into one. Drag, zoom, and adjust. 100% private, no upload.">
+    <title>Photo Merger - Join Images Online Free (Crop + Merge)</title>
+    <meta name="description" content="Free photo merger tool. Join 2 or more photos with crop, drag, zoom. Horizontal, vertical, grid layouts. 100% private.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -42,9 +42,10 @@
 
         <section class="intro-section">
             <h2>🔗 Photo Merger</h2>
-            <p>Combine 2 or more photos into one — drag, zoom, and adjust</p>
+            <p>Join 2 or more images — crop, drag, zoom, and merge</p>
         </section>
 
+        <!-- PHOTO UPLOAD AREA -->
         <div class="card">
             <h2>1. Select Photos</h2>
             <label for="mergeInput">Choose photos (2 or more)</label>
@@ -52,34 +53,74 @@
             <p id="mergeStatus" style="margin-top: 10px; color: #718096; font-size: 14px;">Select 2 or more photos to merge.</p>
         </div>
 
+        <!-- PHOTOS GRID -->
         <div class="card">
-            <h2>2. Choose Layout</h2>
-            <label for="layoutSelect">Layout</label>
-            <select id="layoutSelect" aria-label="Select layout">
-                <option value="vertical">Vertical (Stacked)</option>
-                <option value="horizontal">Horizontal (Side by Side)</option>
-                <option value="grid">Grid (2x2)</option>
-            </select>
+            <h2>2. Preview & Crop</h2>
+            <div id="mergeGrid" class="merge-grid"></div>
+            <button id="addMoreBtn" class="add-more-btn" style="display:none;">+ Add More Photos</button>
         </div>
 
+        <!-- OPTIONS -->
         <div class="card">
-            <h2>3. Preview & Merge</h2>
-            <div class="preview-box">
-                <canvas id="mergeCanvas" style="display:none; max-width:100%; border-radius:6px;"></canvas>
-                <p id="mergePreviewText">Photos select karne ke baad yahan preview dikhega.</p>
+            <h2>3. Options</h2>
+
+            <div class="option-row">
+                <label>Direction:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="direction" value="horizontal" checked>
+                        ↔ Horizontal
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="direction" value="vertical">
+                        ↕ Vertical
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="direction" value="grid">
+                        ▦ Grid
+                    </label>
+                </div>
             </div>
-            <button id="mergeBtn" disabled aria-label="Merge photos">Merge Photos</button>
-            <button id="mergeDownloadBtn" disabled aria-label="Download merged photo" style="margin-top:10px;">Download Merged Photo</button>
+
+            <div class="option-row">
+                <label>Arrange:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="arrange" value="proper" checked>
+                        Proper Align
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="arrange" value="free">
+                        Free Style
+                    </label>
+                </div>
+            </div>
+
+            <div class="option-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="addBorder">
+                    Add Border To Images
+                </label>
+            </div>
+
+            <div class="option-row">
+                <label>Border Color:</label>
+                <input type="color" id="borderColor" value="#000000" style="width: 60px; height: 40px; border: 2px solid #e2e8f0; border-radius: 6px; cursor: pointer;">
+                <label>Border Width (px):</label>
+                <input type="number" id="borderWidth" value="5" min="1" max="50" style="width: 80px; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px;">
+            </div>
+
         </div>
 
+        <!-- MERGE BUTTON -->
         <div class="card">
-            <h2>📌 How to Use</h2>
-            <ol style="margin-left: 20px; line-height: 1.8;">
-                <li>Select 2 or more photos</li>
-                <li>Choose layout (vertical, horizontal, grid)</li>
-                <li>Click "Merge Photos"</li>
-                <li>Preview and click "Download"</li>
-            </ol>
+            <h2>4. Merge & Download</h2>
+            <button id="mergeBtn" disabled>🔗 Join Images</button>
+            <button id="mergeDownloadBtn" disabled style="margin-top:10px;">⬇ Download Merged Photo</button>
+            <div class="preview-box" style="margin-top: 15px;">
+                <canvas id="mergeCanvas" style="display:none; max-width:100%; border-radius:6px;"></canvas>
+                <p id="mergePreviewText">Merged photo will appear here.</p>
+            </div>
         </div>
 
     </main>

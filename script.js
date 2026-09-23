@@ -443,3 +443,402 @@ if (mergeDownloadBtn) {
         link.click();
     });
 }
+
+
+/* ============================================
+   PHOTO MERGER (Full - Crop, Drag, Zoom)
+   ============================================ */
+
+const mergeInput = document.getElementById('mergeInput');
+const mergeGrid = document.getElementById('mergeGrid');
+const addMoreBtn = document.getElementById('addMoreBtn');
+const mergeBtn = document.getElementById('mergeBtn');
+const mergeDownloadBtn = document.getElementById('mergeDownloadBtn');
+const mergeCanvas = document.getElementById('mergeCanvas');
+const mergePreviewText = document.getElementById('mergePreviewText');
+const mergeStatus = document.getElementById('mergeStatus');
+
+let mergePhotos = [];       // { id, img, croppedImg }
+let mergedBlob = null;
+let currentCropIndex = -1;
+let cropOffsetX = 0, cropOffsetY = 0, cropZoom = 1;
+let cropDragging = false, cropStartX = 0, cropStartY = 0;
+
+// Photo select
+if (mergeInput) {
+    mergeInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        files.forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    mergePhotos.push({
+                        id: Date.now() + Math.random(),
+                        img: img,
+                        croppedImg: img,
+                        name: file.name
+                    });
+                    renderMergeGrid();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        mergeInput.value = '';
+    });
+}
+
+// Render grid
+function renderMergeGrid() {
+    if (!mergeGrid) return;
+    mergeGrid.innerHTML = '';
+
+    if (mergePhotos.length === 0) {
+        if (mergeStatus) mergeStatus.textContent = 'Select 2 or more photos to merge.';
+        if (addMoreBtn) addMoreBtn.style.display = 'none';
+        if (mergeBtn) mergeBtn.disabled = true;
+        return;
+    }
+
+    mergePhotos.forEach((photo, index) => {
+        const div = document.createElement('div');
+        div.className = 'merge-item';
+        div.innerHTML = `
+            <button class="crop-btn" data-index="${index}">✂️ Crop</button>
+            <button class="remove-btn" data-index="${index}">×</button>
+            <img src="${photo.croppedImg.src}" alt="Photo">
+            <div class="file-name">${photo.name || 'Photo ' + (index + 1)}</div>
+        `;
+        mergeGrid.appendChild(div);
+    });
+
+    // Attach events
+    mergeGrid.querySelectorAll('.crop-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            openCropModal(parseInt(this.dataset.index));
+        });
+    });
+
+    mergeGrid.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.index);
+            mergePhotos.splice(idx, 1);
+            renderMergeGrid();
+        });
+    });
+
+    if (mergeStatus) {
+        mergeStatus.textContent = `✅ ${mergePhotos.length} photo(s) loaded.`;
+    }
+
+    if (addMoreBtn) addMoreBtn.style.display = 'block';
+    if (mergeBtn) mergeBtn.disabled = mergePhotos.length < 2;
+    if (mergeDownloadBtn) mergeDownloadBtn.disabled = true;
+    mergedBlob = null;
+}
+
+// Add more
+if (addMoreBtn) {
+    addMoreBtn.addEventListener('click', function() {
+        if (mergeInput) mergeInput.click();
+    });
+}
+
+// ============ CROP MODAL ============
+function openCropModal(index) {
+    currentCropIndex = index;
+    const photo = mergePhotos[index];
+    if (!photo) return;
+
+    // Create modal if not exists
+    let modal = document.getElementById('cropModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'cropModal';
+        modal.className = 'crop-modal';
+        modal.innerHTML = `
+            <div class="crop-modal-content">
+                <h3>✂️ Crop Photo</h3>
+                <div class="crop-canvas-wrapper">
+                    <canvas id="cropCanvas"></canvas>
+                </div>
+                <div class="crop-zoom-row">
+                    <label>Zoom:</label>
+                    <input type="range" id="cropZoom" min="50" max="300" value="100">
+                    <span id="cropZoomValue">100%</span>
+                </div>
+                <div class="crop-controls">
+                    <button class="btn-cancel" id="cropCancelBtn">Cancel</button>
+                    <button class="btn-save" id="cropSaveBtn">Save Crop</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        setupCropEvents();
+    }
+
+    cropOffsetX = 0;
+    cropOffsetY = 0;
+    cropZoom = 1;
+    modal.classList.add('active');
+
+    const zoomSlider = document.getElementById('cropZoom');
+    const zoomLabel = document.getElementById('cropZoomValue');
+    if (zoomSlider) zoomSlider.value = 100;
+    if (zoomLabel) zoomLabel.textContent = '100%';
+
+    drawCropCanvas();
+}
+
+function drawCropCanvas() {
+    const canvas = document.getElementById('cropCanvas');
+    if (!canvas || currentCropIndex === -1) return;
+
+    const photo = mergePhotos[currentCropIndex];
+    if (!photo) return;
+
+    const img = photo.croppedImg;
+    const ctx = canvas.getContext('2d');
+
+    // Fixed canvas size for crop (400x400)
+    const size = 400;
+    canvas.width = size;
+    canvas.height = size;
+
+    ctx.fillStyle = '#1a202c';
+    ctx.fillRect(0, 0, size, size);
+
+    // Scale to fit
+    const scale = Math.max(size / img.width, size / img.height) * cropZoom;
+    const drawW = img.width * scale;
+    const drawH = img.height * scale;
+
+    const x = (size - drawW) / 2 + cropOffsetX;
+    const y = (size - drawH) / 2 + cropOffsetY;
+
+    ctx.drawImage(img, x, y, drawW, drawH);
+
+    // Crop border
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([10, 5]);
+    ctx.strokeRect(50, 50, size - 100, size - 100);
+    ctx.setLineDash([]);
+}
+
+function setupCropEvents() {
+    const canvas = document.getElementById('cropCanvas');
+    const modal = document.getElementById('cropModal');
+    const zoomSlider = document.getElementById('cropZoom');
+    const zoomLabel = document.getElementById('cropZoomValue');
+    const saveBtn = document.getElementById('cropSaveBtn');
+    const cancelBtn = document.getElementById('cropCancelBtn');
+
+    if (canvas) {
+        canvas.addEventListener('mousedown', function(e) {
+            cropDragging = true;
+            cropStartX = e.clientX - cropOffsetX;
+            cropStartY = e.clientY - cropOffsetY;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!cropDragging) return;
+            cropOffsetX = e.clientX - cropStartX;
+            cropOffsetY = e.clientY - cropStartY;
+            drawCropCanvas();
+        });
+
+        document.addEventListener('mouseup', function() {
+            cropDragging = false;
+        });
+
+        canvas.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1) {
+                cropDragging = true;
+                cropStartX = e.touches[0].clientX - cropOffsetX;
+                cropStartY = e.touches[0].clientY - cropOffsetY;
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchmove', function(e) {
+            if (!cropDragging || e.touches.length !== 1) return;
+            cropOffsetX = e.touches[0].clientX - cropStartX;
+            cropOffsetY = e.touches[0].clientY - cropStartY;
+            drawCropCanvas();
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', function() {
+            cropDragging = false;
+        });
+    }
+
+    if (zoomSlider) {
+        zoomSlider.addEventListener('input', function() {
+            cropZoom = parseInt(this.value) / 100;
+            if (zoomLabel) zoomLabel.textContent = this.value + '%';
+            drawCropCanvas();
+        });
+    }
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            saveCrop();
+        });
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            modal.classList.remove('active');
+            currentCropIndex = -1;
+        });
+    }
+}
+
+function saveCrop() {
+    const canvas = document.getElementById('cropCanvas');
+    if (!canvas || currentCropIndex === -1) return;
+
+    // Create new canvas with actual crop area (square)
+    const size = 400;
+    const cropSize = size - 100;
+    const newCanvas = document.createElement('canvas');
+    newCanvas.width = cropSize;
+    newCanvas.height = cropSize;
+    const newCtx = newCanvas.getContext('2d');
+
+    newCtx.drawImage(canvas, 50, 50, cropSize, cropSize, 0, 0, cropSize, cropSize);
+
+    const croppedImg = new Image();
+    croppedImg.onload = function() {
+        mergePhotos[currentCropIndex].croppedImg = croppedImg;
+        renderMergeGrid();
+        document.getElementById('cropModal').classList.remove('active');
+        currentCropIndex = -1;
+    };
+    croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.9);
+}
+
+// ============ MERGE ============
+if (mergeBtn) {
+    mergeBtn.addEventListener('click', function() {
+        if (mergePhotos.length < 2 || !mergeCanvas) return;
+
+        const direction = document.querySelector('input[name="direction"]:checked').value;
+        const arrange = document.querySelector('input[name="arrange"]:checked').value;
+        const addBorder = document.getElementById('addBorder').checked;
+        const borderColor = document.getElementById('borderColor').value;
+        const borderWidth = parseInt(document.getElementById('borderWidth').value) || 5;
+
+        const ctx = mergeCanvas.getContext('2d');
+        const images = mergePhotos.map(p => p.croppedImg);
+
+        let canvasW, canvasH;
+
+        if (direction === 'horizontal') {
+            canvasH = Math.max(...images.map(img => img.height));
+            canvasW = images.reduce((sum, img) => sum + (img.width * canvasH / img.height), 0);
+        } else if (direction === 'vertical') {
+            canvasW = Math.max(...images.map(img => img.width));
+            canvasH = images.reduce((sum, img) => sum + (img.height * canvasW / img.width), 0);
+        } else {
+            const cols = 2;
+            const rows = Math.ceil(images.length / cols);
+            const cellW = Math.max(...images.map(img => img.width));
+            const cellH = Math.max(...images.map(img => img.height));
+            canvasW = cellW * cols;
+            canvasH = cellH * rows;
+        }
+
+        mergeCanvas.width = canvasW;
+        mergeCanvas.height = canvasH;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        if (arrange === 'proper') {
+            let x = 0, y = 0;
+
+            if (direction === 'horizontal') {
+                images.forEach((img) => {
+                    const drawW = img.width * canvasH / img.height;
+                    if (addBorder) {
+                        ctx.fillStyle = borderColor;
+                        ctx.fillRect(x, 0, borderWidth, canvasH);
+                    }
+                    ctx.drawImage(img, x + (addBorder ? borderWidth : 0), 0, drawW - (addBorder ? borderWidth : 0), canvasH);
+                    x += drawW;
+                });
+            } else if (direction === 'vertical') {
+                images.forEach((img) => {
+                    const drawH = img.height * canvasW / img.width;
+                    if (addBorder) {
+                        ctx.fillStyle = borderColor;
+                        ctx.fillRect(0, y, canvasW, borderWidth);
+                    }
+                    ctx.drawImage(img, 0, y + (addBorder ? borderWidth : 0), canvasW, drawH - (addBorder ? borderWidth : 0));
+                    y += drawH;
+                });
+            } else {
+                const cols = 2;
+                const cellW = canvasW / cols;
+                const cellH = canvasH / Math.ceil(images.length / cols);
+
+                images.forEach((img, i) => {
+                    const col = i % cols;
+                    const row = Math.floor(i / cols);
+                    const x = col * cellW;
+                    const y = row * cellH;
+
+                    const scale = Math.min(cellW / img.width, cellH / img.height);
+                    const drawW = img.width * scale;
+                    const drawH = img.height * scale;
+                    const offsetX = (cellW - drawW) / 2;
+                    const offsetY = (cellH - drawH) / 2;
+
+                    if (addBorder) {
+                        ctx.fillStyle = borderColor;
+                        ctx.fillRect(x, y, cellW, cellH);
+                    }
+                    ctx.drawImage(img, x + offsetX + (addBorder ? borderWidth/2 : 0), y + offsetY + (addBorder ? borderWidth/2 : 0), drawW - (addBorder ? borderWidth : 0), drawH - (addBorder ? borderWidth : 0));
+                });
+            }
+        } else {
+            // Free style - same as proper for now (can be enhanced)
+            let x = 0, y = 0;
+            images.forEach((img) => {
+                if (direction === 'horizontal') {
+                    const drawW = img.width * canvasH / img.height;
+                    ctx.drawImage(img, x, 0, drawW, canvasH);
+                    x += drawW;
+                } else {
+                    const drawH = img.height * canvasW / img.width;
+                    ctx.drawImage(img, 0, y, canvasW, drawH);
+                    y += drawH;
+                }
+            });
+        }
+
+        mergeCanvas.style.display = 'block';
+        if (mergePreviewText) mergePreviewText.style.display = 'none';
+
+        mergeCanvas.toBlob(function(blob) {
+            mergedBlob = blob;
+            if (mergeDownloadBtn) mergeDownloadBtn.disabled = false;
+        }, 'image/jpeg', 0.9);
+    });
+}
+
+// Download merged
+if (mergeDownloadBtn) {
+    mergeDownloadBtn.addEventListener('click', function() {
+        if (!mergedBlob) return;
+        const link = document.createElement('a');
+        link.download = 'merged-photo.jpg';
+        link.href = URL.createObjectURL(mergedBlob);
+        link.click();
+    });
+}
