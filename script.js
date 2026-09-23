@@ -1,5 +1,5 @@
 /* ============================================
-   Exam Photo Resizer - Script
+   Exam Photo Resizer - Script (Drag + Zoom)
    ============================================ */
 
 const photoInput = document.getElementById('photoInput');
@@ -7,16 +7,29 @@ const examSelect = document.getElementById('examSelect');
 const previewCanvas = document.getElementById('previewCanvas');
 const statusText = document.getElementById('statusText');
 const downloadBtn = document.getElementById('downloadBtn');
+const zoomSlider = document.getElementById('zoomSlider');
+const zoomValue = document.getElementById('zoomValue');
+const resetBtn = document.getElementById('resetBtn');
+const adjustControls = document.getElementById('adjustControls');
+const dragHint = document.querySelector('.drag-hint');
 
 let uploadedImage = null;
+let offsetX = 0;
+let offsetY = 0;
+let zoom = 1;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let targetW = 0;
+let targetH = 0;
 
 // Exam specifications
 const examSpecs = {
-    'ibps': { photoW: 200, photoH: 230, sigW: 140, sigH: 60 },
-    'ssc-cgl': { photoW: 100, photoH: 120, sigW: 140, sigH: 60 },
-    'rrb': { photoW: 320, photoH: 240, sigW: 140, sigH: 60 },
-    'neet': { photoW: 200, photoH: 230, sigW: 140, sigH: 60 },
-    'upsc': { photoW: 350, photoH: 450, sigW: 140, sigH: 60 }
+    'ibps': { photoW: 200, photoH: 230 },
+    'ssc-cgl': { photoW: 100, photoH: 120 },
+    'rrb': { photoW: 320, photoH: 240 },
+    'neet': { photoW: 200, photoH: 230 },
+    'upsc': { photoW: 350, photoH: 450 }
 };
 
 // Photo select hone par
@@ -30,6 +43,11 @@ if (photoInput) {
             const img = new Image();
             img.onload = function() {
                 uploadedImage = img;
+                offsetX = 0;
+                offsetY = 0;
+                zoom = 1;
+                if (zoomSlider) zoomSlider.value = 100;
+                if (zoomValue) zoomValue.textContent = '100%';
                 showPreview();
             };
             img.src = event.target.result;
@@ -42,6 +60,8 @@ if (photoInput) {
 if (examSelect) {
     examSelect.addEventListener('change', function() {
         if (uploadedImage) {
+            offsetX = 0;
+            offsetY = 0;
             showPreview();
         }
     });
@@ -54,8 +74,8 @@ function showPreview() {
     const exam = examSelect ? examSelect.value : '';
     const ctx = previewCanvas.getContext('2d');
 
-    let targetW = uploadedImage.width;
-    let targetH = uploadedImage.height;
+    targetW = uploadedImage.width;
+    targetH = uploadedImage.height;
 
     if (exam && examSpecs[exam]) {
         targetW = examSpecs[exam].photoW;
@@ -66,10 +86,21 @@ function showPreview() {
     previewCanvas.height = targetH;
     previewCanvas.classList.add('show');
 
-    // Draw image
-    ctx.drawImage(uploadedImage, 0, 0, targetW, targetH);
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetW, targetH);
 
-    // Status update
+    // Scale to fit
+    const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height) * zoom;
+    const drawW = uploadedImage.width * scale;
+    const drawH = uploadedImage.height * scale;
+
+    const x = (targetW - drawW) / 2 + offsetX;
+    const y = (targetH - drawH) / 2 + offsetY;
+
+    ctx.drawImage(uploadedImage, x, y, drawW, drawH);
+
+    // Status
     if (statusText) {
         if (exam) {
             statusText.textContent = `${exam.toUpperCase()} - ${targetW}x${targetH} pixels`;
@@ -78,12 +109,78 @@ function showPreview() {
         }
     }
 
-    if (downloadBtn) {
-        downloadBtn.disabled = false;
+    if (downloadBtn) downloadBtn.disabled = false;
+    if (adjustControls) adjustControls.style.display = 'block';
+
+    // Drag hint dikhao
+    if (dragHint) {
+        dragHint.classList.add('show');
+        setTimeout(() => dragHint.classList.remove('show'), 3000);
     }
 }
 
-// Download function
+// DRAG - Mouse
+if (previewCanvas) {
+    previewCanvas.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startX = e.clientX - offsetX;
+        startY = e.clientY - offsetY;
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        offsetX = e.clientX - startX;
+        offsetY = e.clientY - startY;
+        showPreview();
+    });
+
+    document.addEventListener('mouseup', function() {
+        isDragging = false;
+    });
+
+    // DRAG - Touch
+    previewCanvas.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - offsetX;
+            startY = e.touches[0].clientY - offsetY;
+        }
+    }, { passive: true });
+
+    previewCanvas.addEventListener('touchmove', function(e) {
+        if (!isDragging || e.touches.length !== 1) return;
+        offsetX = e.touches[0].clientX - startX;
+        offsetY = e.touches[0].clientY - startY;
+        showPreview();
+    }, { passive: true });
+
+    previewCanvas.addEventListener('touchend', function() {
+        isDragging = false;
+    });
+}
+
+// ZOOM
+if (zoomSlider) {
+    zoomSlider.addEventListener('input', function() {
+        zoom = parseInt(this.value) / 100;
+        if (zoomValue) zoomValue.textContent = this.value + '%';
+        showPreview();
+    });
+}
+
+// RESET
+if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+        offsetX = 0;
+        offsetY = 0;
+        zoom = 1;
+        if (zoomSlider) zoomSlider.value = 100;
+        if (zoomValue) zoomValue.textContent = '100%';
+        showPreview();
+    });
+}
+
+// DOWNLOAD
 function downloadPhoto() {
     if (!previewCanvas || !uploadedImage) return;
 
@@ -93,7 +190,6 @@ function downloadPhoto() {
     link.click();
 }
 
-// Download button
 if (downloadBtn) {
     downloadBtn.addEventListener('click', downloadPhoto);
 }

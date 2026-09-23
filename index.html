@@ -59,7 +59,14 @@
         <div class="card">
             <h2>3. Preview & Download</h2>
             <div class="preview-box">
+                <div class="drag-hint">👆 Photo ko drag karke adjust kariye</div>
                 <canvas id="previewCanvas"></canvas>
+                <div id="adjustControls" style="display:none;">
+    <p class="hint">Photo ko drag karke position adjust karein</p>
+    <label class="control-label">Zoom: <span id="zoomValue">100%</span></label>
+    <input type="range" id="zoomSlider" min="50" max="200" value="100">
+    <button id="resetBtn">Reset Position</button>
+</div>
                 <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
             </div>
             <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
