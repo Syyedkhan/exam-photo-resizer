@@ -1,316 +1,99 @@
-// ================================
-// EXAM PHOTO RESIZER - MAIN LOGIC
-// ================================
+/* ============================================
+   Exam Photo Resizer - Script
+   ============================================ */
 
-// Exam presets - har exam ke exact specifications
-const EXAM_PRESETS = {
-    ibps_photo: { width: 200, height: 230, maxKB: 50, minKB: 20 },
-    ibps_sign:  { width: 140, height: 60,  maxKB: 20, minKB: 10 },
-    ssc_photo:  { width: 100, height: 120, maxKB: 50, minKB: 20 },
-    ssc_sign:   { width: 140, height: 60,  maxKB: 20, minKB: 10 },
-    rrb_photo:  { width: 320, height: 240, maxKB: 40, minKB: 15 },
-    // NAYE EXAMS
-    ssc_cgl_photo: { width: 100, height: 120, maxKB: 50, minKB: 20 },
-    ssc_cgl_sign:  { width: 140, height: 60,  maxKB: 20, minKB: 10 },
-    upsc_photo:    { width: 350, height: 450, maxKB: 300, minKB: 20 },
-    upsc_sign:     { width: 350, height: 500, maxKB: 100, minKB: 20 },
-    neet_photo:    { width: 200, height: 230, maxKB: 200, minKB: 10 },
-    neet_sign:     { width: 140, height: 60,  maxKB: 20, minKB: 10 }
-};
-
-// HTML elements
 const photoInput = document.getElementById('photoInput');
 const examSelect = document.getElementById('examSelect');
 const previewCanvas = document.getElementById('previewCanvas');
 const statusText = document.getElementById('statusText');
 const downloadBtn = document.getElementById('downloadBtn');
 
-// Adjust controls
-const adjustControls = document.getElementById('adjustControls');
-const zoomSlider = document.getElementById('zoomSlider');
-const ySlider = document.getElementById('ySlider');
-const xSlider = document.getElementById('xSlider');
-const zoomValue = document.getElementById('zoomValue');
-const yValue = document.getElementById('yValue');
-const xValue = document.getElementById('xValue');
-const resetBtn = document.getElementById('resetBtn');
+let uploadedImage = null;
 
-// Drag hint
-const dragHint = document.getElementById('dragHint');
+// Exam specifications
+const examSpecs = {
+    'ibps': { photoW: 200, photoH: 230, sigW: 140, sigH: 60 },
+    'ssc-cgl': { photoW: 100, photoH: 120, sigW: 140, sigH: 60 },
+    'rrb': { photoW: 320, photoH: 240, sigW: 140, sigH: 60 },
+    'neet': { photoW: 200, photoH: 230, sigW: 140, sigH: 60 },
+    'upsc': { photoW: 350, photoH: 450, sigW: 140, sigH: 60 }
+};
 
-// State
-let currentImage = null;
-let zoom = 100;
-let offsetX = 0;
-let offsetY = 0;
+// Photo select hone par
+if (photoInput) {
+    photoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-// Drag state
-let isDragging = false;
-let hasDragged = false;
-let dragStartX = 0;
-let dragStartY = 0;
-let dragStartOffsetX = 0;
-let dragStartOffsetY = 0;
-
-// ================================
-// PHOTO SELECT
-// ================================
-photoInput.addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-        statusText.textContent = '❌ Sirf image file select kariye (JPG/PNG)';
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            currentImage = img;
-            resetAdjustments();
-            adjustControls.style.display = 'block';
-            processImage();
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                uploadedImage = img;
+                showPreview();
+            };
+            img.src = event.target.result;
         };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-});
+        reader.readAsDataURL(file);
+    });
+}
 
-// ================================
-// EXAM CHANGE
-// ================================
-examSelect.addEventListener('change', function() {
-    if (currentImage) {
-        processImage();
+// Exam select hone par
+if (examSelect) {
+    examSelect.addEventListener('change', function() {
+        if (uploadedImage) {
+            showPreview();
+        }
+    });
+}
+
+// Preview dikhao
+function showPreview() {
+    if (!uploadedImage || !previewCanvas) return;
+
+    const exam = examSelect ? examSelect.value : '';
+    const ctx = previewCanvas.getContext('2d');
+
+    let targetW = uploadedImage.width;
+    let targetH = uploadedImage.height;
+
+    if (exam && examSpecs[exam]) {
+        targetW = examSpecs[exam].photoW;
+        targetH = examSpecs[exam].photoH;
     }
-});
 
-// ================================
-// SLIDERS
-// ================================
-zoomSlider.addEventListener('input', function() {
-    zoom = parseInt(this.value);
-    zoomValue.textContent = zoom + '%';
-    processImage();
-});
+    previewCanvas.width = targetW;
+    previewCanvas.height = targetH;
+    previewCanvas.classList.add('show');
 
-ySlider.addEventListener('input', function() {
-    offsetY = parseInt(this.value);
-    yValue.textContent = offsetY;
-    processImage();
-});
+    // Draw image
+    ctx.drawImage(uploadedImage, 0, 0, targetW, targetH);
 
-xSlider.addEventListener('input', function() {
-    offsetX = parseInt(this.value);
-    xValue.textContent = offsetX;
-    processImage();
-});
+    // Status update
+    if (statusText) {
+        if (exam) {
+            statusText.textContent = `${exam.toUpperCase()} - ${targetW}x${targetH} pixels`;
+        } else {
+            statusText.textContent = `Original: ${targetW}x${targetH} pixels`;
+        }
+    }
 
-resetBtn.addEventListener('click', function() {
-    resetAdjustments();
-    processImage();
-});
-
-function resetAdjustments() {
-    zoom = 100;
-    offsetX = 0;
-    offsetY = 0;
-    zoomSlider.value = 100;
-    xSlider.value = 0;
-    ySlider.value = 0;
-    zoomValue.textContent = '100%';
-    xValue.textContent = '0';
-    yValue.textContent = '0';
-
-    // Hint wapas dikhao
-    hasDragged = false;
-    if (dragHint) {
-        dragHint.classList.remove('hide');
-        dragHint.classList.add('show');
+    if (downloadBtn) {
+        downloadBtn.disabled = false;
     }
 }
 
-// ================================
-// MAIN PROCESSING
-// ================================
-function processImage() {
-    if (!currentImage) return;
-
-    const preset = EXAM_PRESETS[examSelect.value];
-    const canvas = previewCanvas;
-    canvas.width = preset.width;
-    canvas.height = preset.height;
-
-    const ctx = canvas.getContext('2d');
-
-    // White background
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, preset.width, preset.height);
-
-    // Zoom factor
-    const zoomFactor = zoom / 100;
-
-    // Base scale - image ko canvas me fit karo
-    const baseScale = Math.max(
-        preset.width / currentImage.width,
-        preset.height / currentImage.height
-    );
-    const finalScale = baseScale * zoomFactor;
-
-    // Final dimensions
-    const drawWidth = currentImage.width * finalScale;
-    const drawHeight = currentImage.height * finalScale;
-
-    // Offset apply karo
-    const offsetXPx = (offsetX / 100) * preset.width;
-    const offsetYPx = (offsetY / 100) * preset.height;
-
-    // Center + offset
-    const drawX = (preset.width - drawWidth) / 2 + offsetXPx;
-    const drawY = (preset.height - drawHeight) / 2 + offsetYPx;
-
-    ctx.drawImage(currentImage, drawX, drawY, drawWidth, drawHeight);
-
-    canvas.classList.add('show');
-
-    // Drag hint dikhao (agar abhi tak drag nahi kiya)
-    if (!hasDragged) {
-        dragHint.classList.add('show');
-        dragHint.classList.remove('hide');
-    }
-
-    compressToTargetSize(canvas, preset);
-}
-
-// ================================
-// DRAG - MOUSE
-// ================================
-previewCanvas.addEventListener('mousedown', function(e) {
-    if (!currentImage) return;
-    isDragging = true;
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-    dragStartOffsetX = offsetX;
-    dragStartOffsetY = offsetY;
-
-    // Pehli baar drag - hint hide
-    if (!hasDragged) {
-        hasDragged = true;
-        dragHint.classList.remove('show');
-        dragHint.classList.add('hide');
-    }
-});
-
-document.addEventListener('mousemove', function(e) {
-    if (!isDragging) return;
-
-    const preset = EXAM_PRESETS[examSelect.value];
-    const dx = e.clientX - dragStartX;
-    const dy = e.clientY - dragStartY;
-
-    const newOffsetX = dragStartOffsetX + (dx / preset.width) * 100;
-    const newOffsetY = dragStartOffsetY + (dy / preset.height) * 100;
-
-    offsetX = Math.max(-100, Math.min(100, Math.round(newOffsetX)));
-    offsetY = Math.max(-100, Math.min(100, Math.round(newOffsetY)));
-
-    xSlider.value = offsetX;
-    ySlider.value = offsetY;
-    xValue.textContent = offsetX;
-    yValue.textContent = offsetY;
-
-    processImage();
-});
-
-document.addEventListener('mouseup', function() {
-    isDragging = false;
-});
-
-// ================================
-// DRAG - TOUCH (MOBILE)
-// ================================
-previewCanvas.addEventListener('touchstart', function(e) {
-    if (!currentImage) return;
-    const touch = e.touches[0];
-    isDragging = true;
-    dragStartX = touch.clientX;
-    dragStartY = touch.clientY;
-    dragStartOffsetX = offsetX;
-    dragStartOffsetY = offsetY;
-
-    // Pehli baar drag - hint hide
-    if (!hasDragged) {
-        hasDragged = true;
-        dragHint.classList.remove('show');
-        dragHint.classList.add('hide');
-    }
-}, { passive: true });
-
-previewCanvas.addEventListener('touchmove', function(e) {
-    if (!isDragging) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const preset = EXAM_PRESETS[examSelect.value];
-    const dx = touch.clientX - dragStartX;
-    const dy = touch.clientY - dragStartY;
-
-    const newOffsetX = dragStartOffsetX + (dx / preset.width) * 100;
-    const newOffsetY = dragStartOffsetY + (dy / preset.height) * 100;
-
-    offsetX = Math.max(-100, Math.min(100, Math.round(newOffsetX)));
-    offsetY = Math.max(-100, Math.min(100, Math.round(newOffsetY)));
-
-    xSlider.value = offsetX;
-    ySlider.value = offsetY;
-    xValue.textContent = offsetX;
-    yValue.textContent = offsetY;
-
-    processImage();
-}, { passive: false });
-
-previewCanvas.addEventListener('touchend', function() {
-    isDragging = false;
-});
-
-// ================================
-// COMPRESS TO TARGET SIZE
-// ================================
-function compressToTargetSize(canvas, preset) {
-    let quality = 0.95;
-    let dataUrl = canvas.toDataURL('image/jpeg', quality);
-    let sizeKB = Math.round((dataUrl.length - 22) * 3 / 4 / 1024);
-
-    let attempts = 0;
-    while (sizeKB > preset.maxKB && quality > 0.1 && attempts < 15) {
-        quality -= 0.1;
-        dataUrl = canvas.toDataURL('image/jpeg', quality);
-        sizeKB = Math.round((dataUrl.length - 22) * 3 / 4 / 1024);
-        attempts++;
-    }
-
-    if (sizeKB >= preset.minKB && sizeKB <= preset.maxKB) {
-        statusText.innerHTML = `✅ Ready! Size: <strong>${sizeKB} KB</strong> | Dimensions: <strong>${preset.width}×${preset.height}</strong>`;
-    } else if (sizeKB < preset.minKB) {
-        statusText.innerHTML = `⚠️ Size thoda kam: <strong>${sizeKB} KB</strong> (min ${preset.minKB} KB)`;
-    } else {
-        statusText.innerHTML = `⚠️ Size zyada: <strong>${sizeKB} KB</strong> (max ${preset.maxKB} KB)`;
-    }
-
-    downloadBtn.disabled = false;
-    downloadBtn.dataset.dataUrl = dataUrl;
-}
-
-// ================================
-// DOWNLOAD
-// ================================
-downloadBtn.addEventListener('click', function() {
-    const dataUrl = downloadBtn.dataset.dataUrl;
-    if (!dataUrl) return;
+// Download function
+function downloadPhoto() {
+    if (!previewCanvas || !uploadedImage) return;
 
     const link = document.createElement('a');
-    link.download = `exam-photo-${Date.now()}.jpg`;
-    link.href = dataUrl;
+    link.download = 'exam-photo.jpg';
+    link.href = previewCanvas.toDataURL('image/jpeg', 0.9);
     link.click();
-});
+}
+
+// Download button
+if (downloadBtn) {
+    downloadBtn.addEventListener('click', downloadPhoto);
+}
