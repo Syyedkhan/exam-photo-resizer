@@ -6,12 +6,12 @@
     <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
 
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RN2DNB447D"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-RN2DNB447D');
+      gtag('config', 'G-L5K09RC5D2');
     </script>
 
     <title>Exam Photo Resizer - Free Tool for IBPS, SSC, RRB</title>
@@ -31,7 +31,7 @@
                 <a href="rrb.html">RRB</a>
                 <a href="neet.html">NEET</a>
                 <a href="upsc.html">UPSC</a>
-                                <a href="compressor.html">Compressor</a>
+                <a href="compressor.html">Compressor</a>
             </nav>
         </div>
     </header>
@@ -49,25 +49,18 @@
             <label for="examSelect">Exam chunein</label>
             <select id="examSelect" aria-label="Exam select karein">
                 <option value="">-- Select Exam --</option>
-                <option value="ibps">IBPS</option>
-                <option value="ssc-cgl">SSC CGL</option>
-                <option value="rrb">RRB</option>
-                <option value="neet">NEET</option>
-                <option value="upsc">UPSC</option>
+                <option value="ibps">IBPS (200x230, 20-50 KB)</option>
+                <option value="ssc-cgl">SSC CGL (100x120, 20-50 KB)</option>
+                <option value="rrb">RRB (320x240, 20-50 KB)</option>
+                <option value="neet">NEET (200x230, 10-200 KB)</option>
+                <option value="upsc">UPSC (350x450, 20-300 KB)</option>
             </select>
         </div>
 
         <div class="card">
             <h2>3. Preview & Download</h2>
             <div class="preview-box">
-                <div class="drag-hint">👆 Photo ko drag karke adjust kariye</div>
                 <canvas id="previewCanvas"></canvas>
-                <div id="adjustControls" style="display:none;">
-    <p class="hint">Photo ko drag karke position adjust karein</p>
-    <label class="control-label">Zoom: <span id="zoomValue">100%</span></label>
-    <input type="range" id="zoomSlider" min="50" max="200" value="100">
-    <button id="resetBtn">Reset Position</button>
-</div>
                 <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
             </div>
             <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
