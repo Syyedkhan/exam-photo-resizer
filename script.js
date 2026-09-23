@@ -1,5 +1,5 @@
 /* ============================================
-   Exam Photo Resizer - Script (Drag + Zoom)
+   Exam Photo Resizer - Script (Drag + Zoom + Specs)
    ============================================ */
 
 const photoInput = document.getElementById('photoInput');
@@ -25,11 +25,36 @@ let targetH = 0;
 
 // Exam specifications
 const examSpecs = {
-    'ibps': { photoW: 200, photoH: 230 },
-    'ssc-cgl': { photoW: 100, photoH: 120 },
-    'rrb': { photoW: 320, photoH: 240 },
-    'neet': { photoW: 200, photoH: 230 },
-    'upsc': { photoW: 350, photoH: 450 }
+    'ibps': {
+        photoW: 200, photoH: 230,
+        sigW: 140, sigH: 60,
+        photoSize: '20 KB - 50 KB',
+        sigSize: '10 KB - 20 KB'
+    },
+    'ssc-cgl': {
+        photoW: 100, photoH: 120,
+        sigW: 140, sigH: 60,
+        photoSize: '20 KB - 50 KB',
+        sigSize: '10 KB - 20 KB'
+    },
+    'rrb': {
+        photoW: 320, photoH: 240,
+        sigW: 140, sigH: 60,
+        photoSize: '20 KB - 50 KB',
+        sigSize: '10 KB - 20 KB'
+    },
+    'neet': {
+        photoW: 200, photoH: 230,
+        sigW: 140, sigH: 60,
+        photoSize: '10 KB - 200 KB',
+        sigSize: '10 KB - 20 KB'
+    },
+    'upsc': {
+        photoW: 350, photoH: 450,
+        sigW: 140, sigH: 60,
+        photoSize: '20 KB - 300 KB',
+        sigSize: '10 KB - 20 KB'
+    }
 };
 
 // Photo select hone par
@@ -116,6 +141,39 @@ function showPreview() {
     if (dragHint) {
         dragHint.classList.add('show');
         setTimeout(() => dragHint.classList.remove('show'), 3000);
+    }
+
+    // Exam specs dikhao
+    showExamSpecs(exam);
+}
+
+// Exam specs dikhao
+function showExamSpecs(exam) {
+    let specsDiv = document.getElementById('examSpecs');
+    if (!specsDiv) {
+        specsDiv = document.createElement('div');
+        specsDiv.id = 'examSpecs';
+        specsDiv.className = 'exam-specs';
+        const previewBox = document.querySelector('.preview-box');
+        if (previewBox && previewBox.parentNode) {
+            previewBox.parentNode.insertBefore(specsDiv, previewBox.nextSibling);
+        }
+    }
+
+    if (exam && examSpecs[exam]) {
+        const spec = examSpecs[exam];
+        specsDiv.innerHTML = `
+            <h3>📋 ${exam.toUpperCase()} Requirements</h3>
+            <ul>
+                <li><strong>📷 Photo Size:</strong> ${spec.photoW} x ${spec.photoH} pixels</li>
+                <li><strong>📁 Photo File Size:</strong> ${spec.photoSize}</li>
+                <li><strong>✍️ Signature Size:</strong> ${spec.sigW} x ${spec.sigH} pixels</li>
+                <li><strong>📁 Signature File Size:</strong> ${spec.sigSize}</li>
+            </ul>
+        `;
+        specsDiv.style.display = 'block';
+    } else {
+        specsDiv.style.display = 'none';
     }
 }
 

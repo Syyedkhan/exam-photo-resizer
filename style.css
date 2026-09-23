@@ -344,3 +344,48 @@ input[type="range"]::-moz-range-thumb {
     background: rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
 }
+/* ========== EXAM SPECS ========== */
+.exam-specs {
+    background: #f0f4ff;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-top: 20px;
+    display: none;
+}
+
+.exam-specs h3 {
+    color: #4c51bf;
+    font-size: 16px;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.exam-specs ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.exam-specs li {
+    color: #4a5568;
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.exam-specs li strong {
+    color: #2d3748;
+}
+
+@media (max-width: 600px) {
+    .exam-specs {
+        padding: 14px 16px;
+    }
+    .exam-specs h3 {
+        font-size: 15px;
+    }
+    .exam-specs li {
+        font-size: 13px;
+    }
+}
