@@ -1,5 +1,5 @@
 /* ============================================
-   Exam Photo Resizer - Script (Drag + Zoom + Specs)
+   Photo Resizer - Script (Drag + Zoom + Specs)
    ============================================ */
 
 const photoInput = document.getElementById('photoInput');
@@ -23,41 +23,28 @@ let startY = 0;
 let targetW = 0;
 let targetH = 0;
 
-// Exam specifications
+// Document specifications
 const examSpecs = {
-    'ibps': {
-        photoW: 200, photoH: 230,
-        sigW: 140, sigH: 60,
-        photoSize: '20 KB - 50 KB',
-        sigSize: '10 KB - 20 KB'
-    },
-    'ssc-cgl': {
-        photoW: 100, photoH: 120,
-        sigW: 140, sigH: 60,
-        photoSize: '20 KB - 50 KB',
-        sigSize: '10 KB - 20 KB'
-    },
-    'rrb': {
-        photoW: 320, photoH: 240,
-        sigW: 140, sigH: 60,
-        photoSize: '20 KB - 50 KB',
-        sigSize: '10 KB - 20 KB'
-    },
-    'neet': {
-        photoW: 200, photoH: 230,
-        sigW: 140, sigH: 60,
-        photoSize: '10 KB - 200 KB',
-        sigSize: '10 KB - 20 KB'
-    },
-    'upsc': {
-        photoW: 350, photoH: 450,
-        sigW: 140, sigH: 60,
-        photoSize: '20 KB - 300 KB',
-        sigSize: '10 KB - 20 KB'
-    }
+    // India
+    'ibps': { photoW: 200, photoH: 230, sigW: 140, sigH: 60, photoSize: '20 KB - 50 KB', sigSize: '10 KB - 20 KB' },
+    'ssc-cgl': { photoW: 100, photoH: 120, sigW: 140, sigH: 60, photoSize: '20 KB - 50 KB', sigSize: '10 KB - 20 KB' },
+    'rrb': { photoW: 320, photoH: 240, sigW: 140, sigH: 60, photoSize: '20 KB - 50 KB', sigSize: '10 KB - 20 KB' },
+    'neet': { photoW: 200, photoH: 230, sigW: 140, sigH: 60, photoSize: '10 KB - 200 KB', sigSize: '10 KB - 20 KB' },
+    'upsc': { photoW: 350, photoH: 450, sigW: 140, sigH: 60, photoSize: '20 KB - 300 KB', sigSize: '10 KB - 20 KB' },
+    // US
+    'us-passport': { photoW: 600, photoH: 600, sigW: 0, sigH: 0, photoSize: 'Under 240 KB', sigSize: '-' },
+    'us-visa': { photoW: 600, photoH: 600, sigW: 0, sigH: 0, photoSize: 'Under 240 KB', sigSize: '-' },
+    // UK
+    'uk-passport': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: '50 KB - 10 MB', sigSize: '-' },
+    // Schengen
+    'schengen': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
+    // Canada
+    'canada-passport': { photoW: 591, photoH: 827, sigW: 0, sigH: 0, photoSize: 'Under 4 MB', sigSize: '-' },
+    // Australia
+    'australia-passport': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' }
 };
 
-// Photo select hone par
+// Photo select
 if (photoInput) {
     photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -81,7 +68,7 @@ if (photoInput) {
     });
 }
 
-// Exam select hone par
+// Exam select
 if (examSelect) {
     examSelect.addEventListener('change', function() {
         if (uploadedImage) {
@@ -92,7 +79,7 @@ if (examSelect) {
     });
 }
 
-// Preview dikhao
+// Preview
 function showPreview() {
     if (!uploadedImage || !previewCanvas) return;
 
@@ -111,11 +98,9 @@ function showPreview() {
     previewCanvas.height = targetH;
     previewCanvas.classList.add('show');
 
-    // Background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
 
-    // Scale to fit
     const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height) * zoom;
     const drawW = uploadedImage.width * scale;
     const drawH = uploadedImage.height * scale;
@@ -125,9 +110,8 @@ function showPreview() {
 
     ctx.drawImage(uploadedImage, x, y, drawW, drawH);
 
-    // Status
     if (statusText) {
-        if (exam) {
+        if (exam && examSpecs[exam]) {
             statusText.textContent = `${exam.toUpperCase()} - ${targetW}x${targetH} pixels`;
         } else {
             statusText.textContent = `Original: ${targetW}x${targetH} pixels`;
@@ -136,48 +120,9 @@ function showPreview() {
 
     if (downloadBtn) downloadBtn.disabled = false;
     if (adjustControls) adjustControls.style.display = 'block';
-
-    // Drag hint dikhao
-    if (dragHint) {
-        dragHint.classList.add('show');
-        setTimeout(() => dragHint.classList.remove('show'), 3000);
-    }
-
-    // Exam specs dikhao
-    showExamSpecs(exam);
 }
 
-// Exam specs dikhao
-function showExamSpecs(exam) {
-    let specsDiv = document.getElementById('examSpecs');
-    if (!specsDiv) {
-        specsDiv = document.createElement('div');
-        specsDiv.id = 'examSpecs';
-        specsDiv.className = 'exam-specs';
-        const previewBox = document.querySelector('.preview-box');
-        if (previewBox && previewBox.parentNode) {
-            previewBox.parentNode.insertBefore(specsDiv, previewBox.nextSibling);
-        }
-    }
-
-    if (exam && examSpecs[exam]) {
-        const spec = examSpecs[exam];
-        specsDiv.innerHTML = `
-            <h3>📋 ${exam.toUpperCase()} Requirements</h3>
-            <ul>
-                <li><strong>📷 Photo Size:</strong> ${spec.photoW} x ${spec.photoH} pixels</li>
-                <li><strong>📁 Photo File Size:</strong> ${spec.photoSize}</li>
-                <li><strong>✍️ Signature Size:</strong> ${spec.sigW} x ${spec.sigH} pixels</li>
-                <li><strong>📁 Signature File Size:</strong> ${spec.sigSize}</li>
-            </ul>
-        `;
-        specsDiv.style.display = 'block';
-    } else {
-        specsDiv.style.display = 'none';
-    }
-}
-
-// DRAG - Mouse
+// Drag - Mouse
 if (previewCanvas) {
     previewCanvas.addEventListener('mousedown', function(e) {
         isDragging = true;
@@ -196,7 +141,7 @@ if (previewCanvas) {
         isDragging = false;
     });
 
-    // DRAG - Touch
+    // Drag - Touch
     previewCanvas.addEventListener('touchstart', function(e) {
         if (e.touches.length === 1) {
             isDragging = true;
@@ -217,7 +162,7 @@ if (previewCanvas) {
     });
 }
 
-// ZOOM
+// Zoom
 if (zoomSlider) {
     zoomSlider.addEventListener('input', function() {
         zoom = parseInt(this.value) / 100;
@@ -226,7 +171,7 @@ if (zoomSlider) {
     });
 }
 
-// RESET
+// Reset
 if (resetBtn) {
     resetBtn.addEventListener('click', function() {
         offsetX = 0;
@@ -238,12 +183,11 @@ if (resetBtn) {
     });
 }
 
-// DOWNLOAD
+// Download
 function downloadPhoto() {
     if (!previewCanvas || !uploadedImage) return;
-
     const link = document.createElement('a');
-    link.download = 'exam-photo.jpg';
+    link.download = 'photo.jpg';
     link.href = previewCanvas.toDataURL('image/jpeg', 0.9);
     link.click();
 }
@@ -251,7 +195,6 @@ function downloadPhoto() {
 if (downloadBtn) {
     downloadBtn.addEventListener('click', downloadPhoto);
 }
-
 
 
 /* ============================================
@@ -268,7 +211,6 @@ const compressDownloadBtn = document.getElementById('compressDownloadBtn');
 let compressImage = null;
 let compressedBlob = null;
 
-// Photo select
 if (compressInput) {
     compressInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -296,15 +238,12 @@ if (compressInput) {
     });
 }
 
-// Compress function
 function compressImageFile(img, targetKB, callback) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-
     let width = img.width;
     let height = img.height;
 
-    // Max dimension 1200px
     if (width > 1200 || height > 1200) {
         if (width > height) {
             height = (height / width) * 1200;
@@ -319,31 +258,25 @@ function compressImageFile(img, targetKB, callback) {
     canvas.height = height;
     ctx.drawImage(img, 0, 0, width, height);
 
-    // Try different quality levels
     let quality = 0.9;
-    let result = null;
 
     function tryCompress() {
         canvas.toBlob(function(blob) {
             const sizeKB = blob.size / 1024;
             if (sizeKB <= targetKB || quality <= 0.1) {
-                result = blob;
-                callback(result);
+                callback(blob);
             } else {
                 quality -= 0.1;
                 tryCompress();
             }
         }, 'image/jpeg', quality);
     }
-
     tryCompress();
 }
 
-// Compress button
 if (compressBtn) {
     compressBtn.addEventListener('click', function() {
         if (!compressImage) return;
-
         const targetKB = parseInt(targetSize.value);
         if (compressStatus) compressStatus.textContent = 'Compressing...';
 
@@ -352,24 +285,19 @@ if (compressBtn) {
             const sizeKB = (blob.size / 1024).toFixed(1);
 
             if (compressPreview) {
-                const url = URL.createObjectURL(blob);
-                compressPreview.src = url;
+                compressPreview.src = URL.createObjectURL(blob);
             }
-
             if (compressStatus) {
                 compressStatus.textContent = `✅ Compressed: ${sizeKB} KB (Target: ${targetKB} KB)`;
             }
-
             if (compressDownloadBtn) compressDownloadBtn.disabled = false;
         });
     });
 }
 
-// Download compressed
 if (compressDownloadBtn) {
     compressDownloadBtn.addEventListener('click', function() {
         if (!compressedBlob) return;
-
         const link = document.createElement('a');
         link.download = 'compressed-photo.jpg';
         link.href = URL.createObjectURL(compressedBlob);
