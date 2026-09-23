@@ -39,12 +39,14 @@
 
         <div class="card">
             <h2>1. Apni photo select kariye</h2>
-            <input type="file" id="photoInput" accept="image/*">
+            <label for="photoInput">Photo select karein</label>
+            <input type="file" id="photoInput" accept="image/*" aria-label="Photo upload karein">
         </div>
 
         <div class="card">
             <h2>2. Exam chuniye</h2>
-            <select id="examSelect">
+            <label for="examSelect">Exam chunein</label>
+            <select id="examSelect" aria-label="Exam select karein">
                 <option value="">-- Select Exam --</option>
                 <option value="ibps">IBPS</option>
                 <option value="ssc-cgl">SSC CGL</option>
@@ -60,7 +62,7 @@
                 <canvas id="previewCanvas"></canvas>
                 <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
             </div>
-            <button id="downloadBtn" disabled>Download Photo</button>
+            <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
         </div>
 
         <div class="card">
@@ -83,6 +85,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
