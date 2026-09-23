@@ -171,8 +171,8 @@ select:focus {
     margin-top: 10px;
 }
 
-/* DOWNLOAD BUTTON */
-#downloadBtn, #compressBtn, #compressDownloadBtn {
+/* BUTTONS */
+#downloadBtn, #compressBtn, #compressDownloadBtn, #mergeBtn, #mergeDownloadBtn {
     width: 100%;
     padding: 15px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -185,12 +185,12 @@ select:focus {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-#downloadBtn:hover:not(:disabled), #compressBtn:hover:not(:disabled), #compressDownloadBtn:hover:not(:disabled) {
+#downloadBtn:hover:not(:disabled), #compressBtn:hover:not(:disabled), #compressDownloadBtn:hover:not(:disabled), #mergeBtn:hover:not(:disabled), #mergeDownloadBtn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
-#downloadBtn:disabled, #compressBtn:disabled, #compressDownloadBtn:disabled {
+#downloadBtn:disabled, #compressBtn:disabled, #compressDownloadBtn:disabled, #mergeBtn:disabled, #mergeDownloadBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background: #a0aec0;
@@ -307,46 +307,6 @@ select:focus {
     font-weight: 700;
     font-size: 13px;
 }
-
-/* MOBILE */
-@media (max-width: 600px) {
-    .logo {
-        font-size: 22px;
-    }
-    .card {
-        padding: 18px;
-    }
-    .card h2 {
-        font-size: 16px;
-    }
-    .country-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-    .country-flag {
-        font-size: 36px;
-    }
-    .country-card {
-        padding: 16px 12px;
-    }
-    .country-card h4 {
-        font-size: 15px;
-    }
-    .doc-badge {
-        font-size: 10px;
-        padding: 3px 8px;
-    }
-    .doc-size {
-        font-size: 11px;
-    }
-    .section-title {
-        font-size: 18px;
-    }
-    .intro-section h2 {
-        font-size: 19px;
-    }
-}
-
 
 /* ========== PHOTO MERGER ========== */
 .merge-grid {
@@ -505,7 +465,7 @@ select:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     justify-content: center;
     align-items: center;
@@ -521,7 +481,7 @@ select:focus {
     border-radius: 14px;
     padding: 20px;
     max-width: 90vw;
-    max-height: 90vh;
+    max-height: 95vh;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -541,19 +501,16 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
+    min-height: 400px;
 }
 
 .crop-canvas-wrapper canvas {
     max-width: 100%;
-    max-height: 60vh;
+    max-height: 70vh;
     display: block;
-    cursor: grab;
+    cursor: crosshair;
     touch-action: none;
-}
-
-.crop-canvas-wrapper canvas:active {
-    cursor: grabbing;
+    border-radius: 8px;
 }
 
 .crop-controls {
@@ -610,8 +567,43 @@ select:focus {
     width: 200px;
 }
 
-/* Mobile */
+/* MOBILE */
 @media (max-width: 600px) {
+    .logo {
+        font-size: 22px;
+    }
+    .card {
+        padding: 18px;
+    }
+    .card h2 {
+        font-size: 16px;
+    }
+    .country-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .country-flag {
+        font-size: 36px;
+    }
+    .country-card {
+        padding: 16px 12px;
+    }
+    .country-card h4 {
+        font-size: 15px;
+    }
+    .doc-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    .doc-size {
+        font-size: 11px;
+    }
+    .section-title {
+        font-size: 18px;
+    }
+    .intro-section h2 {
+        font-size: 19px;
+    }
     .merge-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
@@ -633,6 +625,6 @@ select:focus {
         align-items: flex-start;
     }
     .crop-canvas-wrapper {
-        min-height: 200px;
+        min-height: 300px;
     }
 }

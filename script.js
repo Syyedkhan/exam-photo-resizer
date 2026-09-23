@@ -1,5 +1,5 @@
 /* ============================================
-   Photo Resizer - Script (Drag + Zoom + Specs + Compressor + Merger)
+   Photo Resizer - Script (Complete)
    ============================================ */
 
 // ============ PHOTO RESIZER ============
@@ -10,27 +10,22 @@ const statusText = document.getElementById('statusText');
 const downloadBtn = document.getElementById('downloadBtn');
 
 let uploadedImage = null;
-let offsetX = 0;
-let offsetY = 0;
-let zoom = 1;
-let isDragging = false;
-let startX = 0;
-let startY = 0;
-let targetW = 0;
-let targetH = 0;
+let offsetX = 0, offsetY = 0, zoom = 1;
+let isDragging = false, startX = 0, startY = 0;
+let targetW = 0, targetH = 0;
 
 const examSpecs = {
-    'ibps': { photoW: 200, photoH: 230, sigW: 140, sigH: 60, photoSize: '20 KB - 50 KB', sigSize: '10 KB - 20 KB' },
-    'ssc-cgl': { photoW: 100, photoH: 120, sigW: 140, sigH: 60, photoSize: '20 KB - 50 KB', sigSize: '10 KB - 20 KB' },
-    'rrb': { photoW: 320, photoH: 240, sigW: 140, sigH: 60, photoSize: '20 KB - 50 KB', sigSize: '10 KB - 20 KB' },
-    'neet': { photoW: 200, photoH: 230, sigW: 140, sigH: 60, photoSize: '10 KB - 200 KB', sigSize: '10 KB - 20 KB' },
-    'upsc': { photoW: 350, photoH: 450, sigW: 140, sigH: 60, photoSize: '20 KB - 300 KB', sigSize: '10 KB - 20 KB' },
-    'us-passport': { photoW: 600, photoH: 600, sigW: 0, sigH: 0, photoSize: 'Under 240 KB', sigSize: '-' },
-    'us-visa': { photoW: 600, photoH: 600, sigW: 0, sigH: 0, photoSize: 'Under 240 KB', sigSize: '-' },
-    'uk-passport': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: '50 KB - 10 MB', sigSize: '-' },
-    'schengen': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
-    'canada-passport': { photoW: 591, photoH: 827, sigW: 0, sigH: 0, photoSize: 'Under 4 MB', sigSize: '-' },
-    'australia-passport': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' }
+    'ibps': { photoW: 200, photoH: 230 },
+    'ssc-cgl': { photoW: 100, photoH: 120 },
+    'rrb': { photoW: 320, photoH: 240 },
+    'neet': { photoW: 200, photoH: 230 },
+    'upsc': { photoW: 350, photoH: 450 },
+    'us-passport': { photoW: 600, photoH: 600 },
+    'us-visa': { photoW: 600, photoH: 600 },
+    'uk-passport': { photoW: 413, photoH: 531 },
+    'schengen': { photoW: 413, photoH: 531 },
+    'canada-passport': { photoW: 591, photoH: 827 },
+    'australia-passport': { photoW: 413, photoH: 531 }
 };
 
 if (photoInput) {
@@ -198,9 +193,6 @@ const mergeStatusMsg = document.getElementById('mergeStatus');
 
 let mergePhotos = [];
 let mergedBlob = null;
-let currentCropIndex = -1;
-let cropOffsetX = 0, cropOffsetY = 0, cropZoom = 1;
-let cropDragging = false, cropStartX = 0, cropStartY = 0;
 
 if (mergeFileInput) {
     mergeFileInput.addEventListener('change', function(e) {
@@ -267,6 +259,17 @@ if (addMoreBtn) {
     addMoreBtn.addEventListener('click', function() { if (mergeFileInput) mergeFileInput.click(); });
 }
 
+// ============ CROP MODAL (With Crop Box) ============
+let currentCropIndex = -1;
+let cropOffsetX = 0, cropOffsetY = 0, cropZoom = 1;
+let cropBox = { x: 75, y: 75, w: 350, h: 350 };
+let cropBoxDragging = false;
+let cropBoxResizing = false;
+let cropResizeHandle = '';
+let cropBoxStartX = 0, cropBoxStartY = 0;
+let cropBoxStart = { x: 0, y: 0, w: 0, h: 0 };
+const CROP_CANVAS_SIZE = 500;
+
 function openCropModal(index) {
     currentCropIndex = index;
     const photo = mergePhotos[index];
@@ -280,7 +283,10 @@ function openCropModal(index) {
         modal.innerHTML = `
             <div class="crop-modal-content">
                 <h3>✂️ Crop Photo</h3>
-                <div class="crop-canvas-wrapper"><canvas id="cropCanvas"></canvas></div>
+                <p style="font-size:13px; color:#718096;">Drag corners to resize. Drag inside to move.</p>
+                <div class="crop-canvas-wrapper">
+                    <canvas id="cropCanvas"></canvas>
+                </div>
                 <div class="crop-zoom-row">
                     <label>Zoom:</label>
                     <input type="range" id="cropZoom" min="50" max="300" value="100">
@@ -295,12 +301,16 @@ function openCropModal(index) {
         document.body.appendChild(modal);
         setupCropEvents();
     }
+
     cropOffsetX = 0; cropOffsetY = 0; cropZoom = 1;
+    cropBox = { x: 75, y: 75, w: 350, h: 350 };
     modal.classList.add('active');
+
     const zoomSlider = document.getElementById('cropZoom');
     const zoomLabel = document.getElementById('cropZoomValue');
     if (zoomSlider) zoomSlider.value = 100;
     if (zoomLabel) zoomLabel.textContent = '100%';
+
     drawCropCanvas();
 }
 
@@ -311,21 +321,55 @@ function drawCropCanvas() {
     if (!photo) return;
     const img = photo.croppedImg;
     const ctx = canvas.getContext('2d');
-    const size = 400;
-    canvas.width = size; canvas.height = size;
+    const size = CROP_CANVAS_SIZE;
+
+    canvas.width = size;
+    canvas.height = size;
+
     ctx.fillStyle = '#1a202c';
     ctx.fillRect(0, 0, size, size);
+
     const scale = Math.max(size / img.width, size / img.height) * cropZoom;
     const drawW = img.width * scale;
     const drawH = img.height * scale;
     const x = (size - drawW) / 2 + cropOffsetX;
     const y = (size - drawH) / 2 + cropOffsetY;
+
     ctx.drawImage(img, x, y, drawW, drawH);
+
+    // Dark overlay outside crop box
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(0, 0, size, cropBox.y);
+    ctx.fillRect(0, cropBox.y + cropBox.h, size, size - cropBox.y - cropBox.h);
+    ctx.fillRect(0, cropBox.y, cropBox.x, cropBox.h);
+    ctx.fillRect(cropBox.x + cropBox.w, cropBox.y, size - cropBox.x - cropBox.w, cropBox.h);
+
+    // Crop box border
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
-    ctx.setLineDash([10, 5]);
-    ctx.strokeRect(50, 50, size - 100, size - 100);
-    ctx.setLineDash([]);
+    ctx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cropBox.x + cropBox.w / 3, cropBox.y);
+    ctx.lineTo(cropBox.x + cropBox.w / 3, cropBox.y + cropBox.h);
+    ctx.moveTo(cropBox.x + 2 * cropBox.w / 3, cropBox.y);
+    ctx.lineTo(cropBox.x + 2 * cropBox.w / 3, cropBox.y + cropBox.h);
+    ctx.moveTo(cropBox.x, cropBox.y + cropBox.h / 3);
+    ctx.lineTo(cropBox.x + cropBox.w, cropBox.y + cropBox.h / 3);
+    ctx.moveTo(cropBox.x, cropBox.y + 2 * cropBox.h / 3);
+    ctx.lineTo(cropBox.x + cropBox.w, cropBox.y + 2 * cropBox.h / 3);
+    ctx.stroke();
+
+    // Corner handles
+    ctx.fillStyle = '#667eea';
+    const hs = 14;
+    ctx.fillRect(cropBox.x - hs/2, cropBox.y - hs/2, hs, hs);
+    ctx.fillRect(cropBox.x + cropBox.w - hs/2, cropBox.y - hs/2, hs, hs);
+    ctx.fillRect(cropBox.x - hs/2, cropBox.y + cropBox.h - hs/2, hs, hs);
+    ctx.fillRect(cropBox.x + cropBox.w - hs/2, cropBox.y + cropBox.h - hs/2, hs, hs);
 }
 
 function setupCropEvents() {
@@ -336,34 +380,118 @@ function setupCropEvents() {
     const saveBtn = document.getElementById('cropSaveBtn');
     const cancelBtn = document.getElementById('cropCancelBtn');
 
-    if (canvas) {
-        canvas.addEventListener('mousedown', function(e) {
-            cropDragging = true;
-            cropStartX = e.clientX - cropOffsetX;
-            cropStartY = e.clientY - cropOffsetY;
-        });
-        document.addEventListener('mousemove', function(e) {
-            if (!cropDragging) return;
-            cropOffsetX = e.clientX - cropStartX;
-            cropOffsetY = e.clientY - cropStartY;
-            drawCropCanvas();
-        });
-        document.addEventListener('mouseup', function() { cropDragging = false; });
-        canvas.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
-                cropDragging = true;
-                cropStartX = e.touches[0].clientX - cropOffsetX;
-                cropStartY = e.touches[0].clientY - cropOffsetY;
-            }
-        }, { passive: true });
-        canvas.addEventListener('touchmove', function(e) {
-            if (!cropDragging || e.touches.length !== 1) return;
-            cropOffsetX = e.touches[0].clientX - cropStartX;
-            cropOffsetY = e.touches[0].clientY - cropStartY;
-            drawCropCanvas();
-        }, { passive: true });
-        canvas.addEventListener('touchend', function() { cropDragging = false; });
+    function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
     }
+
+    function getHandleAt(mx, my) {
+        const hs = 20;
+        const { x, y, w, h } = cropBox;
+        if (mx >= x - hs && mx <= x + hs && my >= y - hs && my <= y + hs) return 'tl';
+        if (mx >= x + w - hs && mx <= x + w + hs && my >= y - hs && my <= y + hs) return 'tr';
+        if (mx >= x - hs && mx <= x + hs && my >= y + h - hs && my <= y + h + hs) return 'bl';
+        if (mx >= x + w - hs && mx <= x + w + hs && my >= y + h - hs && my <= y + h + hs) return 'br';
+        if (mx >= x && mx <= x + w && my >= y && my <= y + h) return 'move';
+        return null;
+    }
+
+    function onStart(e) {
+        const pos = getMousePos(e);
+        const handle = getHandleAt(pos.x, pos.y);
+        if (!handle) return;
+
+        if (handle === 'move') {
+            cropBoxDragging = true;
+        } else {
+            cropBoxResizing = true;
+            cropResizeHandle = handle;
+        }
+
+        cropBoxStartX = pos.x;
+        cropBoxStartY = pos.y;
+        cropBoxStart = { ...cropBox };
+
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function onMove(e) {
+        if (!cropBoxDragging && !cropBoxResizing) return;
+
+        const pos = getMousePos(e);
+        const dx = pos.x - cropBoxStartX;
+        const dy = pos.y - cropBoxStartY;
+        const size = CROP_CANVAS_SIZE;
+        const minSize = 50;
+
+        if (cropBoxDragging) {
+            let nx = cropBoxStart.x + dx;
+            let ny = cropBoxStart.y + dy;
+            nx = Math.max(0, Math.min(size - cropBox.w, nx));
+            ny = Math.max(0, Math.min(size - cropBox.h, ny));
+            cropBox.x = nx;
+            cropBox.y = ny;
+        } else {
+            let { x, y, w, h } = cropBoxStart;
+
+            if (cropResizeHandle === 'tl') {
+                let nx = Math.max(0, Math.min(x + w - minSize, x + dx));
+                let ny = Math.max(0, Math.min(y + h - minSize, y + dy));
+                cropBox.w = x + w - nx;
+                cropBox.h = y + h - ny;
+                cropBox.x = nx;
+                cropBox.y = ny;
+            } else if (cropResizeHandle === 'tr') {
+                let ny = Math.max(0, Math.min(y + h - minSize, y + dy));
+                cropBox.h = y + h - ny;
+                cropBox.y = ny;
+                cropBox.w = Math.max(minSize, Math.min(size - x, w + dx));
+            } else if (cropResizeHandle === 'bl') {
+                let nx = Math.max(0, Math.min(x + w - minSize, x + dx));
+                cropBox.w = x + w - nx;
+                cropBox.x = nx;
+                cropBox.h = Math.max(minSize, Math.min(size - y, h + dy));
+            } else if (cropResizeHandle === 'br') {
+                cropBox.w = Math.max(minSize, Math.min(size - x, w + dx));
+                cropBox.h = Math.max(minSize, Math.min(size - y, h + dy));
+            }
+        }
+
+        drawCropCanvas();
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function onEnd() {
+        cropBoxDragging = false;
+        cropBoxResizing = false;
+        cropResizeHandle = '';
+    }
+
+    if (canvas) {
+        canvas.addEventListener('mousedown', onStart);
+        canvas.addEventListener('touchstart', onStart, { passive: false });
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchend', onEnd);
+
+        canvas.addEventListener('mousemove', function(e) {
+            const pos = getMousePos(e);
+            const handle = getHandleAt(pos.x, pos.y);
+            if (handle === 'move') canvas.style.cursor = 'move';
+            else if (handle === 'tl' || handle === 'br') canvas.style.cursor = 'nwse-resize';
+            else if (handle === 'tr' || handle === 'bl') canvas.style.cursor = 'nesw-resize';
+            else canvas.style.cursor = 'crosshair';
+        });
+    }
+
     if (zoomSlider) {
         zoomSlider.addEventListener('input', function() {
             cropZoom = parseInt(this.value) / 100;
@@ -371,6 +499,7 @@ function setupCropEvents() {
             drawCropCanvas();
         });
     }
+
     if (saveBtn) saveBtn.addEventListener('click', saveCrop);
     if (cancelBtn) {
         cancelBtn.addEventListener('click', function() {
@@ -383,12 +512,18 @@ function setupCropEvents() {
 function saveCrop() {
     const canvas = document.getElementById('cropCanvas');
     if (!canvas || currentCropIndex === -1) return;
-    const cropSize = 300;
+
     const newCanvas = document.createElement('canvas');
-    newCanvas.width = cropSize;
-    newCanvas.height = cropSize;
+    newCanvas.width = cropBox.w;
+    newCanvas.height = cropBox.h;
     const newCtx = newCanvas.getContext('2d');
-    newCtx.drawImage(canvas, 50, 50, 300, 300, 0, 0, cropSize, cropSize);
+
+    newCtx.drawImage(
+        canvas,
+        cropBox.x, cropBox.y, cropBox.w, cropBox.h,
+        0, 0, cropBox.w, cropBox.h
+    );
+
     const croppedImg = new Image();
     croppedImg.onload = function() {
         mergePhotos[currentCropIndex].croppedImg = croppedImg;
@@ -399,6 +534,7 @@ function saveCrop() {
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.9);
 }
 
+// ============ MERGE ============
 if (mergeBtn) {
     mergeBtn.addEventListener('click', function() {
         if (mergePhotos.length < 2 || !mergeCanvas) return;
