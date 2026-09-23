@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-L5K09RC5D2');
+    </script>
+
+    <title>UK Passport Photo Resizer - Free 35x45mm Tool (No Upload)</title>
+    <meta name="description" content="Free UK passport and visa photo resizer. Get 35x45mm (413x531 px) photos instantly. 100% private, no upload needed.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📸 Photo Resizer</h1>
+            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
+            <nav class="nav">
+                <a href="index.html">🏠 Home</a>
+                <a href="us-passport-photo.html">🇺🇸 US</a>
+                <a href="uk-passport-photo.html">🇬🇧 UK</a>
+                <a href="schengen-visa-photo.html">🇪🇺 Schengen</a>
+                <a href="canada-passport-photo.html">🇨🇦 Canada</a>
+                <a href="australia-passport-photo.html">🇦🇺 Australia</a>
+                <a href="ibps.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="intro-section">
+            <h2>🇬🇧 UK Passport & Visa Photo Resizer</h2>
+            <p>Get your photo in exact UK passport/visa specifications instantly</p>
+        </section>
+
+        <!-- UK SPECS -->
+        <section class="country-section">
+            <h3 class="section-title">📋 UK Passport Photo Requirements</h3>
+            <div class="country-grid">
+
+                <div class="country-card">
+                    <div class="country-flag">📐</div>
+                    <h4>Photo Size</h4>
+                    <div class="doc-size">35 x 45 mm</div>
+                </div>
+
+                <div class="country-card">
+                    <div class="country-flag">📏</div>
+                    <h4>Pixels</h4>
+                    <div class="doc-size">413 x 531 px (minimum)</div>
+                </div>
+
+                <div class="country-card">
+                    <div class="country-flag">💾</div>
+                    <h4>File Size</h4>
+                    <div class="doc-size">50 KB - 10 MB</div>
+                </div>
+
+                <div class="country-card">
+                    <div class="country-flag">🎨</div>
+                    <h4>Background</h4>
+                    <div class="doc-size">Plain light grey or cream</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TOOL -->
+        <div class="card">
+            <h2>📸 Resize Your UK Passport Photo</h2>
+            <label for="photoInput">Photo select karein</label>
+            <input type="file" id="photoInput" accept="image/*" aria-label="Photo upload karein">
+        </div>
+
+        <div class="card">
+            <h2>Document Type</h2>
+            <label for="examSelect">Document chunein</label>
+            <select id="examSelect" aria-label="Document select karein">
+                <option value="uk-passport" selected>UK Passport (35x45 mm)</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <h2>Preview & Download</h2>
+            <div class="preview-box">
+                <canvas id="previewCanvas"></canvas>
+                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            </div>
+            <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
+        </div>
+
+        <!-- TIPS -->
+        <div class="card">
+            <h2>💡 Tips for UK Passport Photo</h2>
+            <ul style="margin-left: 20px; line-height: 1.8; color: #4a5568;">
+                <li>Use a plain light grey or cream background</li>
+                <li>Face the camera directly (no tilt)</li>
+                <li>Neutral expression (no smile)</li>
+                <li>No glasses, no hat (unless religious)</li>
+                <li>Even lighting — no shadows</li>
+                <li>Head size: 29mm to 34mm</li>
+            </ul>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Photo Resizer | Made for the World 🌍</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
