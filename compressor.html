@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RN2DNB447D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-RN2DNB447D');
+    </script>
+
+    <title>Photo Compressor - Reduce Image Size to 20KB, 50KB Free</title>
+    <meta name="description" content="Free photo compressor for exam forms. Reduce image size to 20KB, 50KB, or 100KB instantly. 100% private - no upload.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🗜️ Photo Compressor</h1>
+            <p class="tagline">Free • Fast • 100% Private (No Upload)</p>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="ibps.html">IBPS</a>
+                <a href="ssc-cgl.html">SSC CGL</a>
+                <a href="rrb.html">RRB</a>
+                <a href="neet.html">NEET</a>
+                <a href="upsc.html">UPSC</a>
+                <a href="compressor.html">Compressor</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="card">
+            <h2>1. Apni photo select kariye</h2>
+            <label for="compressInput">Photo select karein</label>
+            <input type="file" id="compressInput" accept="image/*" aria-label="Photo upload karein">
+        </div>
+
+        <div class="card">
+            <h2>2. Target size chuniye</h2>
+            <label for="targetSize">Target Size (KB)</label>
+            <select id="targetSize" aria-label="Target size select karein">
+                <option value="10">10 KB</option>
+                <option value="20">20 KB</option>
+                <option value="50" selected>50 KB</option>
+                <option value="100">100 KB</option>
+                <option value="200">200 KB</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <h2>3. Compress & Download</h2>
+            <div class="preview-box">
+                <img id="compressPreview" alt="Preview" style="max-width:100%; display:none; border-radius:6px;">
+                <p id="compressStatus">Photo select karne ke baad yahan preview dikhega.</p>
+            </div>
+            <button id="compressBtn" disabled aria-label="Photo compress karein">Compress Photo</button>
+            <button id="compressDownloadBtn" disabled aria-label="Compressed photo download karein" style="margin-top:10px;">Download Compressed</button>
+        </div>
+
+        <div class="card">
+            <h2>📌 Kaise Use Karein?</h2>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li>Apni photo select karein</li>
+                <li>Target size chunein (jaise 20 KB, 50 KB)</li>
+                <li>"Compress Photo" button dabayein</li>
+                <li>Result dekh kar "Download" karein</li>
+            </ol>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Exam Photo Resizer</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
