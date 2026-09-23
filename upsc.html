@@ -15,59 +15,105 @@
     </script>
 
     <title>UPSC Photo & Triple Signature Resizer 2026 - Free Tool</title>
-    <meta name="description" content="Free UPSC photo and triple signature resizer 2026. Get exact specifications and resize instantly. 100% private.">
+    <meta name="description" content="Free UPSC photo and triple signature resizer 2026. Get exact specifications (350x450, 20-300 KB) and resize instantly.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="header">
         <div class="container">
-            <h1 class="logo">📗 UPSC Photo & Triple Signature Resizer</h1>
-            <p class="tagline">Free • Fast • 100% Private (No Upload)</p>
+            <h1 class="logo">📸 Photo Resizer</h1>
+            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
             <nav class="nav">
-                <a href="index.html">Home</a>
-                <a href="ibps.html">IBPS</a>
-                <a href="ssc-cgl.html">SSC CGL</a>
-                <a href="rrb.html">RRB</a>
-                <a href="neet.html">NEET</a>
-                <a href="upsc.html">UPSC</a>
-                <a href="compressor.html">Compressor</a>
+                <a href="index.html">🏠 Home</a>
+                <a href="us-passport-photo.html">🇺🇸 US</a>
+                <a href="uk-passport-photo.html">🇬🇧 UK</a>
+                <a href="schengen-visa-photo.html">🇪🇺 Schengen</a>
+                <a href="canada-passport-photo.html">🇨🇦 Canada</a>
+                <a href="australia-passport-photo.html">🇦🇺 Australia</a>
+                <a href="ibps.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
             </nav>
         </div>
     </header>
 
     <main class="container">
 
+        <section class="intro-section">
+            <h2>📗 UPSC Photo & Triple Signature Resizer</h2>
+            <p>Get your photo in exact UPSC specifications instantly</p>
+        </section>
+
+        <section class="country-section">
+            <h3 class="section-title">📋 UPSC Requirements</h3>
+            <div class="country-grid">
+
+                <div class="country-card">
+                    <div class="country-flag">📷</div>
+                    <h4>Photo Size</h4>
+                    <div class="doc-size">350 x 450 pixels</div>
+                </div>
+
+                <div class="country-card">
+                    <div class="country-flag">💾</div>
+                    <h4>Photo File Size</h4>
+                    <div class="doc-size">20 KB - 300 KB</div>
+                </div>
+
+                <div class="country-card">
+                    <div class="country-flag">✍️</div>
+                    <h4>Signature Size</h4>
+                    <div class="doc-size">140 x 60 pixels (×3)</div>
+                </div>
+
+                <div class="country-card">
+                    <div class="country-flag">💾</div>
+                    <h4>Signature File Size</h4>
+                    <div class="doc-size">10 KB - 20 KB each</div>
+                </div>
+
+            </div>
+        </section>
+
         <div class="card">
-            <h2>UPSC Photo Requirements</h2>
-            <ul>
-                <li><strong>Photo Size:</strong> 350 x 450 pixels</li>
-                <li><strong>File Size:</strong> 20 KB - 300 KB</li>
-                <li><strong>Format:</strong> JPG/JPEG</li>
-            </ul>
+            <h2>📸 Resize Your Photo</h2>
+            <label for="photoInput">Photo select karein</label>
+            <input type="file" id="photoInput" accept="image/*" aria-label="Photo upload karein">
         </div>
 
         <div class="card">
-            <h2>UPSC Signature Requirements (Triple)</h2>
-            <ul>
-                <li><strong>Signature 1:</strong> 140 x 60 pixels</li>
-                <li><strong>Signature 2:</strong> 140 x 60 pixels</li>
-                <li><strong>Signature 3:</strong> 140 x 60 pixels</li>
-                <li><strong>File Size:</strong> 10 KB - 20 KB each</li>
-                <li><strong>Format:</strong> JPG/JPEG</li>
-            </ul>
+            <h2>Document Type</h2>
+            <label for="examSelect">Document chunein</label>
+            <select id="examSelect" aria-label="Document select karein">
+                <option value="upsc" selected>UPSC (350x450, 20-300 KB)</option>
+            </select>
         </div>
 
         <div class="card">
-            <h2>Resize Your Photo Now</h2>
-            <a href="index.html" class="exam-link">Go to Photo Resizer</a>
+            <h2>Preview & Download</h2>
+            <div class="preview-box">
+                <canvas id="previewCanvas"></canvas>
+                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            </div>
+            <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
+        </div>
+
+        <div class="card">
+            <h2>💡 Tips for UPSC Photo</h2>
+            <ul style="margin-left: 20px; line-height: 1.8; color: #4a5568;">
+                <li>Use a plain white background</li>
+                <li>Face the camera directly</li>
+                <li>Recent photo (within 6 months)</li>
+                <li>Triple signature required</li>
+                <li>No glasses, no hat</li>
+            </ul>
         </div>
 
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>© 2026 Exam Photo Resizer</p>
+            <p>© 2026 Photo Resizer | Made for the World 🌍</p>
         </div>
     </footer>
 
