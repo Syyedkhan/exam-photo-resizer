@@ -347,19 +347,16 @@ function drawCropCanvas() {
 
     ctx.drawImage(img, x, y, drawW, drawH);
 
-    // Dark overlay outside crop box
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.fillRect(0, 0, size, cropBox.y);
     ctx.fillRect(0, cropBox.y + cropBox.h, size, size - cropBox.y - cropBox.h);
     ctx.fillRect(0, cropBox.y, cropBox.x, cropBox.h);
     ctx.fillRect(cropBox.x + cropBox.w, cropBox.y, size - cropBox.x - cropBox.w, cropBox.h);
 
-    // Crop box border
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
     ctx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
 
-    // Grid lines
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -373,7 +370,6 @@ function drawCropCanvas() {
     ctx.lineTo(cropBox.x + cropBox.w, cropBox.y + 2 * cropBox.h / 3);
     ctx.stroke();
 
-    // Corner handles
     ctx.fillStyle = '#667eea';
     const hs = 14;
     ctx.fillRect(cropBox.x - hs/2, cropBox.y - hs/2, hs, hs);
@@ -549,9 +545,6 @@ if (mergeBtn) {
     mergeBtn.addEventListener('click', function() {
         if (mergePhotos.length < 2 || !mergeCanvas) return;
         const direction = document.querySelector('input[name="direction"]:checked').value;
-        const addBorder = document.getElementById('addBorder').checked;
-        const borderColor = document.getElementById('borderColor').value;
-        const borderWidth = parseInt(document.getElementById('borderWidth').value) || 5;
         const ctx = mergeCanvas.getContext('2d');
         const images = mergePhotos.map(p => p.croppedImg);
         let canvasW, canvasH;
@@ -581,22 +574,12 @@ if (mergeBtn) {
             images.forEach((img) => {
                 const drawW = img.width * canvasH / img.height;
                 ctx.drawImage(img, x, 0, drawW, canvasH);
-                if (addBorder) {
-                    ctx.strokeStyle = borderColor;
-                    ctx.lineWidth = borderWidth;
-                    ctx.strokeRect(x, 0, drawW, canvasH);
-                }
                 x += drawW;
             });
         } else if (direction === 'vertical') {
             images.forEach((img) => {
                 const drawH = img.height * canvasW / img.width;
                 ctx.drawImage(img, 0, y, canvasW, drawH);
-                if (addBorder) {
-                    ctx.strokeStyle = borderColor;
-                    ctx.lineWidth = borderWidth;
-                    ctx.strokeRect(0, y, canvasW, drawH);
-                }
                 y += drawH;
             });
         } else {
@@ -614,11 +597,6 @@ if (mergeBtn) {
                 const offsetX = (cellW - drawW) / 2;
                 const offsetY = (cellH - drawH) / 2;
                 ctx.drawImage(img, x + offsetX, y + offsetY, drawW, drawH);
-                if (addBorder) {
-                    ctx.strokeStyle = borderColor;
-                    ctx.lineWidth = borderWidth;
-                    ctx.strokeRect(x + offsetX, y + offsetY, drawW, drawH);
-                }
             });
         }
 
