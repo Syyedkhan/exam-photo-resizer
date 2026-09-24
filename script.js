@@ -25,7 +25,9 @@ const examSpecs = {
     'uk-passport': { photoW: 413, photoH: 531 },
     'schengen': { photoW: 413, photoH: 531 },
     'canada-passport': { photoW: 591, photoH: 827 },
+        'canada-visa': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
     'australia-passport': { photoW: 413, photoH: 531 }
+        'australia-visa': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
 };
 
 if (photoInput) {
