@@ -564,7 +564,7 @@ function saveCrop() {
     };
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.9);
 }
-}
+
 
 // ============ MERGE ============
 if (mergeBtn) {
