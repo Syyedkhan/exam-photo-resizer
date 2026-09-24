@@ -523,14 +523,35 @@ function saveCrop() {
     const canvas = document.getElementById('cropCanvas');
     if (!canvas || currentCropIndex === -1) return;
 
+    const photo = mergePhotos[currentCropIndex];
+    if (!photo) return;
+
+    const img = photo.croppedImg;
+    const size = CROP_CANVAS_SIZE;
+
+    // Create new canvas with crop area only
     const newCanvas = document.createElement('canvas');
     newCanvas.width = cropBox.w;
     newCanvas.height = cropBox.h;
     const newCtx = newCanvas.getContext('2d');
 
+    // Calculate the scale and position
+    const scale = Math.max(size / img.width, size / img.height) * cropZoom;
+    const drawW = img.width * scale;
+    const drawH = img.height * scale;
+    const x = (size - drawW) / 2 + cropOffsetX;
+    const y = (size - drawH) / 2 + cropOffsetY;
+
+    // Calculate source area in original image
+    const srcX = (cropBox.x - x) / scale;
+    const srcY = (cropBox.y - y) / scale;
+    const srcW = cropBox.w / scale;
+    const srcH = cropBox.h / scale;
+
+    // Draw only the image portion (without border)
     newCtx.drawImage(
-        canvas,
-        cropBox.x, cropBox.y, cropBox.w, cropBox.h,
+        img,
+        Math.max(0, srcX), Math.max(0, srcY), srcW, srcH,
         0, 0, cropBox.w, cropBox.h
     );
 
@@ -542,6 +563,7 @@ function saveCrop() {
         currentCropIndex = -1;
     };
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.9);
+}
 }
 
 // ============ MERGE ============
