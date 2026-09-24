@@ -347,17 +347,20 @@ function drawCropCanvas() {
 
     ctx.drawImage(img, x, y, drawW, drawH);
 
+    // Dark overlay outside crop box
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.fillRect(0, 0, size, cropBox.y);
     ctx.fillRect(0, cropBox.y + cropBox.h, size, size - cropBox.y - cropBox.h);
     ctx.fillRect(0, cropBox.y, cropBox.x, cropBox.h);
     ctx.fillRect(cropBox.x + cropBox.w, cropBox.y, size - cropBox.x - cropBox.w, cropBox.h);
 
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
+    // Crop box border (yellow, thin)
+    ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
+    ctx.lineWidth = 1;
     ctx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(cropBox.x + cropBox.w / 3, cropBox.y);
@@ -370,8 +373,9 @@ function drawCropCanvas() {
     ctx.lineTo(cropBox.x + cropBox.w, cropBox.y + 2 * cropBox.h / 3);
     ctx.stroke();
 
-    ctx.fillStyle = '#667eea';
-    const hs = 14;
+    // Corner handles (yellow)
+    ctx.fillStyle = 'rgba(255, 255, 0, 0.9)';
+    const hs = 12;
     ctx.fillRect(cropBox.x - hs/2, cropBox.y - hs/2, hs, hs);
     ctx.fillRect(cropBox.x + cropBox.w - hs/2, cropBox.y - hs/2, hs, hs);
     ctx.fillRect(cropBox.x - hs/2, cropBox.y + cropBox.h - hs/2, hs, hs);
