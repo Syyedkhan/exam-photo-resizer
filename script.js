@@ -23,8 +23,9 @@ const examSpecs = {
     'us-passport': { photoW: 600, photoH: 600 },
     'us-visa': { photoW: 600, photoH: 600 },
     'uk-passport': { photoW: 413, photoH: 531 },
-    'schengen': { photoW: 413, photoH: 531 },
-        'schengen-passport': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
+        'schengen': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
+    'schengen-passport': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
+    'canada-passport': { photoW: 591, photoH: 827, sigW: 0, sigH: 0, photoSize: 'Under 4 MB', sigSize: '-' },
     'canada-passport': { photoW: 591, photoH: 827 },
         'canada-visa': { photoW: 413, photoH: 531, sigW: 0, sigH: 0, photoSize: 'Under 500 KB', sigSize: '-' },
     'australia-passport': { photoW: 413, photoH: 531 }
