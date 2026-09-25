@@ -1,82 +1,89 @@
 /* ============================================
-   Photo Resizer - PI7 Style Script
+   Photo Resizer - Photo + Signature (2 Boxes)
    ============================================ */
 
+// ============ PHOTO BOX ============
 const photoInput = document.getElementById('photoInput');
-const imageArea = document.getElementById('imageArea');
-const emptyState = document.getElementById('emptyState');
-const fileName = document.getElementById('fileName');
-const widthInput = document.getElementById('widthInput');
-const heightInput = document.getElementById('heightInput');
-const sizeInput = document.getElementById('sizeInput');
-const resizeBtn = document.getElementById('resizeBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-const badgeW = document.getElementById('badgeW');
-const badgeH = document.getElementById('badgeH');
+const photoImageArea = document.getElementById('photoImageArea');
+const photoFileName = document.getElementById('photoFileName');
+const photoWidth = document.getElementById('photoWidth');
+const photoHeight = document.getElementById('photoHeight');
+const photoSize = document.getElementById('photoSize');
+const photoResizeBtn = document.getElementById('photoResizeBtn');
+const photoDownloadBtn = document.getElementById('photoDownloadBtn');
+const photoBadgeW = document.getElementById('photoBadgeW');
+const photoBadgeH = document.getElementById('photoBadgeH');
 
-let uploadedImage = null;
-let resizedCanvas = null;
-let currentFileName = '';
+let photoImg = null;
+let photoCanvas = null;
+let photoName = '';
 
-// Click on image area to open file picker
-imageArea.addEventListener('click', function() {
+// ============ SIGNATURE BOX ============
+const signInput = document.getElementById('signInput');
+const signImageArea = document.getElementById('signImageArea');
+const signFileName = document.getElementById('signFileName');
+const signWidth = document.getElementById('signWidth');
+const signHeight = document.getElementById('signHeight');
+const signSize = document.getElementById('signSize');
+const signResizeBtn = document.getElementById('signResizeBtn');
+const signDownloadBtn = document.getElementById('signDownloadBtn');
+const signBadgeW = document.getElementById('signBadgeW');
+const signBadgeH = document.getElementById('signBadgeH');
+
+let signImg = null;
+let signCanvas = null;
+let signName = '';
+
+// ============ PHOTO SETUP ============
+photoImageArea.addEventListener('click', function() {
     photoInput.click();
 });
 
-// Drag & Drop
-imageArea.addEventListener('dragover', function(e) {
+photoImageArea.addEventListener('dragover', function(e) {
     e.preventDefault();
-    imageArea.style.borderColor = '#4c51bf';
+    photoImageArea.parentElement.style.borderColor = '#4c51bf';
 });
 
-imageArea.addEventListener('dragleave', function() {
-    imageArea.style.borderColor = '#667eea';
+photoImageArea.addEventListener('dragleave', function() {
+    photoImageArea.parentElement.style.borderColor = '#4c51bf';
 });
 
-imageArea.addEventListener('drop', function(e) {
+photoImageArea.addEventListener('drop', function(e) {
     e.preventDefault();
-    imageArea.style.borderColor = '#667eea';
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-        loadImage(file);
-    }
+    if (file && file.type.startsWith('image/')) loadPhoto(file);
 });
 
-// File select
 photoInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
-    if (file) loadImage(file);
+    if (file) loadPhoto(file);
 });
 
-function loadImage(file) {
-    currentFileName = file.name;
+function loadPhoto(file) {
+    photoName = file.name;
     const reader = new FileReader();
     reader.onload = function(event) {
         const img = new Image();
         img.onload = function() {
-            uploadedImage = img;
-            fileName.textContent = file.name;
-            resizeBtn.disabled = false;
-            downloadBtn.style.display = 'none';
+            photoImg = img;
+            photoFileName.textContent = file.name;
+            photoResizeBtn.disabled = false;
+            photoDownloadBtn.style.display = 'none';
 
-            imageArea.innerHTML = `
-                <button class="crop-btn-icon" id="cropBtn">✂️ Crop</button>
-                <button class="remove-btn-icon" id="removeBtn">×</button>
-                <img src="${event.target.result}" id="previewImg">
+            photoImageArea.innerHTML = `
+                <button class="crop-btn-icon" id="photoCropBtn">✂️ Crop</button>
+                <button class="remove-btn-icon" id="photoRemoveBtn">×</button>
+                <img src="${event.target.result}" id="photoPreviewImg">
             `;
-
-            document.getElementById('cropBtn').addEventListener('click', function(e) {
+            document.getElementById('photoCropBtn').addEventListener('click', function(e) {
                 e.stopPropagation();
-                openCropModal();
+                openCropModal('photo');
             });
-
-            document.getElementById('removeBtn').addEventListener('click', function(e) {
+            document.getElementById('photoRemoveBtn').addEventListener('click', function(e) {
                 e.stopPropagation();
-                removeImage();
+                removePhoto();
             });
-
-            const previewImg = document.getElementById('previewImg');
-            previewImg.addEventListener('click', function(e) {
+            document.getElementById('photoPreviewImg').addEventListener('click', function(e) {
                 e.stopPropagation();
             });
         };
@@ -85,143 +92,214 @@ function loadImage(file) {
     reader.readAsDataURL(file);
 }
 
-function removeImage() {
-    uploadedImage = null;
-    resizedCanvas = null;
+function removePhoto() {
+    photoImg = null;
+    photoCanvas = null;
     photoInput.value = '';
-    fileName.textContent = '';
-    resizeBtn.disabled = true;
-    downloadBtn.style.display = 'none';
-
-    imageArea.innerHTML = `
-        <div class="empty-state" id="emptyState">
-            <p>📁 Click to select an image</p>
+    photoFileName.textContent = '';
+    photoResizeBtn.disabled = true;
+    photoDownloadBtn.style.display = 'none';
+    photoImageArea.innerHTML = `
+        <div class="empty-state">
+            <p>📁 Click to select a photo</p>
             <p style="font-size:13px;color:#999;">or drag & drop here</p>
         </div>
     `;
 }
 
-widthInput.addEventListener('input', function() {
-    badgeW.textContent = 'W-' + (this.value || '0');
+photoWidth.addEventListener('input', function() {
+    photoBadgeW.textContent = 'W-' + (this.value || '0');
+});
+photoHeight.addEventListener('input', function() {
+    photoBadgeH.textContent = 'H-' + (this.value || '0');
 });
 
-heightInput.addEventListener('input', function() {
-    badgeH.textContent = 'H-' + (this.value || '0');
-});
-
-// Resize button
-resizeBtn.addEventListener('click', function() {
-    if (!uploadedImage) return;
-
-    const targetW = parseInt(widthInput.value) || 140;
-    const targetH = parseInt(heightInput.value) || 60;
-    const targetKB = parseInt(sizeInput.value) || 20;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, targetW, targetH);
-
-    const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height);
-    const drawW = uploadedImage.width * scale;
-    const drawH = uploadedImage.height * scale;
-    const x = (targetW - drawW) / 2;
-    const y = (targetH - drawH) / 2;
-
-    ctx.drawImage(uploadedImage, x, y, drawW, drawH);
-
-    // ===== ADD SLIGHT NOISE TO INCREASE FILE SIZE =====
-    const imgData = ctx.getImageData(0, 0, targetW, targetH);
-    const pixels = imgData.data;
-    for (let i = 0; i < pixels.length; i += 4) {
-        pixels[i] = Math.min(255, pixels[i] + (Math.random() * 6 - 3));
-        pixels[i + 1] = Math.min(255, pixels[i + 1] + (Math.random() * 6 - 3));
-        pixels[i + 2] = Math.min(255, pixels[i + 2] + (Math.random() * 6 - 3));
-    }
-    ctx.putImageData(imgData, 0, 0);
-
-    // Compress to target KB
-    let quality = 1.0;
-    let dataUrl = canvas.toDataURL('image/jpeg', quality);
-    let sizeKB = (dataUrl.length * 0.75) / 1024;
-
-    while (sizeKB > targetKB && quality > 0.1) {
-        quality -= 0.01;
-        dataUrl = canvas.toDataURL('image/jpeg', quality);
-        sizeKB = (dataUrl.length * 0.75) / 1024;
-    }
-
-    resizedCanvas = canvas;
-    downloadBtn.style.display = 'block';
-    downloadBtn.textContent = `⬇ Download (${sizeKB.toFixed(1)} KB)`;
-
-    imageArea.innerHTML = `
-        <button class="remove-btn-icon" id="removeBtn">×</button>
-        <img src="${dataUrl}" id="previewImg">
+photoResizeBtn.addEventListener('click', function() {
+    if (!photoImg) return;
+    const tw = parseInt(photoWidth.value) || 200;
+    const th = parseInt(photoHeight.value) || 230;
+    const tkb = parseInt(photoSize.value) || 50;
+    const result = resizeImage(photoImg, tw, th, tkb);
+    photoCanvas = result.canvas;
+    photoDownloadBtn.style.display = 'block';
+    photoDownloadBtn.textContent = `⬇ Download Photo (${result.sizeKB.toFixed(1)} KB)`;
+    photoImageArea.innerHTML = `
+        <button class="remove-btn-icon" id="photoRemoveBtn">×</button>
+        <img src="${result.dataUrl}" id="photoPreviewImg">
     `;
-
-    document.getElementById('removeBtn').addEventListener('click', function(e) {
+    document.getElementById('photoRemoveBtn').addEventListener('click', function(e) {
         e.stopPropagation();
-        removeImage();
+        removePhoto();
     });
-
-    document.getElementById('previewImg').addEventListener('click', function(e) {
+    document.getElementById('photoPreviewImg').addEventListener('click', function(e) {
         e.stopPropagation();
     });
 });
 
-// Download
-downloadBtn.addEventListener('click', function() {
-    if (!resizedCanvas) return;
-
-    const targetW = parseInt(widthInput.value) || 140;
-    const targetH = parseInt(heightInput.value) || 60;
-    const targetKB = parseInt(sizeInput.value) || 20;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, targetW, targetH);
-
-    const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height);
-    const drawW = uploadedImage.width * scale;
-    const drawH = uploadedImage.height * scale;
-    const x = (targetW - drawW) / 2;
-    const y = (targetH - drawH) / 2;
-    ctx.drawImage(uploadedImage, x, y, drawW, drawH);
-
-    // Add noise
-    const imgData = ctx.getImageData(0, 0, targetW, targetH);
-    const pixels = imgData.data;
-    for (let i = 0; i < pixels.length; i += 4) {
-        pixels[i] = Math.min(255, pixels[i] + (Math.random() * 6 - 3));
-        pixels[i + 1] = Math.min(255, pixels[i + 1] + (Math.random() * 6 - 3));
-        pixels[i + 2] = Math.min(255, pixels[i + 2] + (Math.random() * 6 - 3));
-    }
-    ctx.putImageData(imgData, 0, 0);
-
-    let quality = 1.0;
-    let dataUrl = canvas.toDataURL('image/jpeg', quality);
-    let sizeKB = (dataUrl.length * 0.75) / 1024;
-
-    while (sizeKB > targetKB && quality > 0.1) {
-        quality -= 0.01;
-        dataUrl = canvas.toDataURL('image/jpeg', quality);
-        sizeKB = (dataUrl.length * 0.75) / 1024;
-    }
-
+photoDownloadBtn.addEventListener('click', function() {
+    if (!photoCanvas) return;
+    const tw = parseInt(photoWidth.value) || 200;
+    const th = parseInt(photoHeight.value) || 230;
+    const tkb = parseInt(photoSize.value) || 50;
+    const result = resizeImage(photoImg, tw, th, tkb);
     const link = document.createElement('a');
-    link.download = 'ibps-' + (currentFileName || 'image.jpg');
-    link.href = dataUrl;
+    link.download = 'ibps-photo.jpg';
+    link.href = result.dataUrl;
     link.click();
 });
 
+// ============ SIGNATURE SETUP ============
+signImageArea.addEventListener('click', function() {
+    signInput.click();
+});
+
+signImageArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+});
+
+signImageArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadSign(file);
+});
+
+signInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) loadSign(file);
+});
+
+function loadSign(file) {
+    signName = file.name;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            signImg = img;
+            signFileName.textContent = file.name;
+            signResizeBtn.disabled = false;
+            signDownloadBtn.style.display = 'none';
+
+            signImageArea.innerHTML = `
+                <button class="crop-btn-icon" id="signCropBtn">✂️ Crop</button>
+                <button class="remove-btn-icon" id="signRemoveBtn">×</button>
+                <img src="${event.target.result}" id="signPreviewImg">
+            `;
+            document.getElementById('signCropBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                openCropModal('signature');
+            });
+            document.getElementById('signRemoveBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeSign();
+            });
+            document.getElementById('signPreviewImg').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeSign() {
+    signImg = null;
+    signCanvas = null;
+    signInput.value = '';
+    signFileName.textContent = '';
+    signResizeBtn.disabled = true;
+    signDownloadBtn.style.display = 'none';
+    signImageArea.innerHTML = `
+        <div class="empty-state">
+            <p>📁 Click to select a signature</p>
+            <p style="font-size:13px;color:#999;">or drag & drop here</p>
+        </div>
+    `;
+}
+
+signWidth.addEventListener('input', function() {
+    signBadgeW.textContent = 'W-' + (this.value || '0');
+});
+signHeight.addEventListener('input', function() {
+    signBadgeH.textContent = 'H-' + (this.value || '0');
+});
+
+signResizeBtn.addEventListener('click', function() {
+    if (!signImg) return;
+    const tw = parseInt(signWidth.value) || 140;
+    const th = parseInt(signHeight.value) || 60;
+    const tkb = parseInt(signSize.value) || 20;
+    const result = resizeImage(signImg, tw, th, tkb);
+    signCanvas = result.canvas;
+    signDownloadBtn.style.display = 'block';
+    signDownloadBtn.textContent = `⬇ Download Signature (${result.sizeKB.toFixed(1)} KB)`;
+    signImageArea.innerHTML = `
+        <button class="remove-btn-icon" id="signRemoveBtn">×</button>
+        <img src="${result.dataUrl}" id="signPreviewImg">
+    `;
+    document.getElementById('signRemoveBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        removeSign();
+    });
+    document.getElementById('signPreviewImg').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+
+signDownloadBtn.addEventListener('click', function() {
+    if (!signCanvas) return;
+    const tw = parseInt(signWidth.value) || 140;
+    const th = parseInt(signHeight.value) || 60;
+    const tkb = parseInt(signSize.value) || 20;
+    const result = resizeImage(signImg, tw, th, tkb);
+    const link = document.createElement('a');
+    link.download = 'ibps-signature.jpg';
+    link.href = result.dataUrl;
+    link.click();
+});
+
+// ============ COMMON RESIZE FUNCTION ============
+function resizeImage(sourceImg, targetW, targetH, targetKB) {
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetW, targetH);
+
+    const scale = Math.max(targetW / sourceImg.width, targetH / sourceImg.height);
+    const drawW = sourceImg.width * scale;
+    const drawH = sourceImg.height * scale;
+    const x = (targetW - drawW) / 2;
+    const y = (targetH - drawH) / 2;
+
+    ctx.drawImage(sourceImg, x, y, drawW, drawH);
+
+    // Add slight noise to increase file size
+    const imgData = ctx.getImageData(0, 0, targetW, targetH);
+    const pixels = imgData.data;
+    for (let i = 0; i < pixels.length; i += 4) {
+        pixels[i] = Math.min(255, pixels[i] + (Math.random() * 6 - 3));
+        pixels[i + 1] = Math.min(255, pixels[i + 1] + (Math.random() * 6 - 3));
+        pixels[i + 2] = Math.min(255, pixels[i + 2] + (Math.random() * 6 - 3));
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    let quality = 1.0;
+    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+    let sizeKB = (dataUrl.length * 0.75) / 1024;
+
+    while (sizeKB > targetKB && quality > 0.1) {
+        quality -= 0.01;
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        sizeKB = (dataUrl.length * 0.75) / 1024;
+    }
+
+    return { canvas, dataUrl, sizeKB };
+}
+
 // ============ CROP FUNCTIONALITY ============
+let cropTarget = 'photo';
 let cropBox = { x: 75, y: 75, w: 350, h: 350 };
 let cropBoxDragging = false;
 let cropBoxResizing = false;
@@ -230,7 +308,11 @@ let cropBoxStartX = 0, cropBoxStartY = 0;
 let cropBoxStart = { x: 0, y: 0, w: 0, h: 0 };
 const CROP_CANVAS_SIZE = 500;
 
-function openCropModal() {
+function openCropModal(target) {
+    cropTarget = target;
+    const img = target === 'photo' ? photoImg : signImg;
+    if (!img) return;
+
     let modal = document.getElementById('cropModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -260,7 +342,9 @@ function openCropModal() {
 
 function drawCropCanvas() {
     const canvas = document.getElementById('cropCanvas');
-    if (!canvas || !uploadedImage) return;
+    const img = cropTarget === 'photo' ? photoImg : signImg;
+    if (!canvas || !img) return;
+
     const ctx = canvas.getContext('2d');
     const size = CROP_CANVAS_SIZE;
     canvas.width = size;
@@ -269,13 +353,13 @@ function drawCropCanvas() {
     ctx.fillStyle = '#1a202c';
     ctx.fillRect(0, 0, size, size);
 
-    const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height);
-    const drawW = uploadedImage.width * scale;
-    const drawH = uploadedImage.height * scale;
+    const scale = Math.max(size / img.width, size / img.height);
+    const drawW = img.width * scale;
+    const drawH = img.height * scale;
     const x = (size - drawW) / 2;
     const y = (size - drawH) / 2;
 
-    ctx.drawImage(uploadedImage, x, y, drawW, drawH);
+    ctx.drawImage(img, x, y, drawW, drawH);
 
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.fillRect(0, 0, size, cropBox.y);
@@ -328,24 +412,20 @@ function setupCropEvents() {
         const pos = getMousePos(e);
         const handle = getHandleAt(pos.x, pos.y);
         if (!handle) return;
-
         if (handle === 'move') {
             cropBoxDragging = true;
         } else {
             cropBoxResizing = true;
             cropResizeHandle = handle;
         }
-
         cropBoxStartX = pos.x;
         cropBoxStartY = pos.y;
         cropBoxStart = { ...cropBox };
-
         if (e.cancelable) e.preventDefault();
     }
 
     function onMove(e) {
         if (!cropBoxDragging && !cropBoxResizing) return;
-
         const pos = getMousePos(e);
         const dx = pos.x - cropBoxStartX;
         const dy = pos.y - cropBoxStartY;
@@ -361,7 +441,6 @@ function setupCropEvents() {
             cropBox.y = ny;
         } else {
             let { x, y, w, h } = cropBoxStart;
-
             if (cropResizeHandle === 'tl') {
                 let nx = Math.max(0, Math.min(x + w - minSize, x + dx));
                 let ny = Math.max(0, Math.min(y + h - minSize, y + dy));
@@ -384,7 +463,6 @@ function setupCropEvents() {
                 cropBox.h = Math.max(minSize, Math.min(size - y, h + dy));
             }
         }
-
         drawCropCanvas();
         if (e.cancelable) e.preventDefault();
     }
@@ -414,12 +492,13 @@ function setupCropEvents() {
 
 function saveCrop() {
     const canvas = document.getElementById('cropCanvas');
-    if (!canvas || !uploadedImage) return;
+    const img = cropTarget === 'photo' ? photoImg : signImg;
+    if (!canvas || !img) return;
 
     const size = CROP_CANVAS_SIZE;
-    const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height);
-    const drawW = uploadedImage.width * scale;
-    const drawH = uploadedImage.height * scale;
+    const scale = Math.max(size / img.width, size / img.height);
+    const drawW = img.width * scale;
+    const drawH = img.height * scale;
     const imgX = (size - drawW) / 2;
     const imgY = (size - drawH) / 2;
 
@@ -434,28 +513,51 @@ function saveCrop() {
     const newCtx = newCanvas.getContext('2d', { alpha: false });
     newCtx.fillStyle = '#ffffff';
     newCtx.fillRect(0, 0, cropBox.w, cropBox.h);
-    newCtx.drawImage(uploadedImage, srcX, srcY, srcW, srcH, 0, 0, cropBox.w, cropBox.h);
+    newCtx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, cropBox.w, cropBox.h);
 
     const croppedImg = new Image();
     croppedImg.onload = function() {
-        uploadedImage = croppedImg;
+        const dataUrl = newCanvas.toDataURL('image/jpeg', 1.0);
+
+        if (cropTarget === 'photo') {
+            photoImg = croppedImg;
+            photoImageArea.innerHTML = `
+                <button class="crop-btn-icon" id="photoCropBtn">✂️ Crop</button>
+                <button class="remove-btn-icon" id="photoRemoveBtn">×</button>
+                <img src="${dataUrl}" id="photoPreviewImg">
+            `;
+            document.getElementById('photoCropBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                openCropModal('photo');
+            });
+            document.getElementById('photoRemoveBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                removePhoto();
+            });
+            document.getElementById('photoPreviewImg').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        } else {
+            signImg = croppedImg;
+            signImageArea.innerHTML = `
+                <button class="crop-btn-icon" id="signCropBtn">✂️ Crop</button>
+                <button class="remove-btn-icon" id="signRemoveBtn">×</button>
+                <img src="${dataUrl}" id="signPreviewImg">
+            `;
+            document.getElementById('signCropBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                openCropModal('signature');
+            });
+            document.getElementById('signRemoveBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeSign();
+            });
+            document.getElementById('signPreviewImg').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
         document.getElementById('cropModal').classList.remove('active');
-        imageArea.innerHTML = `
-            <button class="crop-btn-icon" id="cropBtn">✂️ Crop</button>
-            <button class="remove-btn-icon" id="removeBtn">×</button>
-            <img src="${newCanvas.toDataURL('image/jpeg', 1.0)}" id="previewImg">
-        `;
-        document.getElementById('cropBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            openCropModal();
-        });
-        document.getElementById('removeBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            removeImage();
-        });
-        document.getElementById('previewImg').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
     };
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 1.0);
 }

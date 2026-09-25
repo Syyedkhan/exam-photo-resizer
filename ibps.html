@@ -14,7 +14,7 @@
     </script>
 
     <title>IBPS Photo Signature Resizer 2026 — Free Online Tool</title>
-    <meta name="description" content="Free IBPS photo and signature resizer for PO, Clerk, SO, RRB. Resize to exact dimensions and file size. 100% private.">
+    <meta name="description" content="Free IBPS photo and signature resizer. Resize photo to 200x230 px (20-50 KB) and signature to 140x60 px (10-20 KB). 100% private.">
     <link rel="canonical" href="https://exam-photo-resizer.vercel.app/ibps.html">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -37,7 +37,7 @@
 
         <section class="intro-section">
             <h2>📙 IBPS Photo & Signature Resizer</h2>
-            <p>Resize your photo or signature in exact IBPS specifications</p>
+            <p>Resize your photo and signature in exact IBPS specifications</p>
         </section>
 
         <!-- SPECS -->
@@ -57,67 +57,92 @@
             </div>
         </section>
 
-        <!-- TOOL -->
+        <!-- ============ PHOTO BOX ============ -->
         <div class="tool-container">
+            <h2 class="tool-title">Resize <span>Photo</span></h2>
 
-            <h2 class="tool-title">Resize <span id="toolLabel">Signature</span></h2>
-
-            <div class="tool-box">
-                <div id="imageArea">
-                    <div class="empty-state" id="emptyState">
-                        <p>📁 Click to select an image</p>
+            <div class="tool-box" data-type="photo">
+                <div class="image-area" id="photoImageArea">
+                    <div class="empty-state">
+                        <p>📁 Click to select a photo</p>
                         <p style="font-size:13px;color:#999;">or drag & drop here</p>
                     </div>
                 </div>
                 <input type="file" id="photoInput" accept="image/*" style="display:none;">
             </div>
 
-            <p class="file-name" id="fileName"></p>
+            <p class="file-name" id="photoFileName"></p>
 
-            <!-- W-140 / H-60 badges -->
             <div class="badges">
-                <span class="badge" id="badgeW">W-140</span>
-                <span class="badge" id="badgeH">H-60</span>
+                <span class="badge" id="photoBadgeW">W-200</span>
+                <span class="badge" id="photoBadgeH">H-230</span>
             </div>
 
-            <!-- Pixel / Centimeter -->
-            <div class="unit-row">
-                <label class="unit-label">
-                    <input type="radio" name="unit" value="pixel" checked> Pixel
-                </label>
-                <label class="unit-label">
-                    <input type="radio" name="unit" value="cm"> Centimeter
-                </label>
-            </div>
-
-            <!-- Width / Height -->
             <div class="input-row">
                 <div class="input-group">
                     <label>Width (px)</label>
-                    <input type="number" id="widthInput" value="140">
+                    <input type="number" id="photoWidth" value="200">
                 </div>
                 <span class="x-sign">X</span>
                 <div class="input-group">
                     <label>Height (px)</label>
-                    <input type="number" id="heightInput" value="60">
+                    <input type="number" id="photoHeight" value="230">
                 </div>
             </div>
 
-            <!-- Size KB -->
             <div class="size-row">
                 <label>Size:</label>
-                <input type="number" id="sizeInput" value="20">
+                <input type="number" id="photoSize" value="50">
                 <span class="kb-label">Kb</span>
             </div>
 
-            <!-- Resize Button -->
-            <button id="resizeBtn" class="resize-btn" disabled>Resize Signature</button>
+            <button id="photoResizeBtn" class="resize-btn" disabled>Resize Photo</button>
 
-            <p class="note">Note: You can resize images at once.</p>
+            <button id="photoDownloadBtn" class="download-btn" style="display:none;">⬇ Download Photo</button>
+        </div>
 
-            <!-- Download Button -->
-            <button id="downloadBtn" class="download-btn" style="display:none;">⬇ Download</button>
+        <!-- ============ SIGNATURE BOX ============ -->
+        <div class="tool-container">
+            <h2 class="tool-title">Resize <span>Signature</span></h2>
 
+            <div class="tool-box" data-type="signature">
+                <div class="image-area" id="signImageArea">
+                    <div class="empty-state">
+                        <p>📁 Click to select a signature</p>
+                        <p style="font-size:13px;color:#999;">or drag & drop here</p>
+                    </div>
+                </div>
+                <input type="file" id="signInput" accept="image/*" style="display:none;">
+            </div>
+
+            <p class="file-name" id="signFileName"></p>
+
+            <div class="badges">
+                <span class="badge" id="signBadgeW">W-140</span>
+                <span class="badge" id="signBadgeH">H-60</span>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Width (px)</label>
+                    <input type="number" id="signWidth" value="140">
+                </div>
+                <span class="x-sign">X</span>
+                <div class="input-group">
+                    <label>Height (px)</label>
+                    <input type="number" id="signHeight" value="60">
+                </div>
+            </div>
+
+            <div class="size-row">
+                <label>Size:</label>
+                <input type="number" id="signSize" value="20">
+                <span class="kb-label">Kb</span>
+            </div>
+
+            <button id="signResizeBtn" class="resize-btn" disabled>Resize Signature</button>
+
+            <button id="signDownloadBtn" class="download-btn" style="display:none;">⬇ Download Signature</button>
         </div>
 
         <!-- TIPS -->
@@ -134,24 +159,17 @@
         <!-- SEO Content -->
         <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
             <h2>IBPS Photo Requirements 2026</h2>
-            <p>IBPS conducts exams for PO, Clerk, SO, and RRB across India. Every applicant must upload a photo and signature with strict size requirements. This tool helps you get both exactly right.</p>
-            <h3>IBPS Photo Size & Dimensions</h3>
+            <p>IBPS conducts exams for PO, Clerk, SO, and RRB. Every applicant must upload a photo and signature with strict size requirements. This tool helps you get both exactly right.</p>
+            <h3>IBPS Photo Size</h3>
             <ul>
                 <li><strong>Photo dimensions:</strong> 200 x 230 pixels</li>
                 <li><strong>Photo file size:</strong> 20 KB to 50 KB</li>
-                <li><strong>Format:</strong> JPG or JPEG</li>
             </ul>
             <h3>IBPS Signature Requirements</h3>
             <ul>
                 <li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
                 <li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
-                <li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
             </ul>
-            <h2>Frequently Asked Questions</h2>
-            <h3>What is the IBPS photo size in 2026?</h3>
-            <p>IBPS photo should be 200x230 pixels with file size 20 KB to 50 KB in JPG/JPEG format.</p>
-            <h3>Does this tool upload my photo to a server?</h3>
-            <p>No. All processing happens in your browser. Your photo never leaves your device.</p>
             <h2>Related Tools</h2>
             <p>
                 <a href="ssc-cgl.html">SSC CGL Photo Resizer</a> |
