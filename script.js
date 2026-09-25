@@ -1,35 +1,66 @@
 /* ============================================
-   Photo Resizer - Script (Complete)
+   Photo Resizer - Script (Complete with Background Remove)
    ============================================ */
 
-// ============ PHOTO / SIGNATURE RESIZER ============
+// ============ ELEMENTS ============
 const photoInput = document.getElementById('photoInput');
 const docType = document.getElementById('docType');
 const previewCanvas = document.getElementById('previewCanvas');
-const statusText = document.getElementById('statusText');
 const downloadBtn = document.getElementById('downloadBtn');
+const shareBtn = document.getElementById('shareBtn');
+const processAnotherBtn = document.getElementById('processAnotherBtn');
 const zoomSlider = document.getElementById('zoomSlider');
 const zoomValue = document.getElementById('zoomValue');
 const resetBtn = document.getElementById('resetBtn');
-const adjustControls = document.getElementById('adjustControls');
+const cropBtn = document.getElementById('cropBtn');
+const resultCard = document.getElementById('resultCard');
+const adjustCard = document.getElementById('adjustCard');
+const originalPreview = document.getElementById('originalPreview');
+const originalInfo = document.getElementById('originalInfo');
+const processedInfo = document.getElementById('processedInfo');
+const matchBadge = document.getElementById('matchBadge');
+const matchMessage = document.getElementById('matchMessage');
+const autoRenameNote = document.getElementById('autoRenameNote');
+const autoRenameName = document.getElementById('autoRenameName');
+const reqDimensions = document.getElementById('reqDimensions');
+const reqSize = document.getElementById('reqSize');
 
 let uploadedImage = null;
 let offsetX = 0, offsetY = 0, zoom = 1;
 let isDragging = false, startX = 0, startY = 0;
 let targetW = 0, targetH = 0;
+let originalFileName = '';
+let originalFileSize = 0;
 
+// ============ GET DOCUMENT SPECS ============
 function getDocSpecs() {
     const type = docType ? docType.value : 'photo';
     if (type === 'signature') {
-        return { w: 140, h: 60, label: 'Signature' };
+        return { w: 140, h: 60, label: 'Signature', minKB: 10, maxKB: 20, prefix: 'ibps-signature' };
     }
-    return { w: 200, h: 230, label: 'Photo' };
+    return { w: 200, h: 230, label: 'Photo', minKB: 20, maxKB: 50, prefix: 'ibps-photo' };
 }
 
+// ============ DOCUMENT TYPE CHANGE ============
+if (docType) {
+    docType.addEventListener('change', function() {
+        const specs = getDocSpecs();
+        if (reqDimensions) reqDimensions.textContent = `${specs.w} x ${specs.h} px`;
+        if (reqSize) reqSize.textContent = `${specs.minKB}-${specs.maxKB} KB`;
+        offsetX = 0; offsetY = 0; zoom = 1;
+        if (zoomSlider) zoomSlider.value = 100;
+        if (zoomValue) zoomValue.textContent = '100%';
+        if (uploadedImage) showPreview();
+    });
+}
+
+// ============ FILE SELECT ============
 if (photoInput) {
     photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
+        originalFileName = file.name;
+        originalFileSize = file.size;
         const reader = new FileReader();
         reader.onload = function(event) {
             const img = new Image();
@@ -38,7 +69,13 @@ if (photoInput) {
                 offsetX = 0; offsetY = 0; zoom = 1;
                 if (zoomSlider) zoomSlider.value = 100;
                 if (zoomValue) zoomValue.textContent = '100%';
+
+                if (originalPreview) originalPreview.src = event.target.result;
+                if (originalInfo) originalInfo.textContent = `${img.width} x ${img.height} px • ${(file.size / 1024).toFixed(1)} KB`;
+
                 showPreview();
+                if (resultCard) resultCard.style.display = 'block';
+                if (adjustCard) adjustCard.style.display = 'block';
             };
             img.src = event.target.result;
         };
@@ -46,18 +83,11 @@ if (photoInput) {
     });
 }
 
-if (docType) {
-    docType.addEventListener('change', function() {
-        offsetX = 0; offsetY = 0; zoom = 1;
-        if (zoomSlider) zoomSlider.value = 100;
-        if (zoomValue) zoomValue.textContent = '100%';
-        if (uploadedImage) showPreview();
-    });
-}
-
+// ============ SHOW PREVIEW ============
 function showPreview() {
     if (!uploadedImage || !previewCanvas) return;
     const specs = getDocSpecs();
+    const isSignature = docType && docType.value === 'signature';
     const ctx = previewCanvas.getContext('2d');
 
     targetW = specs.w;
@@ -65,7 +95,7 @@ function showPreview() {
 
     previewCanvas.width = targetW;
     previewCanvas.height = targetH;
-    previewCanvas.classList.add('show');
+    previewCanvas.style.display = 'block';
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
@@ -78,15 +108,72 @@ function showPreview() {
 
     ctx.drawImage(uploadedImage, x, y, drawW, drawH);
 
-    if (statusText) {
-        statusText.textContent = `${specs.label}: ${targetW}x${targetH} px`;
+    // ===== SIGNATURE BACKGROUND REMOVE =====
+    if (isSignature) {
+        removeBackground(previewCanvas);
     }
+
+    // Update processed info
+    const dataUrl = previewCanvas.toDataURL('image/jpeg', 0.9);
+    const sizeKB = (dataUrl.length * 0.75) / 1024;
+
+    if (processedInfo) processedInfo.textContent = `${targetW} x ${targetH} px • ${sizeKB.toFixed(1)} KB`;
+
+    const matches = sizeKB >= specs.minKB && sizeKB <= specs.maxKB;
+
+    if (matchBadge) {
+        if (matches) {
+            matchBadge.textContent = '✅ Ready';
+            matchBadge.style.background = '#e6ffed';
+            matchBadge.style.color = '#22863a';
+        } else {
+            matchBadge.textContent = '⚠️ Size Issue';
+            matchBadge.style.background = '#fff5b1';
+            matchBadge.style.color = '#735c0f';
+        }
+    }
+
+    if (matchMessage) {
+        matchMessage.style.display = matches ? 'flex' : 'none';
+    }
+
     if (downloadBtn) downloadBtn.disabled = false;
-    if (adjustControls) adjustControls.style.display = 'block';
-        const cropBtn = document.getElementById('cropBtn');
-    if (cropBtn) cropBtn.classList.add('show');
+
+    if (autoRenameNote) autoRenameNote.style.display = 'block';
+    if (autoRenameName) autoRenameName.textContent = specs.prefix + '.jpg';
 }
 
+// ============ BACKGROUND REMOVE (Signature) ============
+function removeBackground(canvas) {
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    const threshold = 140;
+
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+
+        if (brightness > threshold) {
+            // Background: pure white
+            data[i] = 255;
+            data[i + 1] = 255;
+            data[i + 2] = 255;
+        } else {
+            // Signature: darker
+            data[i] = Math.max(0, r - 50);
+            data[i + 1] = Math.max(0, g - 50);
+            data[i + 2] = Math.max(0, b - 50);
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+}
+
+// ============ DRAG (Mouse + Touch) ============
 if (previewCanvas) {
     previewCanvas.addEventListener('mousedown', function(e) {
         isDragging = true;
@@ -121,6 +208,7 @@ if (previewCanvas) {
     });
 }
 
+// ============ ZOOM ============
 if (zoomSlider) {
     zoomSlider.addEventListener('input', function() {
         zoom = parseInt(this.value) / 100;
@@ -129,6 +217,7 @@ if (zoomSlider) {
     });
 }
 
+// ============ RESET ============
 if (resetBtn) {
     resetBtn.addEventListener('click', function() {
         offsetX = 0; offsetY = 0; zoom = 1;
@@ -138,23 +227,43 @@ if (resetBtn) {
     });
 }
 
+// ============ DOWNLOAD ============
 function downloadPhoto() {
     if (!previewCanvas || !uploadedImage) return;
     const specs = getDocSpecs();
     const link = document.createElement('a');
-    link.download = specs.label.toLowerCase() + '.jpg';
+    link.download = specs.prefix + '.jpg';
     link.href = previewCanvas.toDataURL('image/jpeg', 0.9);
     link.click();
 }
 if (downloadBtn) downloadBtn.addEventListener('click', downloadPhoto);
 
+// ============ SHARE ============
+if (shareBtn) {
+    shareBtn.addEventListener('click', function() {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            shareBtn.textContent = '✅ Link Copied!';
+            setTimeout(function() { shareBtn.textContent = '🔗 Share'; }, 2000);
+        }).catch(function() {
+            alert('Link: ' + window.location.href);
+        });
+    });
+}
 
+// ============ PROCESS ANOTHER ============
+if (processAnotherBtn) {
+    processAnotherBtn.addEventListener('click', function() {
+        uploadedImage = null;
+        offsetX = 0; offsetY = 0; zoom = 1;
+        if (photoInput) photoInput.value = '';
+        if (resultCard) resultCard.style.display = 'none';
+        if (adjustCard) adjustCard.style.display = 'none';
+        if (downloadBtn) downloadBtn.disabled = true;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
 
-/* ============================================
-   CROP FUNCTIONALITY
-   ============================================ */
-const cropBtn = document.getElementById('cropBtn');
-
+// ============ CROP FUNCTIONALITY ============
 let cropOffsetX = 0, cropOffsetY = 0, cropZoom = 1;
 let cropBox = { x: 75, y: 75, w: 350, h: 350 };
 let cropBoxDragging = false;
@@ -199,9 +308,7 @@ function openCropModal() {
         setupCropEvents();
     }
 
-    cropOffsetX = 0;
-    cropOffsetY = 0;
-    cropZoom = 1;
+    cropOffsetX = 0; cropOffsetY = 0; cropZoom = 1;
     cropBox = { x: 75, y: 75, w: 350, h: 350 };
     modal.classList.add('active');
 
@@ -216,7 +323,6 @@ function openCropModal() {
 function drawCropCanvas() {
     const canvas = document.getElementById('cropCanvas');
     if (!canvas || !uploadedImage) return;
-
     const ctx = canvas.getContext('2d');
     const size = CROP_CANVAS_SIZE;
     canvas.width = size;
@@ -373,15 +479,6 @@ function setupCropEvents() {
         document.addEventListener('touchmove', onMove, { passive: false });
         document.addEventListener('mouseup', onEnd);
         document.addEventListener('touchend', onEnd);
-
-        canvas.addEventListener('mousemove', function(e) {
-            const pos = getMousePos(e);
-            const handle = getHandleAt(pos.x, pos.y);
-            if (handle === 'move') canvas.style.cursor = 'move';
-            else if (handle === 'tl' || handle === 'br') canvas.style.cursor = 'nwse-resize';
-            else if (handle === 'tr' || handle === 'bl') canvas.style.cursor = 'nesw-resize';
-            else canvas.style.cursor = 'crosshair';
-        });
     }
 
     if (zoomSlider) {
@@ -404,29 +501,35 @@ function saveCrop() {
     const canvas = document.getElementById('cropCanvas');
     if (!canvas || !uploadedImage) return;
 
-    // Simply copy the crop box area from the canvas
+    const size = CROP_CANVAS_SIZE;
+    const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height) * cropZoom;
+    const drawW = uploadedImage.width * scale;
+    const drawH = uploadedImage.height * scale;
+    const imgX = (size - drawW) / 2 + cropOffsetX;
+    const imgY = (size - drawH) / 2 + cropOffsetY;
+
+    const srcX = (cropBox.x - imgX) / scale;
+    const srcY = (cropBox.y - imgY) / scale;
+    const srcW = cropBox.w / scale;
+    const srcH = cropBox.h / scale;
+
     const newCanvas = document.createElement('canvas');
     newCanvas.width = cropBox.w;
     newCanvas.height = cropBox.h;
-    const newCtx = newCanvas.getContext('2d');
+    const newCtx = newCanvas.getContext('2d', { alpha: false });
+    newCtx.fillStyle = '#ffffff';
+    newCtx.fillRect(0, 0, cropBox.w, cropBox.h);
 
-    // Copy exactly what's visible in the crop box
-    newCtx.drawImage(
-        canvas,
-        cropBox.x, cropBox.y, cropBox.w, cropBox.h,
-        0, 0, cropBox.w, cropBox.h
-    );
+    newCtx.drawImage(uploadedImage, srcX, srcY, srcW, srcH, 0, 0, cropBox.w, cropBox.h);
 
     const croppedImg = new Image();
     croppedImg.onload = function() {
         uploadedImage = croppedImg;
-        offsetX = 0;
-        offsetY = 0;
-        zoom = 1;
+        offsetX = 0; offsetY = 0; zoom = 1;
         if (zoomSlider) zoomSlider.value = 100;
         if (zoomValue) zoomValue.textContent = '100%';
         showPreview();
         document.getElementById('cropModal').classList.remove('active');
     };
-    croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.9);
+    croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.95);
 }
