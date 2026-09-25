@@ -118,7 +118,7 @@ function showPreview() {
     }
 
     // ===== UPDATE PROCESSED INFO =====
-    const dataUrl = previewCanvas.toDataURL('image/jpeg', 1.0);
+        croppedImg.src = newCanvas.toDataURL('image/jpeg', 1.0);
     const sizeKB = (dataUrl.length * 0.75) / 1024;
 
     if (processedInfo) processedInfo.textContent = `${targetW} x ${targetH} px • ${sizeKB.toFixed(1)} KB`;
@@ -158,7 +158,14 @@ function removeBackground(canvas) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
-    const threshold = 180;
+    // Adaptive threshold based on average brightness
+    let totalBrightness = 0;
+    const pixelCount = data.length / 4;
+    for (let i = 0; i < data.length; i += 4) {
+        totalBrightness += (data[i] + data[i + 1] + data[i + 2]) / 3;
+    }
+    const avgBrightness = totalBrightness / pixelCount;
+    const threshold = Math.max(140, avgBrightness - 20);
 
     for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -167,13 +174,15 @@ function removeBackground(canvas) {
         const brightness = (r + g + b) / 3;
 
         if (brightness > threshold) {
+            // Background: pure white
             data[i] = 255;
             data[i + 1] = 255;
             data[i + 2] = 255;
         } else {
-            data[i] = Math.max(0, r - 30);
-            data[i + 1] = Math.max(0, g - 30);
-            data[i + 2] = Math.max(0, b - 30);
+            // Signature: keep dark, boost contrast
+            data[i] = Math.max(0, r - 60);
+            data[i + 1] = Math.max(0, g - 60);
+            data[i + 2] = Math.max(0, b - 60);
         }
     }
 
