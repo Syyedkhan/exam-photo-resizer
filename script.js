@@ -644,3 +644,58 @@ if (mergeDownloadBtn) {
         link.click();
     });
 }
+
+
+/* ============================================
+   SIGNATURE RESIZER
+   ============================================ */
+const signatureInput = document.getElementById('signatureInput');
+const signatureCanvas = document.getElementById('signatureCanvas');
+const signatureStatus = document.getElementById('signatureStatus');
+const signatureDownloadBtn = document.getElementById('signatureDownloadBtn');
+let signatureImage = null;
+
+if (signatureInput) {
+    signatureInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                signatureImage = img;
+                showSignaturePreview();
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function showSignaturePreview() {
+    if (!signatureImage || !signatureCanvas) return;
+    const ctx = signatureCanvas.getContext('2d');
+    const targetW = 140, targetH = 60;
+    signatureCanvas.width = targetW;
+    signatureCanvas.height = targetH;
+    signatureCanvas.classList.add('show');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetW, targetH);
+    const scale = Math.max(targetW / signatureImage.width, targetH / signatureImage.height);
+    const drawW = signatureImage.width * scale;
+    const drawH = signatureImage.height * scale;
+    const x = (targetW - drawW) / 2;
+    const y = (targetH - drawH) / 2;
+    ctx.drawImage(signatureImage, x, y, drawW, drawH);
+    if (signatureStatus) signatureStatus.textContent = `Signature: ${targetW}x${targetH} px`;
+    if (signatureDownloadBtn) signatureDownloadBtn.disabled = false;
+}
+
+function downloadSignature() {
+    if (!signatureCanvas || !signatureImage) return;
+    const link = document.createElement('a');
+    link.download = 'signature.jpg';
+    link.href = signatureCanvas.toDataURL('image/jpeg', 0.9);
+    link.click();
+}
+if (signatureDownloadBtn) signatureDownloadBtn.addEventListener('click', downloadSignature);
