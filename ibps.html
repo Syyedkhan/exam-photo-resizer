@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
 
-    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,8 +14,7 @@
     </script>
 
     <title>IBPS Photo Signature Resizer 2026 — 20KB to 50KB Free</title>
-    <meta name="description" content="Free IBPS photo resizer for PO, Clerk, SO, RRB. Resize photo to 200x230 px (20-50KB) and signature to 140x60 px (10-20KB). 100% private, files never uploaded.">
-    <meta name="keywords" content="IBPS photo resizer, IBPS signature resizer, IBPS photo size 2026, IBPS PO photo resizer">
+    <meta name="description" content="Free IBPS photo resizer for PO, Clerk, SO, RRB. Resize photo to 200x230 px (20-50KB) and signature to 140x60 px (10-20KB). 100% private.">
     <link rel="canonical" href="https://exam-photo-resizer.vercel.app/ibps.html">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -59,46 +57,86 @@
             </div>
         </section>
 
-        <!-- RESIZER TOOL -->
+        <!-- CONFIGURATION -->
         <div class="card">
-            <h2>📸 Resize Your Document</h2>
+            <h2>⚙️ Configuration</h2>
 
-            <label for="docType">Document Type:</label>
+            <label for="docType">Choose Document Type:</label>
             <select id="docType" aria-label="Document type">
                 <option value="photo" selected>📷 Photo (200 x 230 px)</option>
                 <option value="signature">✍️ Signature (140 x 60 px)</option>
             </select>
 
-            <label for="photoInput" style="margin-top: 15px;">File select karein</label>
-            <input type="file" id="photoInput" accept="image/*" aria-label="File upload karein">
-        </div>
-
-        <!-- PREVIEW & ADJUST -->
-                        <div class="card">
-            <h2>Preview & Adjust</h2>
-            <div class="preview-box">
-                <button id="cropBtn" class="crop-btn-float" type="button">✂️ Crop</button>
-                <canvas id="previewCanvas"></canvas>
-                <p id="statusText">File select karne ke baad yahan preview dikhega.</p>
+            <div id="requirements" style="background:#f0f4ff;border-radius:8px;padding:15px;margin-top:15px;">
+                <p style="margin:0;color:#4c51bf;font-weight:600;">📋 Image Requirements</p>
+                <p style="margin:6px 0 0;color:#4a5568;font-size:14px;">
+                    Dimensions: <strong id="reqDimensions">200 x 230 px</strong> |
+                    Size: <strong id="reqSize">20-50 KB</strong> |
+                    Format: <strong>JPG</strong>
+                </p>
             </div>
 
-            <div id="adjustControls" style="display:none;">
-                <p class="hint">👆 Photo ko drag karke adjust kariye</p>
+            <label for="photoInput" style="margin-top: 20px;">📁 File select karein</label>
+            <input type="file" id="photoInput" accept="image/*">
+
+            <p style="font-size:13px;color:#718096;margin-top:12px;text-align:center;">
+                🔒 Privacy First: Your images are processed locally in your browser.
+            </p>
+        </div>
+
+        <!-- RESULT COMPARISON -->
+        <div class="card" id="resultCard" style="display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <h2 style="margin:0;">🎯 Result Comparison</h2>
+                <span id="matchBadge" style="background:#e6ffed;color:#22863a;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">⚙️ Processing</span>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-label">Original</div>
+                    <div class="comparison-image">
+                        <img id="originalPreview" alt="Original">
+                    </div>
+                    <p id="originalInfo" class="comparison-info">—</p>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-label processed">Ready</div>
+                    <div class="comparison-image" style="position: relative;">
+                        <button id="cropBtn" class="crop-btn-float" type="button">✂️ Crop</button>
+                        <canvas id="previewCanvas"></canvas>
+                    </div>
+                    <p id="processedInfo" class="comparison-info processed">—</p>
+                </div>
+            </div>
+
+            <!-- MATCH MESSAGE -->
+            <div id="matchMessage" class="match-message" style="display:none;">
+                <span style="font-size:24px;">✅</span>
+                <div>
+                    <strong>Perfect Match!</strong>
+                    <p style="margin:0;font-size:14px;color:#4a5568;">Image meets all exam requirements.</p>
+                </div>
+            </div>
+
+            <!-- ADJUST CONTROLS -->
+            <div id="adjustCard" style="display:none; margin-top: 15px; background: #f8f9ff; border-radius: 8px; padding: 15px;">
+                <p class="hint">👆 Drag to adjust position</p>
                 <label class="control-label">Zoom: <span id="zoomValue">100%</span></label>
                 <input type="range" id="zoomSlider" min="50" max="300" value="100">
-                <button id="resetBtn" type="button">Reset Position</button>
+                <button id="resetBtn" type="button" class="btn-secondary" style="margin-top:10px;">Reset Position</button>
             </div>
 
-            <button id="downloadBtn" disabled aria-label="Download">Download</button>
-        </div>
-                <!-- ADJUST CONTROLS -->
-        <div class="card" id="adjustCard" style="display:none;">
-            <h2>✏️ Adjust</h2>
-            <p class="hint">👆 Drag to adjust position</p>
-            <label class="control-label">Zoom: <span id="zoomValue">100%</span></label>
-            <input type="range" id="zoomSlider" min="50" max="300" value="100">
-            <button id="resetBtn" type="button" class="btn-secondary" style="margin-top:10px;">Reset Position</button>
-            <button id="cropBtn" type="button" class="btn-secondary" style="margin-top:10px;">✂️ Crop Image</button>
+            <!-- ACTION BUTTONS -->
+            <div class="action-buttons">
+                <button id="downloadBtn" disabled class="btn-primary">⬇ Download Image</button>
+                <button id="shareBtn" class="btn-secondary">🔗 Share</button>
+                <button id="processAnotherBtn" class="btn-secondary">🔄 Process Another</button>
+            </div>
+
+            <p id="autoRenameNote" style="font-size:13px;color:#718096;text-align:center;margin-top:15px;display:none;">
+                📝 Auto-renamed to <strong id="autoRenameName">ibps-photo.jpg</strong> for error-free portal upload.
+            </p>
         </div>
 
         <!-- TIPS -->
@@ -112,79 +150,27 @@
             </ul>
         </div>
 
-        <!-- SEO Content Section -->
+        <!-- SEO Content -->
         <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-
             <h2>IBPS Photo Requirements 2026 (Official Specifications)</h2>
-            <p>IBPS (Institute of Banking Personnel Selection) conducts exams for PO, Clerk, SO, and RRB across India. Every applicant must upload a photo and signature. Each document has strict size and dimension requirements. If any document does not match, the application gets rejected. This tool helps you get both exactly right.</p>
-
+            <p>IBPS conducts exams for PO, Clerk, SO, and RRB across India. Every applicant must upload a photo and signature with strict size requirements. This tool helps you get both exactly right.</p>
             <h3>IBPS Photo Size & Dimensions</h3>
             <ul>
                 <li><strong>Photo dimensions:</strong> 200 x 230 pixels</li>
                 <li><strong>Photo file size:</strong> 20 KB to 50 KB</li>
                 <li><strong>Format:</strong> JPG or JPEG</li>
-                <li><strong>Background:</strong> Plain white or light</li>
-                <li><strong>Photo age:</strong> Recent (within 3 months)</li>
             </ul>
-
             <h3>IBPS Signature Requirements</h3>
             <ul>
                 <li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
                 <li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
-                <li><strong>Ink color:</strong> Black ink on white paper</li>
                 <li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
             </ul>
-
-            <h2>IBPS Exams Covered by This Tool</h2>
-            <ul>
-                <li>IBPS PO (Probationary Officer)</li>
-                <li>IBPS Clerk</li>
-                <li>IBPS SO (Specialist Officer)</li>
-                <li>IBPS RRB (Regional Rural Banks)</li>
-            </ul>
-
-            <h2>Common Mistakes to Avoid</h2>
-            <ul>
-                <li>Uploading a photo with dark or colored background</li>
-                <li>Signature in CAPITAL LETTERS — most common mistake</li>
-                <li>Photo with glasses or hat — not allowed</li>
-                <li>File size above 50 KB — rejected</li>
-                <li>Old photo (more than 3 months) — rejected</li>
-                <li>Blurred or low-quality photo</li>
-            </ul>
-
-            <h2>How to Use This Tool</h2>
-            <ol>
-                <li>Choose Document Type (Photo or Signature)</li>
-                <li>Upload your file</li>
-                <li>Tool automatically crops to required size</li>
-                <li>Drag and zoom to adjust</li>
-                <li>Download your perfectly sized document</li>
-            </ol>
-
             <h2>Frequently Asked Questions</h2>
-
             <h3>What is the IBPS photo size in 2026?</h3>
             <p>IBPS photo should be 200x230 pixels with file size 20 KB to 50 KB in JPG/JPEG format.</p>
-
-            <h3>Can I use CAPITAL LETTERS in my IBPS signature?</h3>
-            <p>No. IBPS does not accept signatures in CAPITAL LETTERS. Use normal handwriting.</p>
-
-            <h3>Is a white background mandatory for IBPS photo?</h3>
-            <p>Yes, a plain white or light background is required. Dark or colored backgrounds are rejected.</p>
-
-            <h3>Can I take a photo with my mobile phone?</h3>
-            <p>Yes, as long as the photo is clear, recent, and meets all specifications.</p>
-
-            <h3>What if my file size is above 50 KB?</h3>
-            <p>Use our free Image Compressor tool to reduce the file size to 20-50 KB without losing quality.</p>
-
             <h3>Does this tool upload my photo to a server?</h3>
             <p>No. All processing happens in your browser. Your photo never leaves your device.</p>
-
-            <h3>Is this tool free?</h3>
-            <p>Yes, 100% free. No signup, no login.</p>
-
             <h2>Related Tools</h2>
             <p>
                 <a href="ssc-cgl.html">SSC CGL Photo Resizer</a> |
@@ -193,7 +179,6 @@
                 <a href="compressor.html">Image Compressor</a> |
                 <a href="photo-merger.html">Merge Photo & Signature</a>
             </p>
-
         </section>
     </main>
 

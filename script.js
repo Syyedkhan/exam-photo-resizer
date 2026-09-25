@@ -1,5 +1,5 @@
 /* ============================================
-   Photo Resizer - Script (Complete with Background Remove)
+   Photo Resizer - Script (Complete)
    ============================================ */
 
 // ============ ELEMENTS ============
@@ -100,7 +100,7 @@ function showPreview() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
 
-        const scale = Math.min(targetW / uploadedImage.width, targetH / uploadedImage.height) * zoom;
+    const scale = Math.min(targetW / uploadedImage.width, targetH / uploadedImage.height) * zoom;
     const drawW = uploadedImage.width * scale;
     const drawH = uploadedImage.height * scale;
     const x = (targetW - drawW) / 2 + offsetX;
@@ -113,12 +113,14 @@ function showPreview() {
         removeBackground(previewCanvas);
     }
 
-    // Update processed info
+    // ===== HIDE STATUS TEXT =====
+    const statusText = document.getElementById('statusText');
+    if (statusText) statusText.style.display = 'none';
+
+    // ===== UPDATE PROCESSED INFO =====
     const dataUrl = previewCanvas.toDataURL('image/jpeg', 0.9);
     const sizeKB = (dataUrl.length * 0.75) / 1024;
 
-        const statusText = document.getElementById('statusText');
-    if (statusText) statusText.style.display = 'none';
     if (processedInfo) processedInfo.textContent = `${targetW} x ${targetH} px • ${sizeKB.toFixed(1)} KB`;
 
     const matches = sizeKB >= specs.minKB && sizeKB <= specs.maxKB;
@@ -143,6 +145,9 @@ function showPreview() {
 
     if (autoRenameNote) autoRenameNote.style.display = 'block';
     if (autoRenameName) autoRenameName.textContent = specs.prefix + '.jpg';
+
+    // ===== SHOW ADJUST CONTROLS =====
+    if (adjustCard) adjustCard.style.display = 'block';
 }
 
 // ============ BACKGROUND REMOVE (Signature) ============
@@ -160,12 +165,10 @@ function removeBackground(canvas) {
         const brightness = (r + g + b) / 3;
 
         if (brightness > threshold) {
-            // Background: pure white
             data[i] = 255;
             data[i + 1] = 255;
             data[i + 2] = 255;
         } else {
-            // Signature: darker
             data[i] = Math.max(0, r - 50);
             data[i + 1] = Math.max(0, g - 50);
             data[i + 2] = Math.max(0, b - 50);
@@ -314,9 +317,9 @@ function openCropModal() {
     cropBox = { x: 75, y: 75, w: 350, h: 350 };
     modal.classList.add('active');
 
-    const zoomSlider = document.getElementById('cropZoomSlider');
+    const zoomSliderCrop = document.getElementById('cropZoomSlider');
     const zoomLabel = document.getElementById('cropZoomValue');
-    if (zoomSlider) zoomSlider.value = 100;
+    if (zoomSliderCrop) zoomSliderCrop.value = 100;
     if (zoomLabel) zoomLabel.textContent = '100%';
 
     drawCropCanvas();
@@ -375,7 +378,7 @@ function drawCropCanvas() {
 function setupCropEvents() {
     const canvas = document.getElementById('cropCanvas');
     const modal = document.getElementById('cropModal');
-    const zoomSlider = document.getElementById('cropZoomSlider');
+    const zoomSliderCrop = document.getElementById('cropZoomSlider');
     const zoomLabel = document.getElementById('cropZoomValue');
     const saveBtn = document.getElementById('cropSaveBtn');
     const cancelBtn = document.getElementById('cropCancelBtn');
@@ -483,8 +486,8 @@ function setupCropEvents() {
         document.addEventListener('touchend', onEnd);
     }
 
-    if (zoomSlider) {
-        zoomSlider.addEventListener('input', function() {
+    if (zoomSliderCrop) {
+        zoomSliderCrop.addEventListener('input', function() {
             cropZoom = parseInt(this.value) / 100;
             if (zoomLabel) zoomLabel.textContent = this.value + '%';
             drawCropCanvas();
