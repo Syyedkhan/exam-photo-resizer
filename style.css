@@ -533,3 +533,153 @@ body {
         max-height: 200px;
     }
 }
+
+
+/* ========== MERGE GRID (PI7 STYLE) ========== */
+.merge-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 15px;
+    background: #f8f9ff;
+    border: 2px dashed #667eea;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    min-height: 160px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.merge-item {
+    position: relative;
+    background: white;
+    border: 2px solid #4c51bf;
+    border-radius: 8px;
+    padding: 6px;
+    width: 200px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.merge-item:hover {
+    box-shadow: 0 4px 12px rgba(76, 81, 191, 0.2);
+}
+
+.merge-item img {
+    max-width: 100%;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    display: block;
+}
+
+.merge-item .crop-btn {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #4c51bf;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.merge-item .crop-btn:hover {
+    background: #3c40a0;
+}
+
+.merge-item .remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.merge-item .remove-btn:hover {
+    background: #b91c1c;
+}
+
+.merge-item .file-name {
+    font-size: 9px;
+    color: #718096;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+}
+
+/* ADD PHOTO BOX */
+.add-photo-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    color: #667eea;
+    border-radius: 6px;
+}
+
+.add-photo-inner:hover {
+    background: #f0f4ff;
+}
+
+/* MERGE CANVAS (PREVIEW) */
+#mergeCanvas {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+}
+
+#mergePreviewBox {
+    background: #f7fafc;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .merge-item {
+        width: 140px;
+        height: 130px;
+    }
+    .merge-item img {
+        max-height: 80px;
+    }
+    #mergeCanvas {
+        max-height: 250px;
+    }
+}
