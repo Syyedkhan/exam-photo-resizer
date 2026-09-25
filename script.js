@@ -1015,3 +1015,109 @@ if (mergeDownloadBtn) {
         link.click();
     });
 }
+
+
+/* ============================================
+   PHOTO COMPRESSOR
+   ============================================ */
+const compressInput = document.getElementById('compressInput');
+const targetSize = document.getElementById('targetSize');
+const compressPreview = document.getElementById('compressPreview');
+const compressStatus = document.getElementById('compressStatus');
+const compressBtn = document.getElementById('compressBtn');
+const compressDownloadBtn = document.getElementById('compressDownloadBtn');
+
+let compressImage = null;
+let compressedBlob = null;
+
+if (compressInput) {
+    compressInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                compressImage = img;
+                if (compressPreview) {
+                    compressPreview.src = event.target.result;
+                    compressPreview.style.display = 'block';
+                }
+                if (compressStatus) {
+                    compressStatus.textContent = `Original Size: ${(file.size / 1024).toFixed(1)} KB`;
+                }
+                if (compressBtn) compressBtn.disabled = false;
+                if (compressDownloadBtn) compressDownloadBtn.disabled = true;
+                compressedBlob = null;
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function compressImageFile(img, targetKB, callback) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = img.width;
+    let height = img.height;
+
+    if (width > 1200 || height > 1200) {
+        if (width > height) {
+            height = (height / width) * 1200;
+            width = 1200;
+        } else {
+            width = (width / height) * 1200;
+            height = 1200;
+        }
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(img, 0, 0, width, height);
+
+    let quality = 1.0;
+    function tryCompress() {
+        canvas.toBlob(function(blob) {
+            const sizeKB = blob.size / 1024;
+            if (sizeKB <= targetKB || quality <= 0.1) {
+                callback(blob);
+            } else {
+                quality -= 0.05;
+                tryCompress();
+            }
+        }, 'image/jpeg', quality);
+    }
+    tryCompress();
+}
+
+if (compressBtn) {
+    compressBtn.addEventListener('click', function() {
+        if (!compressImage) return;
+        const targetKB = parseInt(targetSize.value) || 100;
+        if (compressStatus) compressStatus.textContent = 'Compressing...';
+
+        compressImageFile(compressImage, targetKB, function(blob) {
+            compressedBlob = blob;
+            const sizeKB = (blob.size / 1024).toFixed(1);
+
+            if (compressPreview) {
+                compressPreview.src = URL.createObjectURL(blob);
+            }
+            if (compressStatus) {
+                compressStatus.textContent = `✅ Compressed: ${sizeKB} KB (Target: ${targetKB} KB)`;
+            }
+            if (compressDownloadBtn) compressDownloadBtn.disabled = false;
+        });
+    });
+}
+
+if (compressDownloadBtn) {
+    compressDownloadBtn.addEventListener('click', function() {
+        if (!compressedBlob) return;
+        const link = document.createElement('a');
+        link.download = 'compressed-photo.jpg';
+        link.href = URL.createObjectURL(compressedBlob);
+        link.click();
+    });
+}
