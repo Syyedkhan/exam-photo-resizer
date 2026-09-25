@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
 
-    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,8 +14,8 @@
     </script>
 
     <title>Merge Photo and Signature into One PDF Free Online</title>
-    <meta name="description" content="Free photo and signature merger. Merge photo and signature into one image or PDF. Works in browser, 100% private, no upload needed.">
-    <meta name="keywords" content="photo signature merger, merge photo and signature, combine photo signature PDF, join photo and signature, exam form photo signature merge">
+    <meta name="description" content="Free photo and signature merger. Merge 2 or more images into one — horizontal, vertical, or grid layout. 100% private.">
+    <meta name="keywords" content="photo signature merger, merge photo and signature, combine photo signature PDF, join photo and signature">
     <link rel="canonical" href="https://exam-photo-resizer.vercel.app/photo-merger.html">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -25,13 +24,13 @@
     <header class="header">
         <div class="container">
             <h1 class="logo">📸 Photo Resizer</h1>
-            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
+            <p class="tagline">Free • Fast • 100% Private</p>
             <nav class="nav">
-    <a href="index.html">🏠 Home</a>
-    <a href="india.html">🇮🇳 India</a>
-    <a href="compressor.html">🗜️ Compressor</a>
-    <a href="photo-merger.html">🔗 Merger</a>
-</nav>
+                <a href="index.html">🏠 Home</a>
+                <a href="india.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+                <a href="photo-merger.html">🔗 Merger</a>
+            </nav>
         </div>
     </header>
 
@@ -39,26 +38,30 @@
 
         <section class="intro-section">
             <h2>🔗 Photo Merger</h2>
-            <p>Join 2 or more images — crop, drag, zoom, and merge</p>
+            <p>Join 2 or more images — crop, drag, and merge</p>
         </section>
 
-        <div class="card">
-            <h2>1. Select Photos</h2>
-            <label for="mergeInput">Choose photos (2 or more)</label>
-            <input type="file" id="mergeInput" accept="image/*" multiple aria-label="Upload photos">
-            <p id="mergeStatus" style="margin-top: 10px; color: #718096; font-size: 14px;">Select 2 or more photos to merge.</p>
-        </div>
+        <!-- MERGER TOOL -->
+        <div class="tool-container">
 
-        <div class="card">
-            <h2>2. Preview & Crop</h2>
-            <div id="mergeGrid" class="merge-grid"></div>
-            <button id="addMoreBtn" class="add-more-btn" style="display:none;">+ Add More Photos</button>
-        </div>
+            <h2 class="tool-title">Merge <span>Images</span></h2>
 
-        <div class="card">
-            <h2>3. Options</h2>
+            <!-- IMAGE GRID (PI7 STYLE) -->
+            <div class="merge-grid" id="mergeGrid">
+                <div class="merge-item" id="addPhotoBox">
+                    <div class="add-photo-inner" onclick="document.getElementById('mergeInput').click()">
+                        <span style="font-size:32px;">+</span>
+                        <p style="font-size:13px;color:#718096;margin-top:6px;">Add Photo</p>
+                    </div>
+                </div>
+            </div>
 
-            <div class="option-row">
+            <input type="file" id="mergeInput" accept="image/*" multiple style="display:none;">
+
+            <p class="file-name" id="mergeStatus">Select 2 or more images to merge.</p>
+
+            <!-- DIRECTION -->
+            <div class="option-row" style="justify-content:center;margin-top:20px;">
                 <label>Direction:</label>
                 <div class="radio-group">
                     <label class="radio-label">
@@ -76,80 +79,90 @@
                 </div>
             </div>
 
-        </div>
-
-        <div class="card">
-            <h2>4. Merge & Download</h2>
-            <button id="mergeBtn" disabled>🔗 Join Images</button>
-            <button id="mergeDownloadBtn" disabled style="margin-top:10px;">⬇ Download Merged Photo</button>
-            <div class="preview-box" style="margin-top: 15px;">
-                <canvas id="mergeCanvas" style="display:none; max-width:100%; border-radius:6px;"></canvas>
-                <p id="mergePreviewText">Merged photo will appear here.</p>
+            <!-- ARRANGE -->
+            <div class="option-row" style="justify-content:center;">
+                <label>Arrange:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="arrange" value="proper" checked>
+                        Proper Align
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="arrange" value="free">
+                        Free Style
+                    </label>
+                </div>
             </div>
+
+            <!-- ADD BORDER -->
+            <div class="option-row" style="justify-content:center;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="addBorder">
+                    Add Border To Images
+                </label>
+            </div>
+
+            <!-- JOIN BUTTON -->
+            <button id="mergeBtn" class="resize-btn" disabled>🔗 Join Images</button>
+
+            <!-- PREVIEW -->
+            <div class="preview-box" style="margin-top: 15px; display:none;" id="mergePreviewBox">
+                <canvas id="mergeCanvas" style="max-width:100%; border-radius:6px; display:block;"></canvas>
+            </div>
+
+            <!-- DOWNLOAD -->
+            <button id="mergeDownloadBtn" class="download-btn" style="display:none;">⬇ Download Merged Photo</button>
+
         </div>
 
         <!-- SEO Content Section -->
-<section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-
-<h2>Merge Photo and Signature into One File — Free Online Tool</h2>
-<p>Many online forms require you to upload your photo and signature as a single image. This free tool lets you merge them in seconds. No upload, no server, 100% private.</p>
-
-<h2>When Do You Need a Photo + Signature Merger?</h2>
-<ul>
-<li><strong>Government exam forms:</strong> Some exams require photo and signature in one file</li>
-<li><strong>Job applications:</strong> Some portals ask for merged photo and signature</li>
-<li><strong>Bank account opening:</strong> KYC forms often need merged files</li>
-<li><strong>School/college admissions:</strong> Application forms require merged files</li>
-</ul>
-
-<h2>Features of This Merger Tool</h2>
-<ul>
-<li><strong>Crop each image:</strong> Adjust photo and signature dimensions</li>
-<li><strong>Drag and zoom:</strong> Position each image exactly</li>
-<li><strong>Multiple layouts:</strong> Horizontal, vertical, or grid</li>
-<li><strong>Add more photos:</strong> Merge 2 or more images</li>
-<li><strong>100% private:</strong> Files never leave your device</li>
-</ul>
-
-<h2>How to Merge Photo and Signature</h2>
-<ol>
-<li>Upload your photo and signature (2 or more images)</li>
-<li>Choose layout: horizontal, vertical, or grid</li>
-<li>Crop and adjust each image</li>
-<li>Click "Join Images"</li>
-<li>Preview the merged result</li>
-<li>Download your merged file</li>
-</ol>
-
-<h2>Frequently Asked Questions</h2>
-
-<h3>Is this merger tool free?</h3>
-<p>Yes, 100% free. No signup, no login.</p>
-
-<h3>Are my photos uploaded to a server?</h3>
-<p>No. All processing happens in your browser. Your photos never leave your device.</p>
-
-<h3>Can I merge more than 2 images?</h3>
-<p>Yes. You can merge 2 or more images, in horizontal, vertical, or grid layout.</p>
-
-<h3>Can I crop each image before merging?</h3>
-<p>Yes. Each image has its own crop and zoom controls.</p>
-
-<h3>What formats are supported?</h3>
-<p>JPG, JPEG, PNG, and WebP.</p>
-
-<h3>Does it work on mobile?</h3>
-<p>Yes, works on any device — mobile, tablet, or desktop.</p>
-
-<h2>Related Tools</h2>
-<p>
-<a href="index.html">Photo Resizer</a> |
-<a href="compressor.html">Image Compressor</a> |
-<a href="ibps.html">IBPS Photo Resizer</a> |
-<a href="ssc-cgl.html">SSC CGL Photo Resizer</a>
-</p>
-
-</section>
+        <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <h2>Merge Photo and Signature into One File — Free Online Tool</h2>
+            <p>Many online forms require you to upload your photo and signature as a single image. This free tool lets you merge them in seconds. No upload, no server, 100% private.</p>
+            <h2>When Do You Need a Photo + Signature Merger?</h2>
+            <ul>
+                <li><strong>Government exam forms:</strong> Some exams require photo and signature in one file</li>
+                <li><strong>Job applications:</strong> Some portals ask for merged photo and signature</li>
+                <li><strong>Bank account opening:</strong> KYC forms often need merged files</li>
+                <li><strong>School/college admissions:</strong> Application forms require merged files</li>
+            </ul>
+            <h2>Features of This Merger Tool</h2>
+            <ul>
+                <li><strong>Crop each image:</strong> Adjust photo and signature dimensions</li>
+                <li><strong>Multiple layouts:</strong> Horizontal, vertical, or grid</li>
+                <li><strong>Add more photos:</strong> Merge 2 or more images</li>
+                <li><strong>100% private:</strong> Files never leave your device</li>
+            </ul>
+            <h2>How to Merge Photo and Signature</h2>
+            <ol>
+                <li>Upload your photo and signature (2 or more images)</li>
+                <li>Choose layout: horizontal, vertical, or grid</li>
+                <li>Crop and adjust each image</li>
+                <li>Click "Join Images"</li>
+                <li>Preview the merged result</li>
+                <li>Download your merged file</li>
+            </ol>
+            <h2>Frequently Asked Questions</h2>
+            <h3>Is this merger tool free?</h3>
+            <p>Yes, 100% free. No signup, no login.</p>
+            <h3>Are my photos uploaded to a server?</h3>
+            <p>No. All processing happens in your browser. Your photos never leave your device.</p>
+            <h3>Can I merge more than 2 images?</h3>
+            <p>Yes. You can merge 2 or more images, in horizontal, vertical, or grid layout.</p>
+            <h3>Can I crop each image before merging?</h3>
+            <p>Yes. Each image has its own crop and zoom controls.</p>
+            <h3>What formats are supported?</h3>
+            <p>JPG, JPEG, PNG, and WebP.</p>
+            <h3>Does it work on mobile?</h3>
+            <p>Yes, works on any device — mobile, tablet, or desktop.</p>
+            <h2>Related Tools</h2>
+            <p>
+                <a href="index.html">Photo Resizer</a> |
+                <a href="compressor.html">Image Compressor</a> |
+                <a href="ibps.html">IBPS Photo Resizer</a> |
+                <a href="ssc-cgl.html">SSC CGL Photo Resizer</a>
+            </p>
+        </section>
     </main>
 
     <footer class="footer">
