@@ -29,8 +29,6 @@ let uploadedImage = null;
 let offsetX = 0, offsetY = 0, zoom = 1;
 let isDragging = false, startX = 0, startY = 0;
 let targetW = 0, targetH = 0;
-let originalFileName = '';
-let originalFileSize = 0;
 
 // ============ GET DOCUMENT SPECS ============
 function getDocSpecs() {
@@ -59,8 +57,6 @@ if (photoInput) {
     photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
-        originalFileName = file.name;
-        originalFileSize = file.size;
         const reader = new FileReader();
         reader.onload = function(event) {
             const img = new Image();
@@ -76,6 +72,7 @@ if (photoInput) {
                 showPreview();
                 if (resultCard) resultCard.style.display = 'block';
                 if (adjustCard) adjustCard.style.display = 'block';
+                if (cropBtn) cropBtn.style.display = 'block';
             };
             img.src = event.target.result;
         };
@@ -95,7 +92,14 @@ function showPreview() {
 
     previewCanvas.width = targetW;
     previewCanvas.height = targetH;
+
+    // CSS size — fit in box
     previewCanvas.style.display = 'block';
+    previewCanvas.style.width = '100%';
+    previewCanvas.style.height = 'auto';
+    previewCanvas.style.maxWidth = '100%';
+    previewCanvas.style.maxHeight = '220px';
+    previewCanvas.style.objectFit = 'contain';
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
@@ -113,11 +117,7 @@ function showPreview() {
         removeBackground(previewCanvas);
     }
 
-    // ===== HIDE STATUS TEXT =====
-    const statusText = document.getElementById('statusText');
-    if (statusText) statusText.style.display = 'none';
-
-    // ===== UPDATE PROCESSED INFO (QUALITY 1.0) =====
+    // ===== UPDATE PROCESSED INFO =====
     const dataUrl = previewCanvas.toDataURL('image/jpeg', 1.0);
     const sizeKB = (dataUrl.length * 0.75) / 1024;
 
@@ -146,13 +146,12 @@ function showPreview() {
     if (autoRenameNote) autoRenameNote.style.display = 'block';
     if (autoRenameName) autoRenameName.textContent = specs.prefix + '.jpg';
 
-    // ===== SHOW ADJUST CONTROLS =====
     if (adjustCard) adjustCard.style.display = 'block';
 
-    // ===== SYNC ZOOM SLIDER =====
     if (zoomSlider) zoomSlider.value = Math.round(zoom * 100);
     if (zoomValue) zoomValue.textContent = Math.round(zoom * 100) + '%';
 }
+
 // ============ BACKGROUND REMOVE (Signature) ============
 function removeBackground(canvas) {
     const ctx = canvas.getContext('2d');
@@ -181,7 +180,7 @@ function removeBackground(canvas) {
     ctx.putImageData(imageData, 0, 0);
 }
 
-// ============ DRAG (Mouse + Touch) ============
+// ============ DRAG ============
 if (previewCanvas) {
     previewCanvas.addEventListener('mousedown', function(e) {
         isDragging = true;
@@ -267,6 +266,7 @@ if (processAnotherBtn) {
         if (resultCard) resultCard.style.display = 'none';
         if (adjustCard) adjustCard.style.display = 'none';
         if (downloadBtn) downloadBtn.disabled = true;
+        if (cropBtn) cropBtn.style.display = 'none';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
