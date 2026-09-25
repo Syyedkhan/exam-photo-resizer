@@ -117,8 +117,8 @@ function showPreview() {
     const statusText = document.getElementById('statusText');
     if (statusText) statusText.style.display = 'none';
 
-    // ===== UPDATE PROCESSED INFO =====
-    const dataUrl = previewCanvas.toDataURL('image/jpeg', 0.9);
+    // ===== UPDATE PROCESSED INFO (QUALITY 1.0) =====
+    const dataUrl = previewCanvas.toDataURL('image/jpeg', 1.0);
     const sizeKB = (dataUrl.length * 0.75) / 1024;
 
     if (processedInfo) processedInfo.textContent = `${targetW} x ${targetH} px • ${sizeKB.toFixed(1)} KB`;
@@ -148,15 +148,18 @@ function showPreview() {
 
     // ===== SHOW ADJUST CONTROLS =====
     if (adjustCard) adjustCard.style.display = 'block';
-}
 
+    // ===== SYNC ZOOM SLIDER =====
+    if (zoomSlider) zoomSlider.value = Math.round(zoom * 100);
+    if (zoomValue) zoomValue.textContent = Math.round(zoom * 100) + '%';
+}
 // ============ BACKGROUND REMOVE (Signature) ============
 function removeBackground(canvas) {
     const ctx = canvas.getContext('2d');
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
-    const threshold = 140;
+    const threshold = 180;
 
     for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -169,9 +172,9 @@ function removeBackground(canvas) {
             data[i + 1] = 255;
             data[i + 2] = 255;
         } else {
-            data[i] = Math.max(0, r - 50);
-            data[i + 1] = Math.max(0, g - 50);
-            data[i + 2] = Math.max(0, b - 50);
+            data[i] = Math.max(0, r - 30);
+            data[i + 1] = Math.max(0, g - 30);
+            data[i + 2] = Math.max(0, b - 30);
         }
     }
 
