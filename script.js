@@ -83,6 +83,8 @@ function showPreview() {
     }
     if (downloadBtn) downloadBtn.disabled = false;
     if (adjustControls) adjustControls.style.display = 'block';
+        const cropBtn = document.getElementById('cropBtn');
+    if (cropBtn) cropBtn.classList.add('show');
 }
 
 if (previewCanvas) {

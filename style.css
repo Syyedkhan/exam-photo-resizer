@@ -818,3 +818,32 @@ input[type="range"]::-moz-range-thumb {
 .crop-zoom-row input[type="range"] {
     width: 200px;
 }
+
+
+/* ========== FLOATING CROP BUTTON ========== */
+.crop-btn-float {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(102, 126, 234, 0.95);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10;
+    transition: 0.2s;
+    display: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.crop-btn-float:hover {
+    background: #4c51bf;
+    transform: translateY(-2px);
+}
+
+.crop-btn-float.show {
+    display: block;
+}
