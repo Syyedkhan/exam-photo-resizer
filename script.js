@@ -13,7 +13,6 @@ const resizeBtn = document.getElementById('resizeBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const badgeW = document.getElementById('badgeW');
 const badgeH = document.getElementById('badgeH');
-const toolLabel = document.getElementById('toolLabel');
 
 let uploadedImage = null;
 let resizedCanvas = null;
@@ -60,14 +59,12 @@ function loadImage(file) {
             resizeBtn.disabled = false;
             downloadBtn.style.display = 'none';
 
-            // Show image in box
             imageArea.innerHTML = `
                 <button class="crop-btn-icon" id="cropBtn">✂️ Crop</button>
                 <button class="remove-btn-icon" id="removeBtn">×</button>
                 <img src="${event.target.result}" id="previewImg">
             `;
 
-            // Setup crop & remove
             document.getElementById('cropBtn').addEventListener('click', function(e) {
                 e.stopPropagation();
                 openCropModal();
@@ -78,7 +75,6 @@ function loadImage(file) {
                 removeImage();
             });
 
-            // Prevent image click from opening file picker
             const previewImg = document.getElementById('previewImg');
             previewImg.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -105,7 +101,6 @@ function removeImage() {
     `;
 }
 
-// Update badges
 widthInput.addEventListener('input', function() {
     badgeW.textContent = 'W-' + (this.value || '0');
 });
@@ -122,7 +117,6 @@ resizeBtn.addEventListener('click', function() {
     const targetH = parseInt(heightInput.value) || 60;
     const targetKB = parseInt(sizeInput.value) || 20;
 
-    // Create canvas
     const canvas = document.createElement('canvas');
     canvas.width = targetW;
     canvas.height = targetH;
@@ -131,7 +125,6 @@ resizeBtn.addEventListener('click', function() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
 
-    // Fit image
     const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height);
     const drawW = uploadedImage.width * scale;
     const drawH = uploadedImage.height * scale;
@@ -140,13 +133,23 @@ resizeBtn.addEventListener('click', function() {
 
     ctx.drawImage(uploadedImage, x, y, drawW, drawH);
 
+    // ===== ADD SLIGHT NOISE TO INCREASE FILE SIZE =====
+    const imgData = ctx.getImageData(0, 0, targetW, targetH);
+    const pixels = imgData.data;
+    for (let i = 0; i < pixels.length; i += 4) {
+        pixels[i] = Math.min(255, pixels[i] + (Math.random() * 6 - 3));
+        pixels[i + 1] = Math.min(255, pixels[i + 1] + (Math.random() * 6 - 3));
+        pixels[i + 2] = Math.min(255, pixels[i + 2] + (Math.random() * 6 - 3));
+    }
+    ctx.putImageData(imgData, 0, 0);
+
     // Compress to target KB
-    let quality = 0.95;
+    let quality = 1.0;
     let dataUrl = canvas.toDataURL('image/jpeg', quality);
     let sizeKB = (dataUrl.length * 0.75) / 1024;
 
     while (sizeKB > targetKB && quality > 0.1) {
-        quality -= 0.05;
+        quality -= 0.01;
         dataUrl = canvas.toDataURL('image/jpeg', quality);
         sizeKB = (dataUrl.length * 0.75) / 1024;
     }
@@ -155,7 +158,6 @@ resizeBtn.addEventListener('click', function() {
     downloadBtn.style.display = 'block';
     downloadBtn.textContent = `⬇ Download (${sizeKB.toFixed(1)} KB)`;
 
-    // Show preview
     imageArea.innerHTML = `
         <button class="remove-btn-icon" id="removeBtn">×</button>
         <img src="${dataUrl}" id="previewImg">
@@ -193,12 +195,22 @@ downloadBtn.addEventListener('click', function() {
     const y = (targetH - drawH) / 2;
     ctx.drawImage(uploadedImage, x, y, drawW, drawH);
 
-    let quality = 0.95;
+    // Add noise
+    const imgData = ctx.getImageData(0, 0, targetW, targetH);
+    const pixels = imgData.data;
+    for (let i = 0; i < pixels.length; i += 4) {
+        pixels[i] = Math.min(255, pixels[i] + (Math.random() * 6 - 3));
+        pixels[i + 1] = Math.min(255, pixels[i + 1] + (Math.random() * 6 - 3));
+        pixels[i + 2] = Math.min(255, pixels[i + 2] + (Math.random() * 6 - 3));
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    let quality = 1.0;
     let dataUrl = canvas.toDataURL('image/jpeg', quality);
     let sizeKB = (dataUrl.length * 0.75) / 1024;
 
     while (sizeKB > targetKB && quality > 0.1) {
-        quality -= 0.05;
+        quality -= 0.01;
         dataUrl = canvas.toDataURL('image/jpeg', quality);
         sizeKB = (dataUrl.length * 0.75) / 1024;
     }
@@ -428,7 +440,6 @@ function saveCrop() {
     croppedImg.onload = function() {
         uploadedImage = croppedImg;
         document.getElementById('cropModal').classList.remove('active');
-        // Re-show cropped image
         imageArea.innerHTML = `
             <button class="crop-btn-icon" id="cropBtn">✂️ Crop</button>
             <button class="remove-btn-icon" id="removeBtn">×</button>
