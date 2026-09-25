@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
 
-    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,9 +13,8 @@
       gtag('config', 'G-L5K09RC5D2');
     </script>
 
-    <title>SSC CGL Photo Resizer 2026 — 20KB to 50KB Free Online</title>
-    <meta name="description" content="Free SSC CGL photo resizer 2026. Resize photo to 100x120 px to 200x230 px (20-50KB) and signature to 140x60 px (10-20KB). Works offline, files never uploaded.">
-    <meta name="keywords" content="SSC CGL photo resizer, SSC CGL signature resizer, SSC photo size 2026, SSC CGL photo 20KB, SSC CGL photo 50KB">
+    <title>SSC CGL Photo Signature Resizer 2026 — Free Online Tool</title>
+    <meta name="description" content="Free SSC CGL photo and signature resizer. Resize photo to 100x120 px (20-50 KB) and signature to 140x60 px (10-20 KB). 100% private.">
     <link rel="canonical" href="https://exam-photo-resizer.vercel.app/ssc-cgl.html">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -25,13 +23,13 @@
     <header class="header">
         <div class="container">
             <h1 class="logo">📸 Photo Resizer</h1>
-            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
+            <p class="tagline">Free • Fast • 100% Private</p>
             <nav class="nav">
-    <a href="index.html">🏠 Home</a>
-    <a href="india.html">🇮🇳 India</a>
-    <a href="compressor.html">🗜️ Compressor</a>
-    <a href="photo-merger.html">🔗 Merger</a>
-</nav>
+                <a href="index.html">🏠 Home</a>
+                <a href="india.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+                <a href="photo-merger.html">🔗 Merger</a>
+            </nav>
         </div>
     </header>
 
@@ -39,153 +37,130 @@
 
         <section class="intro-section">
             <h2>📘 SSC CGL Photo & Signature Resizer</h2>
-            <p>Get your photo in exact SSC CGL specifications instantly</p>
+            <p>Resize your photo or signature in exact SSC CGL specifications</p>
         </section>
 
+        <!-- SPECS -->
         <section class="country-section">
             <h3 class="section-title">📋 SSC CGL Requirements</h3>
             <div class="country-grid">
-
                 <div class="country-card">
                     <div class="country-flag">📷</div>
                     <h4>Photo Size</h4>
-                    <div class="doc-size">100 x 120 pixels</div>
+                    <div class="doc-size">100 x 120 pixels (20-50 KB)</div>
                 </div>
-
-                <div class="country-card">
-                    <div class="country-flag">💾</div>
-                    <h4>Photo File Size</h4>
-                    <div class="doc-size">20 KB - 50 KB</div>
-                </div>
-
                 <div class="country-card">
                     <div class="country-flag">✍️</div>
                     <h4>Signature Size</h4>
-                    <div class="doc-size">140 x 60 pixels</div>
+                    <div class="doc-size">140 x 60 pixels (10-20 KB)</div>
                 </div>
-
-                <div class="country-card">
-                    <div class="country-flag">💾</div>
-                    <h4>Signature File Size</h4>
-                    <div class="doc-size">10 KB - 20 KB</div>
-                </div>
-
             </div>
         </section>
 
-        <div class="card">
-            <h2>📸 Resize Your Photo</h2>
-            <label for="photoInput">Photo select karein</label>
-            <input type="file" id="photoInput" accept="image/*" aria-label="Photo upload karein">
-        </div>
+        <!-- TOOL -->
+        <div class="tool-container">
 
-        <div class="card">
-            <h2>Document Type</h2>
-            <label for="examSelect">Document chunein</label>
-            <select id="examSelect" aria-label="Document select karein">
-                <option value="ssc-cgl" selected>SSC CGL (100x120, 20-50 KB)</option>
-            </select>
-        </div>
+            <h2 class="tool-title">Resize <span id="toolLabel">Signature</span></h2>
 
-        <div class="card">
-            <h2>Preview & Download</h2>
-            <div class="preview-box">
-                <canvas id="previewCanvas"></canvas>
-                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            <div class="tool-box">
+                <div id="imageArea">
+                    <div class="empty-state" id="emptyState">
+                        <p>📁 Click to select an image</p>
+                        <p style="font-size:13px;color:#999;">or drag & drop here</p>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" style="display:none;">
             </div>
-            <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
+
+            <p class="file-name" id="fileName"></p>
+
+            <!-- W-140 / H-60 badges -->
+            <div class="badges">
+                <span class="badge" id="badgeW">W-140</span>
+                <span class="badge" id="badgeH">H-60</span>
+            </div>
+
+            <!-- Pixel / Centimeter -->
+            <div class="unit-row">
+                <label class="unit-label">
+                    <input type="radio" name="unit" value="pixel" checked> Pixel
+                </label>
+                <label class="unit-label">
+                    <input type="radio" name="unit" value="cm"> Centimeter
+                </label>
+            </div>
+
+            <!-- Width / Height -->
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Width (px)</label>
+                    <input type="number" id="widthInput" value="140">
+                </div>
+                <span class="x-sign">X</span>
+                <div class="input-group">
+                    <label>Height (px)</label>
+                    <input type="number" id="heightInput" value="60">
+                </div>
+            </div>
+
+            <!-- Size KB -->
+            <div class="size-row">
+                <label>Size:</label>
+                <input type="number" id="sizeInput" value="20">
+                <span class="kb-label">Kb</span>
+            </div>
+
+            <!-- Resize Button -->
+            <button id="resizeBtn" class="resize-btn" disabled>Resize Signature</button>
+
+            <p class="note">Note: You can resize images at once.</p>
+
+            <!-- Download Button -->
+            <button id="downloadBtn" class="download-btn" style="display:none;">⬇ Download</button>
+
         </div>
 
+        <!-- TIPS -->
         <div class="card">
-            <h2>💡 Tips for SSC CGL Photo</h2>
+            <h2>💡 Tips for SSC CGL</h2>
             <ul style="margin-left: 20px; line-height: 1.8; color: #4a5568;">
-                <li>Use a plain white background</li>
-                <li>Face the camera directly</li>
+                <li><strong>Photo:</strong> Plain white background, face camera directly</li>
+                <li><strong>Signature:</strong> Black ink on white paper (NO CAPITAL LETTERS)</li>
                 <li>Recent photo (within 3 months)</li>
                 <li>No glasses, no hat</li>
             </ul>
         </div>
 
-        <!-- SEO Content Section -->
-<section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-
-<h2>SSC CGL Photo Requirements 2026 (Official Specifications)</h2>
-<p>SSC CGL (Combined Graduate Level) is one of the most popular exams in India. Every year, lakhs of candidates apply. The Staff Selection Commission has strict photo and signature requirements. If your documents don't match, your application gets rejected. This tool helps you get them exactly right.</p>
-
-<h3>SSC CGL Photo Size & Dimensions</h3>
-<ul>
-<li><strong>Photo dimensions:</strong> 100 x 120 pixels (minimum) to 200 x 230 pixels (maximum)</li>
-<li><strong>Photo file size:</strong> 20 KB to 50 KB</li>
-<li><strong>Format:</strong> JPG or JPEG</li>
-<li><strong>Background:</strong> Plain white or light</li>
-<li><strong>Photo age:</strong> Recent (within 3 months)</li>
-</ul>
-
-<h3>SSC CGL Signature Requirements</h3>
-<ul>
-<li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
-<li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
-<li><strong>Ink color:</strong> Black ink on white paper</li>
-<li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
-</ul>
-
-<h2>SSC Exams Covered by This Tool</h2>
-<ul>
-<li>SSC CGL (Combined Graduate Level)</li>
-<li>SSC CHSL (Combined Higher Secondary Level)</li>
-<li>SSC MTS (Multi-Tasking Staff)</li>
-<li>SSC GD Constable</li>
-<li>SSC JE (Junior Engineer)</li>
-<li>SSC CPO (Central Police Organisation)</li>
-<li>SSC Stenographer</li>
-</ul>
-
-<h2>Common Mistakes to Avoid</h2>
-<ul>
-<li>Photo with dark or colored background</li>
-<li>Signature in CAPITAL LETTERS — most common mistake</li>
-<li>Photo with glasses or hat</li>
-<li>File size above 50 KB</li>
-<li>Old photo (more than 3 months)</li>
-<li>Blurred photo</li>
-</ul>
-
-<h2>How to Use This Tool</h2>
-<ol>
-<li>Upload your photo or signature</li>
-<li>The tool automatically crops it to exact SSC dimensions</li>
-<li>Check the file size</li>
-<li>If too large, use our Image Compressor</li>
-<li>Download your perfectly sized photo</li>
-</ol>
-
-<h2>Frequently Asked Questions</h2>
-
-<h3>What is the SSC CGL photo size in 2026?</h3>
-<p>SSC CGL photo should be 100x120 to 200x230 pixels with file size 20 KB to 50 KB in JPG/JPEG format.</p>
-
-<h3>Can I use CAPITAL LETTERS in my SSC signature?</h3>
-<p>No. SSC does not accept signatures in CAPITAL LETTERS. Use normal handwriting.</p>
-
-<h3>Is a white background mandatory for SSC photo?</h3>
-<p>Yes, a plain white or light background is required.</p>
-
-<h3>What if my file size is above 50 KB?</h3>
-<p>Use our free Image Compressor to reduce the file size to 20-50 KB.</p>
-
-<h3>Does this tool upload my photo to a server?</h3>
-<p>No. All processing happens in your browser. Your photo never leaves your device.</p>
-
-<h2>Related Tools</h2>
-<p>
-<a href="ibps.html">IBPS Photo Resizer</a> |
-<a href="rrb.html">RRB NTPC Photo Resizer</a> |
-<a href="upsc.html">UPSC Photo Resizer</a> |
-<a href="compressor.html">Image Compressor</a> |
-<a href="photo-merger.html">Merge Photo & Signature</a>
-</p>
-
-</section>
+        <!-- SEO Content -->
+        <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <h2>SSC CGL Photo Requirements 2026</h2>
+            <p>SSC CGL (Combined Graduate Level) exam is conducted by Staff Selection Commission. Every applicant must upload a photo and signature with strict size requirements. This tool helps you get both exactly right.</p>
+            <h3>SSC CGL Photo Size & Dimensions</h3>
+            <ul>
+                <li><strong>Photo dimensions:</strong> 100 x 120 pixels</li>
+                <li><strong>Photo file size:</strong> 20 KB to 50 KB</li>
+                <li><strong>Format:</strong> JPG or JPEG</li>
+            </ul>
+            <h3>SSC CGL Signature Requirements</h3>
+            <ul>
+                <li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
+                <li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
+                <li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
+            </ul>
+            <h2>Frequently Asked Questions</h2>
+            <h3>What is the SSC CGL photo size in 2026?</h3>
+            <p>SSC CGL photo should be 100x120 pixels with file size 20 KB to 50 KB in JPG/JPEG format.</p>
+            <h3>Does this tool upload my photo to a server?</h3>
+            <p>No. All processing happens in your browser. Your photo never leaves your device.</p>
+            <h2>Related Tools</h2>
+            <p>
+                <a href="ibps.html">IBPS Photo Resizer</a> |
+                <a href="rrb.html">RRB NTPC Photo Resizer</a> |
+                <a href="neet.html">NEET Photo Resizer</a> |
+                <a href="compressor.html">Image Compressor</a> |
+                <a href="photo-merger.html">Merge Photo & Signature</a>
+            </p>
+        </section>
     </main>
 
     <footer class="footer">

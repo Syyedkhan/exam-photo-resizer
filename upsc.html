@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
 
-    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,9 +13,8 @@
       gtag('config', 'G-L5K09RC5D2');
     </script>
 
-    <title>UPSC Photo Resizer 2026 — 350x450 px, 20KB to 300KB Free</title>
-    <meta name="description" content="Free UPSC photo resizer 2026. Resize photo to 350x450 px (20-300KB) and triple signature to 140x60 px. Works in browser, files never leave your device.">
-    <meta name="keywords" content="UPSC photo resizer, UPSC photo size 2026, UPSC signature resizer, UPSC triple signature, UPSC photo 350x450">
+    <title>UPSC Photo Signature Resizer 2026 — Free Online Tool</title>
+    <meta name="description" content="Free UPSC photo and signature resizer. Resize photo to 350x450 px (20-300 KB) and signature to 140x60 px (10-20 KB). 100% private.">
     <link rel="canonical" href="https://exam-photo-resizer.vercel.app/upsc.html">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -25,163 +23,140 @@
     <header class="header">
         <div class="container">
             <h1 class="logo">📸 Photo Resizer</h1>
-            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
+            <p class="tagline">Free • Fast • 100% Private</p>
             <nav class="nav">
-    <a href="index.html">🏠 Home</a>
-    <a href="india.html">🇮🇳 India</a>
-    <a href="compressor.html">🗜️ Compressor</a>
-    <a href="photo-merger.html">🔗 Merger</a>
-</nav>
+                <a href="index.html">🏠 Home</a>
+                <a href="india.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+                <a href="photo-merger.html">🔗 Merger</a>
+            </nav>
         </div>
     </header>
 
     <main class="container">
 
         <section class="intro-section">
-            <h2>📗 UPSC Photo & Triple Signature Resizer</h2>
-            <p>Get your photo in exact UPSC specifications instantly</p>
+            <h2>📗 UPSC Photo & Signature Resizer</h2>
+            <p>Resize your photo or signature in exact UPSC specifications</p>
         </section>
 
+        <!-- SPECS -->
         <section class="country-section">
             <h3 class="section-title">📋 UPSC Requirements</h3>
             <div class="country-grid">
-
                 <div class="country-card">
                     <div class="country-flag">📷</div>
                     <h4>Photo Size</h4>
-                    <div class="doc-size">350 x 450 pixels</div>
+                    <div class="doc-size">350 x 450 pixels (20-300 KB)</div>
                 </div>
-
-                <div class="country-card">
-                    <div class="country-flag">💾</div>
-                    <h4>Photo File Size</h4>
-                    <div class="doc-size">20 KB - 300 KB</div>
-                </div>
-
                 <div class="country-card">
                     <div class="country-flag">✍️</div>
                     <h4>Signature Size</h4>
-                    <div class="doc-size">140 x 60 pixels (×3)</div>
+                    <div class="doc-size">140 x 60 pixels (10-20 KB)</div>
                 </div>
-
-                <div class="country-card">
-                    <div class="country-flag">💾</div>
-                    <h4>Signature File Size</h4>
-                    <div class="doc-size">10 KB - 20 KB each</div>
-                </div>
-
             </div>
         </section>
 
-        <div class="card">
-            <h2>📸 Resize Your Photo</h2>
-            <label for="photoInput">Photo select karein</label>
-            <input type="file" id="photoInput" accept="image/*" aria-label="Photo upload karein">
-        </div>
+        <!-- TOOL -->
+        <div class="tool-container">
 
-        <div class="card">
-            <h2>Document Type</h2>
-            <label for="examSelect">Document chunein</label>
-            <select id="examSelect" aria-label="Document select karein">
-                <option value="upsc" selected>UPSC (350x450, 20-300 KB)</option>
-            </select>
-        </div>
+            <h2 class="tool-title">Resize <span id="toolLabel">Signature</span></h2>
 
-        <div class="card">
-            <h2>Preview & Download</h2>
-            <div class="preview-box">
-                <canvas id="previewCanvas"></canvas>
-                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            <div class="tool-box">
+                <div id="imageArea">
+                    <div class="empty-state" id="emptyState">
+                        <p>📁 Click to select an image</p>
+                        <p style="font-size:13px;color:#999;">or drag & drop here</p>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" style="display:none;">
             </div>
-            <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
+
+            <p class="file-name" id="fileName"></p>
+
+            <div class="badges">
+                <span class="badge" id="badgeW">W-140</span>
+                <span class="badge" id="badgeH">H-60</span>
+            </div>
+
+            <div class="unit-row">
+                <label class="unit-label">
+                    <input type="radio" name="unit" value="pixel" checked> Pixel
+                </label>
+                <label class="unit-label">
+                    <input type="radio" name="unit" value="cm"> Centimeter
+                </label>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Width (px)</label>
+                    <input type="number" id="widthInput" value="140">
+                </div>
+                <span class="x-sign">X</span>
+                <div class="input-group">
+                    <label>Height (px)</label>
+                    <input type="number" id="heightInput" value="60">
+                </div>
+            </div>
+
+            <div class="size-row">
+                <label>Size:</label>
+                <input type="number" id="sizeInput" value="20">
+                <span class="kb-label">Kb</span>
+            </div>
+
+            <button id="resizeBtn" class="resize-btn" disabled>Resize Signature</button>
+
+            <p class="note">Note: You can resize images at once.</p>
+
+            <button id="downloadBtn" class="download-btn" style="display:none;">⬇ Download</button>
+
         </div>
 
+        <!-- TIPS -->
         <div class="card">
-            <h2>💡 Tips for UPSC Photo</h2>
+            <h2>💡 Tips for UPSC</h2>
             <ul style="margin-left: 20px; line-height: 1.8; color: #4a5568;">
-                <li>Use a plain white background</li>
-                <li>Face the camera directly</li>
+                <li><strong>Photo:</strong> Plain white background, face camera directly</li>
+                <li><strong>Signature:</strong> Black ink on white paper (NO CAPITAL LETTERS)</li>
                 <li>Recent photo (within 6 months)</li>
-                <li>Triple signature required</li>
+                <li>Triple signature required for UPSC</li>
                 <li>No glasses, no hat</li>
             </ul>
         </div>
 
-        <!-- SEO Content Section -->
-<section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-
-<h2>UPSC Photo Requirements 2026 (Official Specifications)</h2>
-<p>UPSC (Union Public Service Commission) conducts India's most prestigious exams — Civil Services (IAS, IPS, IFS), NDA, CDS, and more. UPSC has strict photo and signature requirements, including a unique triple signature requirement. This tool helps you get everything right.</p>
-
-<h3>UPSC Photo Size & Dimensions</h3>
-<ul>
-<li><strong>Photo dimensions:</strong> 350 x 450 pixels</li>
-<li><strong>Photo file size:</strong> 20 KB to 300 KB</li>
-<li><strong>Format:</strong> JPG or JPEG</li>
-<li><strong>Background:</strong> Plain white</li>
-<li><strong>Photo age:</strong> Recent (within 6 months)</li>
-</ul>
-
-<h3>UPSC Signature Requirements (Triple Signature)</h3>
-<ul>
-<li><strong>Signature dimensions:</strong> 140 x 60 pixels each</li>
-<li><strong>Signature file size:</strong> 10 KB to 20 KB each</li>
-<li><strong>How many:</strong> 3 signatures (triple signature)</li>
-<li><strong>Ink color:</strong> Black ink on white paper</li>
-</ul>
-
-<h2>UPSC Exams Covered by This Tool</h2>
-<ul>
-<li>UPSC Civil Services (IAS, IPS, IFS)</li>
-<li>UPSC NDA (National Defence Academy)</li>
-<li>UPSC CDS (Combined Defence Services)</li>
-<li>UPSC CMS (Combined Medical Services)</li>
-<li>UPSC IES (Indian Engineering Services)</li>
-<li>UPSC CAPF (Central Armed Police Forces)</li>
-</ul>
-
-<h2>Common Mistakes to Avoid</h2>
-<ul>
-<li>Only one signature instead of triple signature</li>
-<li>Photo with dark or colored background</li>
-<li>Photo with glasses or hat</li>
-<li>Old photo (more than 6 months)</li>
-<li>File size above 300 KB</li>
-<li>Blurred photo</li>
-</ul>
-
-<h2>How to Use This Tool</h2>
-<ol>
-<li>Upload your photo or signature</li>
-<li>The tool crops it to 350x450 pixels (photo) or 140x60 pixels (signature)</li>
-<li>Repeat for all 3 signatures</li>
-<li>Check the file size</li>
-<li>Download your photos</li>
-</ol>
-
-<h2>Frequently Asked Questions</h2>
-
-<h3>What is the UPSC photo size in 2026?</h3>
-<p>UPSC photo should be 350x450 pixels with file size 20 KB to 300 KB in JPG/JPEG format.</p>
-
-<h3>Why does UPSC require triple signature?</h3>
-<p>UPSC requires 3 signatures for identity verification. All three must be identical and clear.</p>
-
-<h3>What if my file size is above 300 KB?</h3>
-<p>Use our free Image Compressor to reduce the file size.</p>
-
-<h3>Does this tool upload my photo to a server?</h3>
-<p>No. All processing happens in your browser.</p>
-
-<h2>Related Tools</h2>
-<p>
-<a href="ssc-cgl.html">SSC CGL Photo Resizer</a> |
-<a href="ibps.html">IBPS Photo Resizer</a> |
-<a href="neet.html">NEET Photo Resizer</a> |
-<a href="compressor.html">Image Compressor</a>
-</p>
-
-</section>
+        <!-- SEO Content -->
+        <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <h2>UPSC Photo Requirements 2026</h2>
+            <p>UPSC (Union Public Service Commission) conducts Civil Services exams. Every applicant must upload a photo and triple signature with strict size requirements. This tool helps you get both exactly right.</p>
+            <h3>UPSC Photo Size & Dimensions</h3>
+            <ul>
+                <li><strong>Photo dimensions:</strong> 350 x 450 pixels</li>
+                <li><strong>Photo file size:</strong> 20 KB to 300 KB</li>
+                <li><strong>Format:</strong> JPG or JPEG</li>
+            </ul>
+            <h3>UPSC Signature Requirements (Triple)</h3>
+            <ul>
+                <li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
+                <li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
+                <li><strong>Important:</strong> 3 signatures required — all in same style</li>
+                <li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
+            </ul>
+            <h2>Frequently Asked Questions</h2>
+            <h3>What is the UPSC photo size in 2026?</h3>
+            <p>UPSC photo should be 350x450 pixels with file size 20 KB to 300 KB in JPG/JPEG format.</p>
+            <h3>Does this tool upload my photo to a server?</h3>
+            <p>No. All processing happens in your browser. Your photo never leaves your device.</p>
+            <h2>Related Tools</h2>
+            <p>
+                <a href="ibps.html">IBPS Photo Resizer</a> |
+                <a href="ssc-cgl.html">SSC CGL Photo Resizer</a> |
+                <a href="rrb.html">RRB NTPC Photo Resizer</a> |
+                <a href="compressor.html">Image Compressor</a> |
+                <a href="photo-merger.html">Merge Photo & Signature</a>
+            </p>
+        </section>
     </main>
 
     <footer class="footer">

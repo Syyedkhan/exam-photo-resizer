@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
 
-    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,9 +13,8 @@
       gtag('config', 'G-L5K09RC5D2');
     </script>
 
-    <title>RRB NTPC Photo Resizer 2026 — 15KB to 40KB Free Online</title>
-    <meta name="description" content="Free RRB NTPC photo resizer 2026. Resize photo to 320x240 px (15-40KB) and signature to 140x60 px (10-20KB). 100% private, no upload needed.">
-    <meta name="keywords" content="RRB photo resizer, RRB NTPC photo size, RRB signature resizer 2026, RRB Group D photo resizer, RRB photo 20KB">
+    <title>RRB Photo Signature Resizer 2026 — Free Online Tool</title>
+    <meta name="description" content="Free RRB photo and signature resizer. Resize photo to 320x240 px (20-50 KB) and signature to 140x60 px (10-20 KB). 100% private.">
     <link rel="canonical" href="https://exam-photo-resizer.vercel.app/rrb.html">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -25,13 +23,13 @@
     <header class="header">
         <div class="container">
             <h1 class="logo">📸 Photo Resizer</h1>
-            <p class="tagline">Free • Fast • 100% Private (files never leave your device)</p>
+            <p class="tagline">Free • Fast • 100% Private</p>
             <nav class="nav">
-    <a href="index.html">🏠 Home</a>
-    <a href="india.html">🇮🇳 India</a>
-    <a href="compressor.html">🗜️ Compressor</a>
-    <a href="photo-merger.html">🔗 Merger</a>
-</nav>
+                <a href="index.html">🏠 Home</a>
+                <a href="india.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+                <a href="photo-merger.html">🔗 Merger</a>
+            </nav>
         </div>
     </header>
 
@@ -39,148 +37,124 @@
 
         <section class="intro-section">
             <h2>📓 RRB Photo & Signature Resizer</h2>
-            <p>Get your photo in exact RRB specifications instantly</p>
+            <p>Resize your photo or signature in exact RRB specifications</p>
         </section>
 
+        <!-- SPECS -->
         <section class="country-section">
             <h3 class="section-title">📋 RRB Requirements</h3>
             <div class="country-grid">
-
                 <div class="country-card">
                     <div class="country-flag">📷</div>
                     <h4>Photo Size</h4>
-                    <div class="doc-size">320 x 240 pixels</div>
+                    <div class="doc-size">320 x 240 pixels (20-50 KB)</div>
                 </div>
-
-                <div class="country-card">
-                    <div class="country-flag">💾</div>
-                    <h4>Photo File Size</h4>
-                    <div class="doc-size">20 KB - 50 KB</div>
-                </div>
-
                 <div class="country-card">
                     <div class="country-flag">✍️</div>
                     <h4>Signature Size</h4>
-                    <div class="doc-size">140 x 60 pixels</div>
+                    <div class="doc-size">140 x 60 pixels (10-20 KB)</div>
                 </div>
-
-                <div class="country-card">
-                    <div class="country-flag">💾</div>
-                    <h4>Signature File Size</h4>
-                    <div class="doc-size">10 KB - 20 KB</div>
-                </div>
-
             </div>
         </section>
 
-        <div class="card">
-            <h2>📸 Resize Your Photo</h2>
-            <label for="photoInput">Photo select karein</label>
-            <input type="file" id="photoInput" accept="image/*" aria-label="Photo upload karein">
-        </div>
+        <!-- TOOL -->
+        <div class="tool-container">
 
-        <div class="card">
-            <h2>Document Type</h2>
-            <label for="examSelect">Document chunein</label>
-            <select id="examSelect" aria-label="Document select karein">
-                <option value="rrb" selected>RRB (320x240, 20-50 KB)</option>
-            </select>
-        </div>
+            <h2 class="tool-title">Resize <span id="toolLabel">Signature</span></h2>
 
-        <div class="card">
-            <h2>Preview & Download</h2>
-            <div class="preview-box">
-                <canvas id="previewCanvas"></canvas>
-                <p id="statusText">Photo select karne ke baad yahan preview dikhega.</p>
+            <div class="tool-box">
+                <div id="imageArea">
+                    <div class="empty-state" id="emptyState">
+                        <p>📁 Click to select an image</p>
+                        <p style="font-size:13px;color:#999;">or drag & drop here</p>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" style="display:none;">
             </div>
-            <button id="downloadBtn" disabled aria-label="Photo download karein">Download Photo</button>
+
+            <p class="file-name" id="fileName"></p>
+
+            <div class="badges">
+                <span class="badge" id="badgeW">W-140</span>
+                <span class="badge" id="badgeH">H-60</span>
+            </div>
+
+            <div class="unit-row">
+                <label class="unit-label">
+                    <input type="radio" name="unit" value="pixel" checked> Pixel
+                </label>
+                <label class="unit-label">
+                    <input type="radio" name="unit" value="cm"> Centimeter
+                </label>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Width (px)</label>
+                    <input type="number" id="widthInput" value="140">
+                </div>
+                <span class="x-sign">X</span>
+                <div class="input-group">
+                    <label>Height (px)</label>
+                    <input type="number" id="heightInput" value="60">
+                </div>
+            </div>
+
+            <div class="size-row">
+                <label>Size:</label>
+                <input type="number" id="sizeInput" value="20">
+                <span class="kb-label">Kb</span>
+            </div>
+
+            <button id="resizeBtn" class="resize-btn" disabled>Resize Signature</button>
+
+            <p class="note">Note: You can resize images at once.</p>
+
+            <button id="downloadBtn" class="download-btn" style="display:none;">⬇ Download</button>
+
         </div>
 
+        <!-- TIPS -->
         <div class="card">
-            <h2>💡 Tips for RRB Photo</h2>
+            <h2>💡 Tips for RRB</h2>
             <ul style="margin-left: 20px; line-height: 1.8; color: #4a5568;">
-                <li>Use a plain white background</li>
-                <li>Face the camera directly</li>
+                <li><strong>Photo:</strong> Plain white background, face camera directly</li>
+                <li><strong>Signature:</strong> Black ink on white paper (NO CAPITAL LETTERS)</li>
                 <li>Recent photo (within 3 months)</li>
                 <li>No glasses, no hat</li>
             </ul>
         </div>
 
-        <!-- SEO Content Section -->
-<section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-
-<h2>RRB NTPC Photo Requirements 2026 (Official Specifications)</h2>
-<p>RRB (Railway Recruitment Board) conducts exams for NTPC, Group D, ALP, and JE posts. Every applicant must upload a photo and signature that match the exact specifications. If your documents don't match, your application is rejected. This tool helps you get them right.</p>
-
-<h3>RRB NTPC Photo Size & Dimensions</h3>
-<ul>
-<li><strong>Photo dimensions:</strong> 320 x 240 pixels</li>
-<li><strong>Photo file size:</strong> 15 KB to 40 KB</li>
-<li><strong>Format:</strong> JPG or JPEG</li>
-<li><strong>Background:</strong> Plain white or light</li>
-<li><strong>Photo age:</strong> Recent (within 3 months)</li>
-</ul>
-
-<h3>RRB NTPC Signature Requirements</h3>
-<ul>
-<li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
-<li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
-<li><strong>Ink color:</strong> Black ink on white paper</li>
-<li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
-</ul>
-
-<h2>RRB Exams Covered by This Tool</h2>
-<ul>
-<li>RRB NTPC (Non-Technical Popular Categories)</li>
-<li>RRB Group D</li>
-<li>RRB ALP (Assistant Loco Pilot)</li>
-<li>RRB JE (Junior Engineer)</li>
-<li>RRB SSE (Senior Section Engineer)</li>
-</ul>
-
-<h2>Common Mistakes to Avoid</h2>
-<ul>
-<li>Photo with dark or colored background</li>
-<li>Signature in CAPITAL LETTERS</li>
-<li>Photo with glasses or hat</li>
-<li>File size above 40 KB</li>
-<li>Old photo (more than 3 months)</li>
-<li>Blurred or low-quality photo</li>
-</ul>
-
-<h2>How to Use This Tool</h2>
-<ol>
-<li>Upload your photo or signature</li>
-<li>The tool automatically crops it to 320x240 pixels (photo) or 140x60 pixels (signature)</li>
-<li>Check the file size</li>
-<li>If too large, use our Image Compressor</li>
-<li>Download your photo</li>
-</ol>
-
-<h2>Frequently Asked Questions</h2>
-
-<h3>What is the RRB NTPC photo size in 2026?</h3>
-<p>RRB NTPC photo should be 320x240 pixels with file size 15 KB to 40 KB in JPG/JPEG format.</p>
-
-<h3>Can I use CAPITAL LETTERS in my RRB signature?</h3>
-<p>No. RRB does not accept signatures in CAPITAL LETTERS.</p>
-
-<h3>What if my file size is above 40 KB?</h3>
-<p>Use our free Image Compressor to reduce the file size to 15-40 KB.</p>
-
-<h3>Does this tool upload my photo to a server?</h3>
-<p>No. All processing happens in your browser. Your photo never leaves your device.</p>
-
-<h2>Related Tools</h2>
-<p>
-<a href="ibps.html">IBPS Photo Resizer</a> |
-<a href="ssc-cgl.html">SSC CGL Photo Resizer</a> |
-<a href="neet.html">NEET Photo Resizer</a> |
-<a href="compressor.html">Image Compressor</a> |
-<a href="photo-merger.html">Merge Photo & Signature</a>
-</p>
-
-</section>
+        <!-- SEO Content -->
+        <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <h2>RRB Photo Requirements 2026</h2>
+            <p>RRB (Railway Recruitment Board) conducts exams for NTPC, Group D, ALP, and JE posts. Every applicant must upload a photo and signature with strict size requirements. This tool helps you get both exactly right.</p>
+            <h3>RRB Photo Size & Dimensions</h3>
+            <ul>
+                <li><strong>Photo dimensions:</strong> 320 x 240 pixels</li>
+                <li><strong>Photo file size:</strong> 20 KB to 50 KB</li>
+                <li><strong>Format:</strong> JPG or JPEG</li>
+            </ul>
+            <h3>RRB Signature Requirements</h3>
+            <ul>
+                <li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
+                <li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
+                <li><strong>Important:</strong> Signature in CAPITAL LETTERS is NOT accepted</li>
+            </ul>
+            <h2>Frequently Asked Questions</h2>
+            <h3>What is the RRB photo size in 2026?</h3>
+            <p>RRB photo should be 320x240 pixels with file size 20 KB to 50 KB in JPG/JPEG format.</p>
+            <h3>Does this tool upload my photo to a server?</h3>
+            <p>No. All processing happens in your browser. Your photo never leaves your device.</p>
+            <h2>Related Tools</h2>
+            <p>
+                <a href="ibps.html">IBPS Photo Resizer</a> |
+                <a href="ssc-cgl.html">SSC CGL Photo Resizer</a> |
+                <a href="neet.html">NEET Photo Resizer</a> |
+                <a href="compressor.html">Image Compressor</a> |
+                <a href="photo-merger.html">Merge Photo & Signature</a>
+            </p>
+        </section>
     </main>
 
     <footer class="footer">
