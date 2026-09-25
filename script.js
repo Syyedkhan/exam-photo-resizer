@@ -1,69 +1,137 @@
 /* ============================================
-   Photo Resizer - Simple Script
+   Photo Resizer - PI7 Style Script
    ============================================ */
 
-// ============ ELEMENTS ============
 const photoInput = document.getElementById('photoInput');
-const docType = document.getElementById('docType');
-const previewCanvas = document.getElementById('previewCanvas');
+const imageArea = document.getElementById('imageArea');
+const emptyState = document.getElementById('emptyState');
+const fileName = document.getElementById('fileName');
+const widthInput = document.getElementById('widthInput');
+const heightInput = document.getElementById('heightInput');
+const sizeInput = document.getElementById('sizeInput');
+const resizeBtn = document.getElementById('resizeBtn');
 const downloadBtn = document.getElementById('downloadBtn');
-const cropBtn = document.getElementById('cropBtn');
-const previewCard = document.getElementById('previewCard');
+const badgeW = document.getElementById('badgeW');
+const badgeH = document.getElementById('badgeH');
+const toolLabel = document.getElementById('toolLabel');
 
 let uploadedImage = null;
-let targetW = 200;
-let targetH = 230;
+let resizedCanvas = null;
+let currentFileName = '';
 
-// ============ DOCUMENT TYPE CHANGE ============
-if (docType) {
-    docType.addEventListener('change', function() {
-        if (this.value === 'signature') {
-            targetW = 140;
-            targetH = 60;
-        } else {
-            targetW = 200;
-            targetH = 230;
-        }
-        if (uploadedImage) showPreview();
-    });
-}
+// Click on image area to open file picker
+imageArea.addEventListener('click', function() {
+    photoInput.click();
+});
 
-// ============ FILE SELECT ============
-if (photoInput) {
-    photoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                uploadedImage = img;
-                showPreview();
-                if (previewCard) previewCard.style.display = 'block';
-            };
-            img.src = event.target.result;
+// Drag & Drop
+imageArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    imageArea.style.borderColor = '#4c51bf';
+});
+
+imageArea.addEventListener('dragleave', function() {
+    imageArea.style.borderColor = '#667eea';
+});
+
+imageArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    imageArea.style.borderColor = '#667eea';
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        loadImage(file);
+    }
+});
+
+// File select
+photoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) loadImage(file);
+});
+
+function loadImage(file) {
+    currentFileName = file.name;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            uploadedImage = img;
+            fileName.textContent = file.name;
+            resizeBtn.disabled = false;
+            downloadBtn.style.display = 'none';
+
+            // Show image in box
+            imageArea.innerHTML = `
+                <button class="crop-btn-icon" id="cropBtn">✂️ Crop</button>
+                <button class="remove-btn-icon" id="removeBtn">×</button>
+                <img src="${event.target.result}" id="previewImg">
+            `;
+
+            // Setup crop & remove
+            document.getElementById('cropBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                openCropModal();
+            });
+
+            document.getElementById('removeBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeImage();
+            });
+
+            // Prevent image click from opening file picker
+            const previewImg = document.getElementById('previewImg');
+            previewImg.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         };
-        reader.readAsDataURL(file);
-    });
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
-// ============ SHOW PREVIEW ============
-function showPreview() {
-    if (!uploadedImage || !previewCanvas) return;
-    const ctx = previewCanvas.getContext('2d');
+function removeImage() {
+    uploadedImage = null;
+    resizedCanvas = null;
+    photoInput.value = '';
+    fileName.textContent = '';
+    resizeBtn.disabled = true;
+    downloadBtn.style.display = 'none';
 
-    previewCanvas.width = targetW;
-    previewCanvas.height = targetH;
+    imageArea.innerHTML = `
+        <div class="empty-state" id="emptyState">
+            <p>📁 Click to select an image</p>
+            <p style="font-size:13px;color:#999;">or drag & drop here</p>
+        </div>
+    `;
+}
 
-    previewCanvas.style.width = targetW + 'px';
-    previewCanvas.style.height = targetH + 'px';
-    previewCanvas.style.maxWidth = '100%';
-    previewCanvas.style.display = 'block';
+// Update badges
+widthInput.addEventListener('input', function() {
+    badgeW.textContent = 'W-' + (this.value || '0');
+});
+
+heightInput.addEventListener('input', function() {
+    badgeH.textContent = 'H-' + (this.value || '0');
+});
+
+// Resize button
+resizeBtn.addEventListener('click', function() {
+    if (!uploadedImage) return;
+
+    const targetW = parseInt(widthInput.value) || 140;
+    const targetH = parseInt(heightInput.value) || 60;
+    const targetKB = parseInt(sizeInput.value) || 20;
+
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
 
-    // Fit image to canvas
+    // Fit image
     const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height);
     const drawW = uploadedImage.width * scale;
     const drawH = uploadedImage.height * scale;
@@ -72,19 +140,74 @@ function showPreview() {
 
     ctx.drawImage(uploadedImage, x, y, drawW, drawH);
 
-    if (downloadBtn) downloadBtn.disabled = false;
-}
+    // Compress to target KB
+    let quality = 0.95;
+    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+    let sizeKB = (dataUrl.length * 0.75) / 1024;
 
-// ============ DOWNLOAD ============
-function downloadPhoto() {
-    if (!previewCanvas || !uploadedImage) return;
-    const prefix = (docType && docType.value === 'signature') ? 'ibps-signature' : 'ibps-photo';
+    while (sizeKB > targetKB && quality > 0.1) {
+        quality -= 0.05;
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        sizeKB = (dataUrl.length * 0.75) / 1024;
+    }
+
+    resizedCanvas = canvas;
+    downloadBtn.style.display = 'block';
+    downloadBtn.textContent = `⬇ Download (${sizeKB.toFixed(1)} KB)`;
+
+    // Show preview
+    imageArea.innerHTML = `
+        <button class="remove-btn-icon" id="removeBtn">×</button>
+        <img src="${dataUrl}" id="previewImg">
+    `;
+
+    document.getElementById('removeBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        removeImage();
+    });
+
+    document.getElementById('previewImg').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+
+// Download
+downloadBtn.addEventListener('click', function() {
+    if (!resizedCanvas) return;
+
+    const targetW = parseInt(widthInput.value) || 140;
+    const targetH = parseInt(heightInput.value) || 60;
+    const targetKB = parseInt(sizeInput.value) || 20;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetW, targetH);
+
+    const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height);
+    const drawW = uploadedImage.width * scale;
+    const drawH = uploadedImage.height * scale;
+    const x = (targetW - drawW) / 2;
+    const y = (targetH - drawH) / 2;
+    ctx.drawImage(uploadedImage, x, y, drawW, drawH);
+
+    let quality = 0.95;
+    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+    let sizeKB = (dataUrl.length * 0.75) / 1024;
+
+    while (sizeKB > targetKB && quality > 0.1) {
+        quality -= 0.05;
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        sizeKB = (dataUrl.length * 0.75) / 1024;
+    }
+
     const link = document.createElement('a');
-    link.download = prefix + '.jpg';
-    link.href = previewCanvas.toDataURL('image/jpeg', 0.95);
+    link.download = 'ibps-' + (currentFileName || 'image.jpg');
+    link.href = dataUrl;
     link.click();
-}
-if (downloadBtn) downloadBtn.addEventListener('click', downloadPhoto);
+});
 
 // ============ CROP FUNCTIONALITY ============
 let cropBox = { x: 75, y: 75, w: 350, h: 350 };
@@ -94,13 +217,6 @@ let cropResizeHandle = '';
 let cropBoxStartX = 0, cropBoxStartY = 0;
 let cropBoxStart = { x: 0, y: 0, w: 0, h: 0 };
 const CROP_CANVAS_SIZE = 500;
-
-if (cropBtn) {
-    cropBtn.addEventListener('click', function() {
-        if (!uploadedImage) return;
-        openCropModal();
-    });
-}
 
 function openCropModal() {
     let modal = document.getElementById('cropModal');
@@ -306,14 +422,29 @@ function saveCrop() {
     const newCtx = newCanvas.getContext('2d', { alpha: false });
     newCtx.fillStyle = '#ffffff';
     newCtx.fillRect(0, 0, cropBox.w, cropBox.h);
-
     newCtx.drawImage(uploadedImage, srcX, srcY, srcW, srcH, 0, 0, cropBox.w, cropBox.h);
 
     const croppedImg = new Image();
     croppedImg.onload = function() {
         uploadedImage = croppedImg;
-        showPreview();
         document.getElementById('cropModal').classList.remove('active');
+        // Re-show cropped image
+        imageArea.innerHTML = `
+            <button class="crop-btn-icon" id="cropBtn">✂️ Crop</button>
+            <button class="remove-btn-icon" id="removeBtn">×</button>
+            <img src="${newCanvas.toDataURL('image/jpeg', 1.0)}" id="previewImg">
+        `;
+        document.getElementById('cropBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            openCropModal();
+        });
+        document.getElementById('removeBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            removeImage();
+        });
+        document.getElementById('previewImg').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
     };
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 1.0);
 }
