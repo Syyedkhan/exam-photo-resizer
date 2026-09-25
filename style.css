@@ -683,3 +683,92 @@ body {
         max-height: 250px;
     }
 }
+
+
+/* ========== PHOTO COMPRESSOR ========== */
+#compressBtn, #compressDownloadBtn {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    margin: 12px auto 0;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+#compressBtn {
+    background: #4c51bf;
+    color: white;
+}
+
+#compressBtn:hover:not(:disabled) {
+    background: #3c40a0;
+    transform: translateY(-2px);
+}
+
+#compressBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #a0aec0;
+}
+
+#compressDownloadBtn {
+    background: #16a34a;
+    color: white;
+}
+
+#compressDownloadBtn:hover:not(:disabled) {
+    background: #15803d;
+    transform: translateY(-2px);
+}
+
+#compressDownloadBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #a0aec0;
+}
+
+#compressPreview {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+}
+
+#compressStatus {
+    color: #718096;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* COMPRESS BOX */
+.compress-preview-box {
+    background: #f7fafc;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    #compressBtn, #compressDownloadBtn {
+        max-width: 100%;
+    }
+    #compressPreview {
+        max-height: 200px;
+    }
+}
