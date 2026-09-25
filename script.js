@@ -100,7 +100,7 @@ function showPreview() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
 
-    const scale = Math.max(targetW / uploadedImage.width, targetH / uploadedImage.height) * zoom;
+        const scale = Math.min(targetW / uploadedImage.width, targetH / uploadedImage.height) * zoom;
     const drawW = uploadedImage.width * scale;
     const drawH = uploadedImage.height * scale;
     const x = (targetW - drawW) / 2 + offsetX;
@@ -117,6 +117,8 @@ function showPreview() {
     const dataUrl = previewCanvas.toDataURL('image/jpeg', 0.9);
     const sizeKB = (dataUrl.length * 0.75) / 1024;
 
+        const statusText = document.getElementById('statusText');
+    if (statusText) statusText.style.display = 'none';
     if (processedInfo) processedInfo.textContent = `${targetW} x ${targetH} px • ${sizeKB.toFixed(1)} KB`;
 
     const matches = sizeKB >= specs.minKB && sizeKB <= specs.maxKB;
