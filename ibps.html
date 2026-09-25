@@ -91,6 +91,16 @@
 
             <button id="downloadBtn" disabled aria-label="Download">Download</button>
         </div>
+                <!-- ADJUST CONTROLS -->
+        <div class="card" id="adjustCard" style="display:none;">
+            <h2>✏️ Adjust</h2>
+            <p class="hint">👆 Drag to adjust position</p>
+            <label class="control-label">Zoom: <span id="zoomValue">100%</span></label>
+            <input type="range" id="zoomSlider" min="50" max="300" value="100">
+            <button id="resetBtn" type="button" class="btn-secondary" style="margin-top:10px;">Reset Position</button>
+            <button id="cropBtn" type="button" class="btn-secondary" style="margin-top:10px;">✂️ Crop Image</button>
+        </div>
+
 
         <!-- TIPS -->
         <div class="card">
