@@ -405,26 +405,46 @@ function saveCrop() {
     if (!canvas || !uploadedImage) return;
 
     const size = CROP_CANVAS_SIZE;
+
+    // Create new canvas with crop box dimensions
     const newCanvas = document.createElement('canvas');
     newCanvas.width = cropBox.w;
     newCanvas.height = cropBox.h;
     const newCtx = newCanvas.getContext('2d');
 
+    // Fill white background
+    newCtx.fillStyle = '#ffffff';
+    newCtx.fillRect(0, 0, cropBox.w, cropBox.h);
+
+    // Calculate scale and position (same as drawCropCanvas)
     const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height) * cropZoom;
     const drawW = uploadedImage.width * scale;
     const drawH = uploadedImage.height * scale;
-    const x = (size - drawW) / 2 + cropOffsetX;
-    const y = (size - drawH) / 2 + cropOffsetY;
+    const imgX = (size - drawW) / 2 + cropOffsetX;
+    const imgY = (size - drawH) / 2 + cropOffsetY;
 
-    const srcX = (cropBox.x - x) / scale;
-    const srcY = (cropBox.y - y) / scale;
+    // Calculate source area in original image (relative to image position)
+    const srcX = (cropBox.x - imgX) / scale;
+    const srcY = (cropBox.y - imgY) / scale;
     const srcW = cropBox.w / scale;
     const srcH = cropBox.h / scale;
 
+    // Draw only the visible portion within the image bounds
+    const clampedSrcX = Math.max(0, srcX);
+    const clampedSrcY = Math.max(0, srcY);
+    const clampedSrcW = Math.min(uploadedImage.width - clampedSrcX, srcW);
+    const clampedSrcH = Math.min(uploadedImage.height - clampedSrcY, srcH);
+
+    // Destination position (where in the new canvas to draw)
+    const destX = (clampedSrcX - srcX) * scale;
+    const destY = (clampedSrcY - srcY) * scale;
+    const destW = clampedSrcW * scale;
+    const destH = clampedSrcH * scale;
+
     newCtx.drawImage(
         uploadedImage,
-        Math.max(0, srcX), Math.max(0, srcY), srcW, srcH,
-        0, 0, cropBox.w, cropBox.h
+        clampedSrcX, clampedSrcY, clampedSrcW, clampedSrcH,
+        destX, destY, destW, destH
     );
 
     const croppedImg = new Image();
