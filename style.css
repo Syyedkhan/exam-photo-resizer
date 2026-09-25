@@ -707,3 +707,114 @@ input[type="range"]::-moz-range-thumb {
 #resetBtn:hover {
     background: #e2e8f0;
 }
+
+
+/* ========== CROP MODAL ========== */
+.crop-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.crop-modal.active {
+    display: flex;
+}
+
+.crop-modal-content {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    max-width: 90vw;
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: auto;
+}
+
+.crop-modal-content h3 {
+    color: #4c51bf;
+    font-size: 20px;
+}
+
+.crop-canvas-wrapper {
+    position: relative;
+    background: #2d3748;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.crop-canvas-wrapper canvas {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+    border-radius: 8px;
+}
+
+.crop-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.crop-controls button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.crop-controls .btn-save {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.crop-controls .btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.crop-controls .btn-cancel {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.crop-controls .btn-cancel:hover {
+    background: #e2e8f0;
+}
+
+.crop-zoom-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.crop-zoom-row label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0;
+}
+
+.crop-zoom-row input[type="range"] {
+    width: 200px;
+}
