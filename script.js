@@ -1,6 +1,7 @@
 /* ============================================
    Photo Resizer - Photo + Signature (2 Boxes)
    + Merger (PI7 Style) — SAFE VERSION
+   + FIXED CROP (poori image dikhti hai)
    ============================================ */
 
 // ============ PHOTO BOX ============
@@ -321,7 +322,7 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
     return { canvas, dataUrl, sizeKB };
 }
 
-// ============ CROP FUNCTIONALITY ============
+// ============ CROP FUNCTIONALITY (FIXED) ============
 let cropTarget = 'photo';
 let cropBox = { x: 75, y: 75, w: 350, h: 350 };
 let cropBoxDragging = false;
@@ -358,7 +359,32 @@ function openCropModal(target) {
         setupCropEvents();
     }
 
-    cropBox = { x: 75, y: 75, w: 350, h: 350 };
+    // ✅ FIX: Image ke hisaab se crop box size karo
+    const size = CROP_CANVAS_SIZE;
+    const imgAspect = img.width / img.height;
+
+    let boxW, boxH;
+    if (imgAspect > 1) {
+        // Landscape
+        boxW = size * 0.8;
+        boxH = size * 0.6;
+    } else if (imgAspect < 1) {
+        // Portrait
+        boxW = size * 0.6;
+        boxH = size * 0.8;
+    } else {
+        // Square
+        boxW = size * 0.7;
+        boxH = size * 0.7;
+    }
+
+    cropBox = {
+        x: (size - boxW) / 2,
+        y: (size - boxH) / 2,
+        w: boxW,
+        h: boxH
+    };
+
     modal.classList.add('active');
     drawCropCanvas();
 }
@@ -373,10 +399,12 @@ function drawCropCanvas() {
     canvas.width = size;
     canvas.height = size;
 
-    ctx.fillStyle = '#1a202c';
+    // ✅ FIX: Light background
+    ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, size, size);
 
-    const scale = Math.max(size / img.width, size / img.height);
+    // ✅ FIX: Math.min — poori image fit ho
+    const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
     const x = (size - drawW) / 2;
@@ -384,16 +412,19 @@ function drawCropCanvas() {
 
     ctx.drawImage(img, x, y, drawW, drawH);
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    // ✅ FIX: Halka overlay
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.fillRect(0, 0, size, cropBox.y);
     ctx.fillRect(0, cropBox.y + cropBox.h, size, size - cropBox.y - cropBox.h);
     ctx.fillRect(0, cropBox.y, cropBox.x, cropBox.h);
     ctx.fillRect(cropBox.x + cropBox.w, cropBox.y, size - cropBox.x - cropBox.w, cropBox.h);
 
+    // Blue border
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
     ctx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
 
+    // Handles
     ctx.fillStyle = '#667eea';
     const hs = 14;
     ctx.fillRect(cropBox.x - hs/2, cropBox.y - hs/2, hs, hs);
@@ -519,7 +550,8 @@ function saveCrop() {
     if (!canvas || !img) return;
 
     const size = CROP_CANVAS_SIZE;
-    const scale = Math.max(size / img.width, size / img.height);
+    // ✅ FIX: Math.min — same as display
+    const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
     const imgX = (size - drawW) / 2;
@@ -687,7 +719,7 @@ function renderMergeGrid() {
     mergedBlob = null;
 }
 
-// ============ MERGE CROP MODAL ============
+// ============ MERGE CROP MODAL (FIXED) ============
 let mergeCropIndex = -1;
 let mergeCropBox = { x: 75, y: 75, w: 350, h: 350 };
 let mergeCropDragging = false;
@@ -724,7 +756,30 @@ function openMergeCropModal(index) {
         setupMergeCropEvents();
     }
 
-    mergeCropBox = { x: 75, y: 75, w: 350, h: 350 };
+    // ✅ FIX: Image ke hisaab se crop box
+    const img = photo.croppedImg;
+    const size = MERGE_CROP_SIZE;
+    const imgAspect = img.width / img.height;
+
+    let boxW, boxH;
+    if (imgAspect > 1) {
+        boxW = size * 0.8;
+        boxH = size * 0.6;
+    } else if (imgAspect < 1) {
+        boxW = size * 0.6;
+        boxH = size * 0.8;
+    } else {
+        boxW = size * 0.7;
+        boxH = size * 0.7;
+    }
+
+    mergeCropBox = {
+        x: (size - boxW) / 2,
+        y: (size - boxH) / 2,
+        w: boxW,
+        h: boxH
+    };
+
     modal.classList.add('active');
     drawMergeCropCanvas();
 }
@@ -741,10 +796,12 @@ function drawMergeCropCanvas() {
     canvas.width = size;
     canvas.height = size;
 
-    ctx.fillStyle = '#1a202c';
+    // ✅ FIX: Light background
+    ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, size, size);
 
-    const scale = Math.max(size / img.width, size / img.height);
+    // ✅ FIX: Math.min — poori image fit
+    const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
     const x = (size - drawW) / 2;
@@ -752,7 +809,8 @@ function drawMergeCropCanvas() {
 
     ctx.drawImage(img, x, y, drawW, drawH);
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    // ✅ FIX: Halka overlay
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.fillRect(0, 0, size, mergeCropBox.y);
     ctx.fillRect(0, mergeCropBox.y + mergeCropBox.h, size, size - mergeCropBox.y - mergeCropBox.h);
     ctx.fillRect(0, mergeCropBox.y, mergeCropBox.x, mergeCropBox.h);
@@ -889,7 +947,8 @@ function saveMergeCrop() {
 
     const img = photo.croppedImg;
     const size = MERGE_CROP_SIZE;
-    const scale = Math.max(size / img.width, size / img.height);
+    // ✅ FIX: Math.min — same as display
+    const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
     const imgX = (size - drawW) / 2;
