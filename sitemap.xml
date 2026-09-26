@@ -1,88 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- Main Pages -->
   <url>
     <loc>https://exam-photo-resizer.vercel.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
   <url>
-    <loc>https://exam-photo-resizer.vercel.app/us-passport-photo.html</loc>
+    <loc>https://exam-photo-resizer.vercel.app/index.html</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>1.0</priority>
   </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/uk-passport-photo.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/schengen-visa-photo.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/canada-passport-photo.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/australia-passport-photo.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
   <url>
     <loc>https://exam-photo-resizer.vercel.app/india.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/ibps.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/ssc-cgl.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/rrb.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/neet.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://exam-photo-resizer.vercel.app/upsc.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
   <url>
     <loc>https://exam-photo-resizer.vercel.app/compressor.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <url>
     <loc>https://exam-photo-resizer.vercel.app/photo-merger.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- SSC Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/ssc-cgl.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ssc-chsl.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ssc-mts.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ssc-gd.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ssc-cpo.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ssc-je.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Banking Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/ibps.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ibps-clerk.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ibps-so.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ibps-rrb.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/sbi-po.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/sbi-clerk.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Railway Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/rrb.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/rrb-ntpc.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/rrb-group-d.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/rrb-alp.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Police Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/police.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/up-police.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/bihar-police.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/delhi-police.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Defence Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/nda.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/cds.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/cisf.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Teaching Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/ctet.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ugc-net.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/kvs.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/dsssb.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Medical Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/neet.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/neet-pg.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/aiims.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/jipmer.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Engineering Exams -->
+  <url><loc>https://exam-photo-resizer.vercel.app/jee-main.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/gate.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/bitsat.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/viteee.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Civil Services -->
+  <url><loc>https://exam-photo-resizer.vercel.app/upsc.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/state-psc.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/mpsc.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/bpsc.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/uppsc.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Law & University -->
+  <url><loc>https://exam-photo-resizer.vercel.app/clat.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ailet.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/cuet.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/duet.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://exam-photo-resizer.vercel.app/ipu-cet.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 
 </urlset>
