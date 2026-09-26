@@ -1,7 +1,8 @@
 /* ============================================
    Photo Resizer - Photo + Signature (2 Boxes)
-   + Merger (PI7 Style) — SAFE VERSION
+   + Merger (PI7 Style)
    + FIXED CROP (poori image dikhti hai)
+   + BEST QUALITY (exam requirement bhi poori)
    ============================================ */
 
 // ============ PHOTO BOX ============
@@ -36,16 +37,14 @@ let signImg = null;
 let signCanvas = null;
 let signName = '';
 
-// ============ PHOTO SETUP (SAFE) ============
+// ============ PHOTO SETUP ============
 if (photoImageArea) {
     photoImageArea.addEventListener('click', function() {
         photoInput.click();
     });
-
     photoImageArea.addEventListener('dragover', function(e) {
         e.preventDefault();
     });
-
     photoImageArea.addEventListener('drop', function(e) {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
@@ -159,16 +158,14 @@ if (photoDownloadBtn) {
     });
 }
 
-// ============ SIGNATURE SETUP (SAFE) ============
+// ============ SIGNATURE SETUP ============
 if (signImageArea) {
     signImageArea.addEventListener('click', function() {
         signInput.click();
     });
-
     signImageArea.addEventListener('dragover', function(e) {
         e.preventDefault();
     });
-
     signImageArea.addEventListener('drop', function(e) {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
@@ -282,16 +279,22 @@ if (signDownloadBtn) {
     });
 }
 
-// ============ COMMON RESIZE FUNCTION ============
+// ============ COMMON RESIZE FUNCTION (BEST QUALITY) ============
 function resizeImage(sourceImg, targetW, targetH, targetKB) {
     const canvas = document.createElement('canvas');
     canvas.width = targetW;
     canvas.height = targetH;
     const ctx = canvas.getContext('2d');
 
+    // ✅ High quality rendering
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // White background (JPEG ke liye zaroori)
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
 
+    // Cover mode — poori jagah fill kare, aspect ratio maintain
     const scale = Math.max(targetW / sourceImg.width, targetH / sourceImg.height);
     const drawW = sourceImg.width * scale;
     const drawH = sourceImg.height * scale;
@@ -300,23 +303,42 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
 
     ctx.drawImage(sourceImg, x, y, drawW, drawH);
 
-    const imgData = ctx.getImageData(0, 0, targetW, targetH);
-    const pixels = imgData.data;
-    for (let i = 0; i < pixels.length; i += 4) {
-        pixels[i] = Math.min(255, pixels[i] + (Math.random() * 6 - 3));
-        pixels[i + 1] = Math.min(255, pixels[i + 1] + (Math.random() * 6 - 3));
-        pixels[i + 2] = Math.min(255, pixels[i + 2] + (Math.random() * 6 - 3));
-    }
-    ctx.putImageData(imgData, 0, 0);
-
+    // ✅ Smart quality — 1.0 se start karo
     let quality = 1.0;
     let dataUrl = canvas.toDataURL('image/jpeg', quality);
     let sizeKB = (dataUrl.length * 0.75) / 1024;
 
-    while (sizeKB > targetKB && quality > 0.1) {
-        quality -= 0.01;
+    // Step 1: Quality kam karo (1.0 → 0.7) — sirf 30% tak
+    while (sizeKB > targetKB && quality > 0.7) {
+        quality -= 0.02;
         dataUrl = canvas.toDataURL('image/jpeg', quality);
         sizeKB = (dataUrl.length * 0.75) / 1024;
+    }
+
+    // Step 2: Agar 0.7 par bhi size bada — dimensions kam karo
+    if (sizeKB > targetKB) {
+        let currentW = targetW;
+        let currentH = targetH;
+        let workCanvas = canvas;
+
+        while (sizeKB > targetKB && currentW > 80) {
+            currentW = Math.round(currentW * 0.9);
+            currentH = Math.round(currentH * 0.9);
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = currentW;
+            tempCanvas.height = currentH;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.imageSmoothingEnabled = true;
+            tempCtx.imageSmoothingQuality = 'high';
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.fillRect(0, 0, currentW, currentH);
+            tempCtx.drawImage(workCanvas, 0, 0, currentW, currentH);
+
+            dataUrl = tempCanvas.toDataURL('image/jpeg', 0.85);
+            sizeKB = (dataUrl.length * 0.75) / 1024;
+            workCanvas = tempCanvas;
+        }
     }
 
     return { canvas, dataUrl, sizeKB };
@@ -359,21 +381,17 @@ function openCropModal(target) {
         setupCropEvents();
     }
 
-    // ✅ FIX: Image ke hisaab se crop box size karo
     const size = CROP_CANVAS_SIZE;
     const imgAspect = img.width / img.height;
 
     let boxW, boxH;
     if (imgAspect > 1) {
-        // Landscape
         boxW = size * 0.8;
         boxH = size * 0.6;
     } else if (imgAspect < 1) {
-        // Portrait
         boxW = size * 0.6;
         boxH = size * 0.8;
     } else {
-        // Square
         boxW = size * 0.7;
         boxH = size * 0.7;
     }
@@ -399,11 +417,9 @@ function drawCropCanvas() {
     canvas.width = size;
     canvas.height = size;
 
-    // ✅ FIX: Light background
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, size, size);
 
-    // ✅ FIX: Math.min — poori image fit ho
     const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
@@ -412,19 +428,16 @@ function drawCropCanvas() {
 
     ctx.drawImage(img, x, y, drawW, drawH);
 
-    // ✅ FIX: Halka overlay
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.fillRect(0, 0, size, cropBox.y);
     ctx.fillRect(0, cropBox.y + cropBox.h, size, size - cropBox.y - cropBox.h);
     ctx.fillRect(0, cropBox.y, cropBox.x, cropBox.h);
     ctx.fillRect(cropBox.x + cropBox.w, cropBox.y, size - cropBox.x - cropBox.w, cropBox.h);
 
-    // Blue border
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
     ctx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
 
-    // Handles
     ctx.fillStyle = '#667eea';
     const hs = 14;
     ctx.fillRect(cropBox.x - hs/2, cropBox.y - hs/2, hs, hs);
@@ -550,7 +563,6 @@ function saveCrop() {
     if (!canvas || !img) return;
 
     const size = CROP_CANVAS_SIZE;
-    // ✅ FIX: Math.min — same as display
     const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
@@ -566,6 +578,8 @@ function saveCrop() {
     newCanvas.width = cropBox.w;
     newCanvas.height = cropBox.h;
     const newCtx = newCanvas.getContext('2d', { alpha: false });
+    newCtx.imageSmoothingEnabled = true;
+    newCtx.imageSmoothingQuality = 'high';
     newCtx.fillStyle = '#ffffff';
     newCtx.fillRect(0, 0, cropBox.w, cropBox.h);
     newCtx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, cropBox.w, cropBox.h);
@@ -617,7 +631,7 @@ function saveCrop() {
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 1.0);
 }
 
-// ============ PHOTO MERGER (PI7 STYLE) — SAFE ============
+// ============ PHOTO MERGER ============
 const mergeInput = document.getElementById('mergeInput');
 const mergeGrid = document.getElementById('mergeGrid');
 const mergeStatus = document.getElementById('mergeStatus');
@@ -633,7 +647,6 @@ if (mergeInput) {
     mergeInput.addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
-
         files.forEach((file) => {
             const reader = new FileReader();
             reader.onload = function(event) {
@@ -658,7 +671,6 @@ if (mergeInput) {
 function renderMergeGrid() {
     if (!mergeGrid) return;
     mergeGrid.innerHTML = '';
-
     mergePhotos.forEach((photo, index) => {
         const div = document.createElement('div');
         div.className = 'merge-item';
@@ -670,7 +682,6 @@ function renderMergeGrid() {
         `;
         mergeGrid.appendChild(div);
     });
-
     const addBox = document.createElement('div');
     addBox.className = 'merge-item';
     addBox.innerHTML = `
@@ -680,14 +691,12 @@ function renderMergeGrid() {
         </div>
     `;
     mergeGrid.appendChild(addBox);
-
     mergeGrid.querySelectorAll('.crop-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             openMergeCropModal(parseInt(this.dataset.index));
         });
     });
-
     mergeGrid.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -695,14 +704,12 @@ function renderMergeGrid() {
             renderMergeGrid();
         });
     });
-
     const addMoreBtn = document.getElementById('addMoreBtn');
     if (addMoreBtn) {
         addMoreBtn.addEventListener('click', function() {
             mergeInput.click();
         });
     }
-
     if (mergeStatus) {
         if (mergePhotos.length === 0) {
             mergeStatus.textContent = 'Select 2 or more images to merge.';
@@ -712,7 +719,6 @@ function renderMergeGrid() {
             mergeStatus.textContent = `✅ ${mergePhotos.length} images selected.`;
         }
     }
-
     if (mergeBtn) mergeBtn.disabled = mergePhotos.length < 2;
     if (mergeDownloadBtn) mergeDownloadBtn.style.display = 'none';
     if (mergePreviewBox) mergePreviewBox.style.display = 'none';
@@ -756,7 +762,6 @@ function openMergeCropModal(index) {
         setupMergeCropEvents();
     }
 
-    // ✅ FIX: Image ke hisaab se crop box
     const img = photo.croppedImg;
     const size = MERGE_CROP_SIZE;
     const imgAspect = img.width / img.height;
@@ -796,11 +801,9 @@ function drawMergeCropCanvas() {
     canvas.width = size;
     canvas.height = size;
 
-    // ✅ FIX: Light background
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, size, size);
 
-    // ✅ FIX: Math.min — poori image fit
     const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
@@ -809,7 +812,6 @@ function drawMergeCropCanvas() {
 
     ctx.drawImage(img, x, y, drawW, drawH);
 
-    // ✅ FIX: Halka overlay
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.fillRect(0, 0, size, mergeCropBox.y);
     ctx.fillRect(0, mergeCropBox.y + mergeCropBox.h, size, size - mergeCropBox.y - mergeCropBox.h);
@@ -947,7 +949,6 @@ function saveMergeCrop() {
 
     const img = photo.croppedImg;
     const size = MERGE_CROP_SIZE;
-    // ✅ FIX: Math.min — same as display
     const scale = Math.min(size / img.width, size / img.height);
     const drawW = img.width * scale;
     const drawH = img.height * scale;
@@ -963,6 +964,8 @@ function saveMergeCrop() {
     newCanvas.width = mergeCropBox.w;
     newCanvas.height = mergeCropBox.h;
     const newCtx = newCanvas.getContext('2d', { alpha: false });
+    newCtx.imageSmoothingEnabled = true;
+    newCtx.imageSmoothingQuality = 'high';
     newCtx.fillStyle = '#ffffff';
     newCtx.fillRect(0, 0, mergeCropBox.w, mergeCropBox.h);
     newCtx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, mergeCropBox.w, mergeCropBox.h);
@@ -983,7 +986,6 @@ if (mergeBtn) {
         if (mergePhotos.length < 2 || !mergeCanvas) return;
 
         const direction = document.querySelector('input[name="direction"]:checked').value;
-        const arrange = document.querySelector('input[name="arrange"]:checked').value;
         const addBorder = document.getElementById('addBorder').checked;
 
         const ctx = mergeCanvas.getContext('2d');
@@ -1008,6 +1010,8 @@ if (mergeBtn) {
 
         mergeCanvas.width = canvasW;
         mergeCanvas.height = canvasH;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvasW, canvasH);
 
@@ -1133,13 +1137,15 @@ function compressImageFile(img, targetKB, callback) {
 
     canvas.width = width;
     canvas.height = height;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, 0, 0, width, height);
 
     let quality = 1.0;
     function tryCompress() {
         canvas.toBlob(function(blob) {
             const sizeKB = blob.size / 1024;
-            if (sizeKB <= targetKB || quality <= 0.1) {
+            if (sizeKB <= targetKB || quality <= 0.4) {
                 callback(blob);
             } else {
                 quality -= 0.05;
