@@ -2,7 +2,7 @@
    Photo Resizer - Photo + Signature (2 Boxes)
    + Merger (PI7 Style)
    + FIXED CROP (poori image dikhti hai)
-   + BEST QUALITY (exam requirement bhi poori)
+   + PI7 QUALITY (multi-step downscale + high quality)
    ============================================ */
 
 // ============ PHOTO BOX ============
@@ -279,52 +279,96 @@ if (signDownloadBtn) {
     });
 }
 
-// ============ COMMON RESIZE FUNCTION (BEST QUALITY) ============
+// ============ COMMON RESIZE FUNCTION (PI7 STYLE QUALITY) ============
 function resizeImage(sourceImg, targetW, targetH, targetKB) {
+    // ✅ Step 1: Multi-step downscale for best quality
+    let currentImg = sourceImg;
+    
+    // Agar source bahut badi hai (2x se zyada) — 2 step mein downscale karo
+    if (sourceImg.width > targetW * 4 || sourceImg.height > targetH * 4) {
+        // Step 1a: 50% tak
+        const step1W = Math.round(sourceImg.width / 2);
+        const step1H = Math.round(sourceImg.height / 2);
+        
+        const step1Canvas = document.createElement('canvas');
+        step1Canvas.width = step1W;
+        step1Canvas.height = step1H;
+        const step1Ctx = step1Canvas.getContext('2d');
+        step1Ctx.imageSmoothingEnabled = true;
+        step1Ctx.imageSmoothingQuality = 'high';
+        step1Ctx.drawImage(sourceImg, 0, 0, step1W, step1H);
+        
+        const step1Img = new Image();
+        step1Img.src = step1Canvas.toDataURL('image/png');
+        currentImg = step1Img;
+        
+        // Step 1b: Agar abhi bhi badi hai
+        if (step1W > targetW * 2 || step1H > targetH * 2) {
+            const step2W = Math.round(step1W / 2);
+            const step2H = Math.round(step1H / 2);
+            
+            const step2Canvas = document.createElement('canvas');
+            step2Canvas.width = step2W;
+            step2Canvas.height = step2H;
+            const step2Ctx = step2Canvas.getContext('2d');
+            step2Ctx.imageSmoothingEnabled = true;
+            step2Ctx.imageSmoothingQuality = 'high';
+            step2Ctx.drawImage(currentImg, 0, 0, step2W, step2H);
+            
+            const step2Img = new Image();
+            step2Img.src = step2Canvas.toDataURL('image/png');
+            currentImg = step2Img;
+        }
+    }
+    
+    // ✅ Step 2: Final canvas — high quality
     const canvas = document.createElement('canvas');
     canvas.width = targetW;
     canvas.height = targetH;
     const ctx = canvas.getContext('2d');
-
-    // ✅ High quality rendering
+    
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-
-    // White background (JPEG ke liye zaroori)
+    
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, targetW, targetH);
-
-    // Cover mode — poori jagah fill kare, aspect ratio maintain
-    const scale = Math.max(targetW / sourceImg.width, targetH / sourceImg.height);
-    const drawW = sourceImg.width * scale;
-    const drawH = sourceImg.height * scale;
+    
+    const scale = Math.max(targetW / currentImg.width, targetH / currentImg.height);
+    const drawW = currentImg.width * scale;
+    const drawH = currentImg.height * scale;
     const x = (targetW - drawW) / 2;
     const y = (targetH - drawH) / 2;
-
-    ctx.drawImage(sourceImg, x, y, drawW, drawH);
-
-    // ✅ Smart quality — 1.0 se start karo
-    let quality = 1.0;
-    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+    
+    ctx.drawImage(currentImg, x, y, drawW, drawH);
+    
+    // ✅ Step 3: Smart compression — quality HIGH rakho
+    let dataUrl = canvas.toDataURL('image/jpeg', 0.95);
     let sizeKB = (dataUrl.length * 0.75) / 1024;
-
-    // Step 1: Quality kam karo (1.0 → 0.7) — sirf 30% tak
-    while (sizeKB > targetKB && quality > 0.7) {
+    
+    if (sizeKB <= targetKB) {
+        return { canvas, dataUrl, sizeKB };
+    }
+    
+    // ✅ Quality sirf 0.95 → 0.85 tak (10% kam)
+    let quality = 0.95;
+    while (sizeKB > targetKB && quality > 0.85) {
         quality -= 0.02;
         dataUrl = canvas.toDataURL('image/jpeg', quality);
         sizeKB = (dataUrl.length * 0.75) / 1024;
     }
-
-    // Step 2: Agar 0.7 par bhi size bada — dimensions kam karo
+    
+    // ✅ Agar 0.85 par bhi size bada — dimensions kam karo
     if (sizeKB > targetKB) {
         let currentW = targetW;
         let currentH = targetH;
         let workCanvas = canvas;
-
-        while (sizeKB > targetKB && currentW > 80) {
-            currentW = Math.round(currentW * 0.9);
-            currentH = Math.round(currentH * 0.9);
-
+        let scaleDown = 1.0;
+        
+        while (sizeKB > targetKB && scaleDown > 0.5) {
+            scaleDown -= 0.05;
+            currentW = Math.round(targetW * scaleDown);
+            currentH = Math.round(targetH * scaleDown);
+            
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = currentW;
             tempCanvas.height = currentH;
@@ -334,13 +378,33 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
             tempCtx.fillStyle = '#ffffff';
             tempCtx.fillRect(0, 0, currentW, currentH);
             tempCtx.drawImage(workCanvas, 0, 0, currentW, currentH);
-
-            dataUrl = tempCanvas.toDataURL('image/jpeg', 0.85);
+            
+            dataUrl = tempCanvas.toDataURL('image/jpeg', 0.9);
             sizeKB = (dataUrl.length * 0.75) / 1024;
             workCanvas = tempCanvas;
         }
+        
+        // Final canvas update
+        canvas.width = currentW;
+        canvas.height = currentH;
+        const finalCtx = canvas.getContext('2d');
+        finalCtx.imageSmoothingEnabled = true;
+        finalCtx.imageSmoothingQuality = 'high';
+        finalCtx.fillStyle = '#ffffff';
+        finalCtx.fillRect(0, 0, currentW, currentH);
+        finalCtx.drawImage(workCanvas, 0, 0, currentW, currentH);
     }
-
+    
+    // ✅ Last resort — quality 0.85 → 0.7
+    if (sizeKB > targetKB) {
+        let q = 0.85;
+        while (sizeKB > targetKB && q > 0.7) {
+            q -= 0.02;
+            dataUrl = canvas.toDataURL('image/jpeg', q);
+            sizeKB = (dataUrl.length * 0.75) / 1024;
+        }
+    }
+    
     return { canvas, dataUrl, sizeKB };
 }
 
@@ -416,6 +480,9 @@ function drawCropCanvas() {
     const size = CROP_CANVAS_SIZE;
     canvas.width = size;
     canvas.height = size;
+    
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, size, size);
@@ -800,6 +867,9 @@ function drawMergeCropCanvas() {
     const size = MERGE_CROP_SIZE;
     canvas.width = size;
     canvas.height = size;
+    
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, size, size);
@@ -1145,7 +1215,7 @@ function compressImageFile(img, targetKB, callback) {
     function tryCompress() {
         canvas.toBlob(function(blob) {
             const sizeKB = blob.size / 1024;
-            if (sizeKB <= targetKB || quality <= 0.4) {
+            if (sizeKB <= targetKB || quality <= 0.5) {
                 callback(blob);
             } else {
                 quality -= 0.05;
