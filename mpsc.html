@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="tlzrOaoU-WR5NCPKOZP6TkNLgj0IyDJJ8ccoMWkeKhY" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L5K09RC5D2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-L5K09RC5D2');
+    </script>
+
+    <title>MPSC Photo Signature Resizer 2026 — Free Online Tool</title>
+    <meta name="description" content="Free MPSC photo and signature resizer. Resize photo to 350x450 px (20-300 KB) and signature to 140x60 px (10-20 KB). 100% private.">
+    <link rel="canonical" href="https://exam-photo-resizer.vercel.app/mpsc.html">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📸 Photo Resizer</h1>
+            <p class="tagline">Free • Fast • 100% Private</p>
+            <nav class="nav">
+                <a href="index.html">🏠 Home</a>
+                <a href="india.html">🇮🇳 India</a>
+                <a href="compressor.html">🗜️ Compressor</a>
+                <a href="photo-merger.html">🔗 Merger</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="intro-section">
+            <h2>🏛️ MPSC Photo & Signature Resizer</h2>
+            <p>Resize your photo and signature in exact MPSC specifications</p>
+        </section>
+
+        <section class="country-section">
+            <h3 class="section-title">📋 MPSC Requirements</h3>
+            <div class="country-grid">
+                <div class="country-card">
+                    <div class="country-flag">📷</div>
+                    <h4>Photo Size</h4>
+                    <div class="doc-size">350 x 450 pixels (20-300 KB)</div>
+                </div>
+                <div class="country-card">
+                    <div class="country-flag">✍️</div>
+                    <h4>Signature Size</h4>
+                    <div class="doc-size">140 x 60 pixels (10-20 KB)</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="tool-container">
+            <h2 class="tool-title">Resize <span>Photo</span></h2>
+            <div class="tool-box" data-type="photo">
+                <div class="image-area" id="photoImageArea">
+                    <div class="empty-state">
+                        <p>📁 Click to select a photo</p>
+                        <p style="font-size:13px;color:#999;">or drag & drop here</p>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" style="display:none;">
+            </div>
+            <p class="file-name" id="photoFileName"></p>
+            <div class="badges">
+                <span class="badge" id="photoBadgeW">W-350</span>
+                <span class="badge" id="photoBadgeH">H-450</span>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Width (px)</label>
+                    <input type="number" id="photoWidth" value="350">
+                </div>
+                <span class="x-sign">X</span>
+                <div class="input-group">
+                    <label>Height (px)</label>
+                    <input type="number" id="photoHeight" value="450">
+                </div>
+            </div>
+            <div class="size-row">
+                <label>Size:</label>
+                <input type="number" id="photoSize" value="300">
+                <span class="kb-label">Kb</span>
+            </div>
+            <button id="photoResizeBtn" class="resize-btn" disabled>Resize Photo</button>
+            <button id="photoDownloadBtn" class="download-btn" style="display:none;">⬇ Download Photo</button>
+        </div>
+
+        <div class="tool-container">
+            <h2 class="tool-title">Resize <span>Signature</span></h2>
+            <div class="tool-box" data-type="signature">
+                <div class="image-area" id="signImageArea">
+                    <div class="empty-state">
+                        <p>📁 Click to select a signature</p>
+                        <p style="font-size:13px;color:#999;">or drag & drop here</p>
+                    </div>
+                </div>
+                <input type="file" id="signInput" accept="image/*" style="display:none;">
+            </div>
+            <p class="file-name" id="signFileName"></p>
+            <div class="badges">
+                <span class="badge" id="signBadgeW">W-140</span>
+                <span class="badge" id="signBadgeH">H-60</span>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Width (px)</label>
+                    <input type="number" id="signWidth" value="140">
+                </div>
+                <span class="x-sign">X</span>
+                <div class="input-group">
+                    <label>Height (px)</label>
+                    <input type="number" id="signHeight" value="60">
+                </div>
+            </div>
+            <div class="size-row">
+                <label>Size:</label>
+                <input type="number" id="signSize" value="20">
+                <span class="kb-label">Kb</span>
+            </div>
+            <button id="signResizeBtn" class="resize-btn" disabled>Resize Signature</button>
+            <button id="signDownloadBtn" class="download-btn" style="display:none;">⬇ Download Signature</button>
+        </div>
+
+        <div class="card">
+            <h2>💡 Tips for MPSC</h2>
+            <ul style="margin-left: 20px; line-height: 1.8; color: #4a5568;">
+                <li><strong>Photo:</strong> Plain white background, face camera directly</li>
+                <li><strong>Signature:</strong> Black ink on white paper (NO CAPITAL LETTERS)</li>
+                <li>Recent photo (within 3 months)</li>
+                <li>No glasses, no hat</li>
+            </ul>
+        </div>
+
+        <section class="content-section" style="max-width:900px;margin:40px auto;padding:30px;line-height:1.7;color:#2d3748;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <h2>MPSC Photo Requirements 2026</h2>
+            <p>MPSC (Maharashtra Public Service Commission) exam is conducted by Maharashtra government. Every applicant must upload a photo and signature with strict size requirements. This tool helps you get both exactly right.</p>
+            <h3>MPSC Photo Size</h3>
+            <ul>
+                <li><strong>Photo dimensions:</strong> 350 x 450 pixels</li>
+                <li><strong>Photo file size:</strong> 20 KB to 300 KB</li>
+            </ul>
+            <h3>MPSC Signature Requirements</h3>
+            <ul>
+                <li><strong>Signature dimensions:</strong> 140 x 60 pixels</li>
+                <li><strong>Signature file size:</strong> 10 KB to 20 KB</li>
+            </ul>
+            <h2>Related Tools</h2>
+            <p>
+                <a href="bpsc.html">BPSC Photo Resizer</a> |
+                <a href="uppsc.html">UPPSC Photo Resizer</a> |
+                <a href="state-psc.html">State PSC Photo Resizer</a> |
+                <a href="upsc.html">UPSC Photo Resizer</a> |
+                <a href="ssc-cgl.html">SSC CGL Photo Resizer</a>
+            </p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Photo Resizer | Made for the World 🌍</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
