@@ -1,8 +1,7 @@
 /* ============================================
    Photo Resizer - Photo + Signature (2 Boxes)
-   + Merger (PI7 Style)
+   + Merger (PI7 Style Quality)
    + FIXED CROP (poori image dikhti hai)
-   + PI7 QUALITY (multi-step downscale + high quality)
    ============================================ */
 
 // ============ PHOTO BOX ============
@@ -281,12 +280,10 @@ if (signDownloadBtn) {
 
 // ============ COMMON RESIZE FUNCTION (PI7 STYLE QUALITY) ============
 function resizeImage(sourceImg, targetW, targetH, targetKB) {
-    // ✅ Step 1: Multi-step downscale for best quality
     let currentImg = sourceImg;
     
-    // Agar source bahut badi hai (2x se zyada) — 2 step mein downscale karo
+    // Multi-step downscale for best quality
     if (sourceImg.width > targetW * 4 || sourceImg.height > targetH * 4) {
-        // Step 1a: 50% tak
         const step1W = Math.round(sourceImg.width / 2);
         const step1H = Math.round(sourceImg.height / 2);
         
@@ -302,7 +299,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
         step1Img.src = step1Canvas.toDataURL('image/png');
         currentImg = step1Img;
         
-        // Step 1b: Agar abhi bhi badi hai
         if (step1W > targetW * 2 || step1H > targetH * 2) {
             const step2W = Math.round(step1W / 2);
             const step2H = Math.round(step1H / 2);
@@ -321,7 +317,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
         }
     }
     
-    // ✅ Step 2: Final canvas — high quality
     const canvas = document.createElement('canvas');
     canvas.width = targetW;
     canvas.height = targetH;
@@ -341,7 +336,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
     
     ctx.drawImage(currentImg, x, y, drawW, drawH);
     
-    // ✅ Step 3: Smart compression — quality HIGH rakho
     let dataUrl = canvas.toDataURL('image/jpeg', 0.95);
     let sizeKB = (dataUrl.length * 0.75) / 1024;
     
@@ -349,7 +343,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
         return { canvas, dataUrl, sizeKB };
     }
     
-    // ✅ Quality sirf 0.95 → 0.85 tak (10% kam)
     let quality = 0.95;
     while (sizeKB > targetKB && quality > 0.85) {
         quality -= 0.02;
@@ -357,7 +350,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
         sizeKB = (dataUrl.length * 0.75) / 1024;
     }
     
-    // ✅ Agar 0.85 par bhi size bada — dimensions kam karo
     if (sizeKB > targetKB) {
         let currentW = targetW;
         let currentH = targetH;
@@ -384,7 +376,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
             workCanvas = tempCanvas;
         }
         
-        // Final canvas update
         canvas.width = currentW;
         canvas.height = currentH;
         const finalCtx = canvas.getContext('2d');
@@ -395,7 +386,6 @@ function resizeImage(sourceImg, targetW, targetH, targetKB) {
         finalCtx.drawImage(workCanvas, 0, 0, currentW, currentH);
     }
     
-    // ✅ Last resort — quality 0.85 → 0.7
     if (sizeKB > targetKB) {
         let q = 0.85;
         while (sizeKB > targetKB && q > 0.7) {
@@ -792,7 +782,7 @@ function renderMergeGrid() {
     mergedBlob = null;
 }
 
-// ============ MERGE CROP MODAL (FIXED) ============
+// ============ MERGE CROP MODAL ============
 let mergeCropIndex = -1;
 let mergeCropBox = { x: 75, y: 75, w: 350, h: 350 };
 let mergeCropDragging = false;
@@ -1050,7 +1040,7 @@ function saveMergeCrop() {
     croppedImg.src = newCanvas.toDataURL('image/jpeg', 0.95);
 }
 
-// ============ MERGE FUNCTION ============
+// ============ MERGE FUNCTION (PI7 STYLE - FIXED QUALITY) ============
 if (mergeBtn) {
     mergeBtn.addEventListener('click', function() {
         if (mergePhotos.length < 2 || !mergeCanvas) return;
@@ -1063,33 +1053,30 @@ if (mergeBtn) {
 
         let canvasW, canvasH;
 
+        // ✅ PI7 STYLE: Horizontal — same height, aspect ratio maintain
         if (direction === 'horizontal') {
             canvasH = Math.max(...images.map(img => img.height));
-            canvasW = images.reduce((sum, img) => sum + (img.width * canvasH / img.height), 0);
-        } else if (direction === 'vertical') {
-            canvasW = Math.max(...images.map(img => img.width));
-            canvasH = images.reduce((sum, img) => sum + (img.height * canvasW / img.width), 0);
-        } else {
-            const cols = 2;
-            const rows = Math.ceil(images.length / cols);
-            const cellW = Math.max(...images.map(img => img.width));
-            const cellH = Math.max(...images.map(img => img.height));
-            canvasW = cellW * cols;
-            canvasH = cellH * rows;
-        }
+            
+            const widths = images.map(img => {
+                const aspect = img.width / img.height;
+                return Math.round(canvasH * aspect);
+            });
+            
+            canvasW = widths.reduce((sum, w) => sum + w, 0);
+            
+            mergeCanvas.width = canvasW;
+            mergeCanvas.height = canvasH;
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvasW, canvasH);
 
-        mergeCanvas.width = canvasW;
-        mergeCanvas.height = canvasH;
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvasW, canvasH);
-
-        let x = 0, y = 0;
-        if (direction === 'horizontal') {
-            images.forEach((img) => {
-                const drawW = img.width * canvasH / img.height;
+            let x = 0;
+            images.forEach((img, i) => {
+                const drawW = widths[i];
                 ctx.drawImage(img, x, 0, drawW, canvasH);
+                
                 if (addBorder) {
                     ctx.strokeStyle = '#000000';
                     ctx.lineWidth = 3;
@@ -1097,10 +1084,31 @@ if (mergeBtn) {
                 }
                 x += drawW;
             });
-        } else if (direction === 'vertical') {
-            images.forEach((img) => {
-                const drawH = img.height * canvasW / img.width;
+        }
+        // ✅ PI7 STYLE: Vertical — same width, aspect ratio maintain
+        else if (direction === 'vertical') {
+            canvasW = Math.max(...images.map(img => img.width));
+            
+            const heights = images.map(img => {
+                const aspect = img.height / img.width;
+                return Math.round(canvasW * aspect);
+            });
+            
+            canvasH = heights.reduce((sum, h) => sum + h, 0);
+            
+            mergeCanvas.width = canvasW;
+            mergeCanvas.height = canvasH;
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvasW, canvasH);
+
+            let y = 0;
+            images.forEach((img, i) => {
+                const drawH = heights[i];
                 ctx.drawImage(img, 0, y, canvasW, drawH);
+                
                 if (addBorder) {
                     ctx.strokeStyle = '#000000';
                     ctx.lineWidth = 3;
@@ -1108,21 +1116,43 @@ if (mergeBtn) {
                 }
                 y += drawH;
             });
-        } else {
+        }
+        // ✅ Grid — 2 columns
+        else {
             const cols = 2;
-            const cellW = canvasW / cols;
-            const cellH = canvasH / Math.ceil(images.length / cols);
+            const rows = Math.ceil(images.length / cols);
+            
+            const maxW = Math.max(...images.map(img => img.width));
+            const maxH = Math.max(...images.map(img => img.height));
+            
+            const cellW = maxW;
+            const cellH = maxH;
+            
+            canvasW = cellW * cols;
+            canvasH = cellH * rows;
+            
+            mergeCanvas.width = canvasW;
+            mergeCanvas.height = canvasH;
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvasW, canvasH);
+
             images.forEach((img, i) => {
                 const col = i % cols;
                 const row = Math.floor(i / cols);
                 const x = col * cellW;
                 const y = row * cellH;
+                
                 const scale = Math.min(cellW / img.width, cellH / img.height);
                 const drawW = img.width * scale;
                 const drawH = img.height * scale;
                 const offsetX = (cellW - drawW) / 2;
                 const offsetY = (cellH - drawH) / 2;
+                
                 ctx.drawImage(img, x + offsetX, y + offsetY, drawW, drawH);
+                
                 if (addBorder) {
                     ctx.strokeStyle = '#000000';
                     ctx.lineWidth = 3;
@@ -1132,10 +1162,12 @@ if (mergeBtn) {
         }
 
         if (mergePreviewBox) mergePreviewBox.style.display = 'block';
+        
+        // ✅ HIGH QUALITY output — 0.98 (PI7 jaisa)
         mergeCanvas.toBlob(function(blob) {
             mergedBlob = blob;
             if (mergeDownloadBtn) mergeDownloadBtn.style.display = 'block';
-        }, 'image/jpeg', 0.95);
+        }, 'image/jpeg', 0.98);
     });
 }
 
